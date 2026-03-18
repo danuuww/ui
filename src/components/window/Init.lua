@@ -29,6 +29,8 @@ local Notified = false
 return function(Config)
 	local Window = {
 		Title = Config.Title or "UI Library",
+		SubTitle = Config.SubTitle,
+		TitleMessages = Config.TitleMessages,
 		TitleAnim = Config.TitleAnim,
 		TitleFont = Config.TitleFont or Creator.Font,
 		TitleFontWeight = Config.TitleFontWeight or Enum.FontWeight.SemiBold,
@@ -666,213 +668,275 @@ return function(Config)
 	end
 
 	local WindowTitle = New("TextLabel", {
-		Text = Window.Title,
-		FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight),
-		BackgroundTransparency = 1,
-		AutomaticSize = "XY",
-		Name = "Title",
-		TextXAlignment = "Left",
-		TextSize = Window.TitleTextSize,
-		ThemeTag = {
-			TextColor3 = "WindowTopbarTitle",
-		},
-	})
+	Text = Window.Title,
+	FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight),
+	BackgroundTransparency = 1,
+	AutomaticSize = "XY",
+	Name = "Title",
+	TextXAlignment = "Left",
+	TextSize = Window.TitleTextSize,
+	ThemeTag = {
+		TextColor3 = "WindowTopbarTitle",
+	},
+})
 
-	local TitleAnimToken = 0
+local TitleAnimToken = 0
 
-	local function GetTitleAnimConfig()
-		local anim = Window.TitleAnim
+local function GetTitleMessages()
+	local messages = {}
 
-		if not anim or anim == false or anim == "None" then
-			return nil
+	if type(Window.TitleMessages) == "table" and #Window.TitleMessages > 0 then
+		for _, msg in ipairs(Window.TitleMessages) do
+			if type(msg) == "string" and msg ~= "" then
+				table.insert(messages, msg)
+			end
+		end
+	else
+		if type(Window.Title) == "string" and Window.Title ~= "" then
+			table.insert(messages, Window.Title)
 		end
 
-		if type(anim) == "string" then
-			local loopDefault = (anim == "FadeLoop" or anim == "Pulse" or anim == "TypingCursor")
-			return {
-				Type = anim,
-				Speed = 0.055,
-				Delay = 6,
-				Loop = loopDefault,
-				CursorChar = "▏",
-			}
+		if type(Window.SubTitle) == "string" and Window.SubTitle ~= "" and Window.SubTitle ~= Window.Title then
+			table.insert(messages, Window.SubTitle)
 		end
+	end
 
-		if type(anim) == "table" then
-			local animType = anim.Type or anim.Name or "TypingWrite"
-			local loopDefault = (animType == "FadeLoop" or animType == "Pulse" or animType == "TypingCursor")
+	if #messages == 0 then
+		messages = { "UI Library" }
+	end
 
-			return {
-				Type = animType,
-				Speed = anim.Speed or 0.055,
-				Delay = anim.Delay or 6,
-				Loop = anim.Loop == nil and loopDefault or anim.Loop,
-				CursorChar = anim.CursorChar or "▏",
-			}
-		end
+	return messages
+end
 
+local function GetTitleAnimConfig()
+	local anim = Window.TitleAnim
+
+	if not anim or anim == false or anim == "None" then
 		return nil
 	end
 
-	local function ResetWindowTitleVisual()
-		WindowTitle.Text = Window.Title
-		WindowTitle.TextTransparency = 0
-		WindowTitle.Position = UDim2.new(0, 0, 0, 0)
-		WindowTitle.TextSize = Window.TitleTextSize
+	if type(anim) == "string" then
+		local loopDefault = (anim == "FadeLoop" or anim == "Pulse" or anim == "TypingCursor" or anim == "TypingWrite")
+		return {
+			Type = anim,
+			Speed = 0.055,
+			Delay = 3.5,
+			Loop = loopDefault,
+			CursorChar = "▏",
+		}
 	end
 
-	local function StopWindowTitleAnimation()
-		TitleAnimToken += 1
-		ResetWindowTitleVisual()
+	if type(anim) == "table" then
+		local animType = anim.Type or anim.Name or "TypingWrite"
+		local loopDefault = (animType == "FadeLoop" or animType == "Pulse" or animType == "TypingCursor" or animType == "TypingWrite")
+
+		return {
+			Type = animType,
+			Speed = anim.Speed or 0.055,
+			Delay = anim.Delay or 3.5,
+			Loop = anim.Loop == nil and loopDefault or anim.Loop,
+			CursorChar = anim.CursorChar or "▏",
+		}
 	end
 
-	local function RunWindowTitleAnimation()
-		StopWindowTitleAnimation()
+	return nil
+end
 
-		local anim = GetTitleAnimConfig()
-		if not anim then
-			return
+local function ResetWindowTitleVisual()
+	WindowTitle.Text = Window.Title
+	WindowTitle.TextTransparency = 0
+	WindowTitle.Position = UDim2.new(0, 0, 0, 0)
+	WindowTitle.TextSize = Window.TitleTextSize
+	WindowTitle.FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight)
+end
+
+local function StopWindowTitleAnimation()
+	TitleAnimToken += 1
+	ResetWindowTitleVisual()
+end
+
+local function RunWindowTitleAnimation()
+	StopWindowTitleAnimation()
+
+	local anim = GetTitleAnimConfig()
+	if not anim then
+		return
+	end
+
+	local token = TitleAnimToken
+	local messages = GetTitleMessages()
+	local animType = string.lower(tostring(anim.Type))
+
+	task.spawn(function()
+		local function alive()
+			return token == TitleAnimToken and not Window.Destroyed
 		end
 
-		local token = TitleAnimToken
-		local baseTitle = Window.Title or "UI Library"
-		local animType = string.lower(tostring(anim.Type))
+		local index = 1
 
-		task.spawn(function()
-			local function alive()
-				return token == TitleAnimToken and not Window.Destroyed
+		local function getCurrentMessage()
+			return messages[index] or Window.Title or "UI Library"
+		end
+
+		local function nextMessage()
+			index += 1
+			if index > #messages then
+				index = 1
 			end
+		end
 
-			if animType == "typingwrite" or animType == "typingcursor" then
-				repeat
-					WindowTitle.Text = ""
-					WindowTitle.TextTransparency = 0
+		if animType == "typingwrite" or animType == "typingcursor" then
+			repeat
+				local baseTitle = getCurrentMessage()
 
-					for i = 1, #baseTitle do
+				WindowTitle.Text = ""
+				WindowTitle.TextTransparency = 0
+
+				for i = 1, #baseTitle do
+					if not alive() then
+						return
+					end
+
+					local partial = string.sub(baseTitle, 1, i)
+					if animType == "typingcursor" then
+						WindowTitle.Text = partial .. anim.CursorChar
+					else
+						WindowTitle.Text = partial
+					end
+
+					task.wait(anim.Speed)
+				end
+
+				WindowTitle.Text = baseTitle
+
+				if animType == "typingcursor" then
+					for _ = 1, 4 do
 						if not alive() then
 							return
 						end
+						WindowTitle.Text = baseTitle .. anim.CursorChar
+						task.wait(0.3)
 
-						local partial = string.sub(baseTitle, 1, i)
-						if animType == "typingcursor" then
-							WindowTitle.Text = partial .. anim.CursorChar
-						else
-							WindowTitle.Text = partial
+						if not alive() then
+							return
 						end
-
-						task.wait(anim.Speed)
+						WindowTitle.Text = baseTitle
+						task.wait(0.3)
 					end
-
-					WindowTitle.Text = baseTitle
-
-					if animType == "typingcursor" then
-						local blinkCount = anim.Loop and 6 or 4
-
-						for _ = 1, blinkCount do
-							if not alive() then
-								return
-							end
-							WindowTitle.Text = baseTitle .. anim.CursorChar
-							task.wait(0.35)
-
-							if not alive() then
-								return
-							end
-							WindowTitle.Text = baseTitle
-							task.wait(0.35)
-						end
-					end
-
-					if not anim.Loop then
-						break
-					end
-
-					task.wait(anim.Delay)
-				until not alive()
-
-				if alive() then
-					ResetWindowTitleVisual()
 				end
 
-			elseif animType == "fadeloop" then
-				while alive() do
-					Tween(
-						WindowTitle,
-						0.8,
-						{ TextTransparency = 0.28 },
-						Enum.EasingStyle.Sine,
-						Enum.EasingDirection.InOut
-					):Play()
-					task.wait(0.8)
-
-					if not alive() then
-						return
-					end
-
-					Tween(
-						WindowTitle,
-						0.8,
-						{ TextTransparency = 0 },
-						Enum.EasingStyle.Sine,
-						Enum.EasingDirection.InOut
-					):Play()
-					task.wait(anim.Delay)
+				if #messages <= 1 and not anim.Loop then
+					break
 				end
 
-			elseif animType == "pulse" then
-				while alive() do
-					Tween(
-						WindowTitle,
-						0.18,
-						{ TextSize = Window.TitleTextSize + 1 },
-						Enum.EasingStyle.Quint,
-						Enum.EasingDirection.Out
-					):Play()
-					task.wait(0.18)
+				task.wait(anim.Delay)
+				nextMessage()
+			until not alive()
 
-					if not alive() then
-						return
-					end
+			if alive() then
+				ResetWindowTitleVisual()
+			end
 
-					Tween(
-						WindowTitle,
-						0.22,
-						{ TextSize = Window.TitleTextSize },
-						Enum.EasingStyle.Quint,
-						Enum.EasingDirection.Out
-					):Play()
-					task.wait(anim.Delay)
+		elseif animType == "fadeloop" then
+			while alive() do
+				local baseTitle = getCurrentMessage()
+				WindowTitle.Text = baseTitle
+
+				Tween(
+					WindowTitle,
+					0.8,
+					{ TextTransparency = 0.28 },
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.InOut
+				):Play()
+				task.wait(0.8)
+
+				if not alive() then
+					return
 				end
 
-			elseif animType == "slidereveal" then
-				repeat
-					WindowTitle.Position = UDim2.new(0, -10, 0, 0)
-					WindowTitle.TextTransparency = 1
+				Tween(
+					WindowTitle,
+					0.8,
+					{ TextTransparency = 0 },
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.InOut
+				):Play()
+				task.wait(anim.Delay)
 
-					Tween(
-						WindowTitle,
-						0.28,
-						{
-							Position = UDim2.new(0, 0, 0, 0),
-							TextTransparency = 0,
-						},
-						Enum.EasingStyle.Quint,
-						Enum.EasingDirection.Out
-					):Play()
-
-					if not anim.Loop then
-						break
-					end
-
-					task.wait(anim.Delay)
-				until not alive()
-
-				if alive() then
-					ResetWindowTitleVisual()
+				if #messages > 1 or anim.Loop then
+					nextMessage()
+				else
+					break
 				end
 			end
-		end)
-	end -- batas
+
+		elseif animType == "pulse" then
+			while alive() do
+				local baseTitle = getCurrentMessage()
+				WindowTitle.Text = baseTitle
+
+				Tween(
+					WindowTitle,
+					0.18,
+					{ TextSize = Window.TitleTextSize + 1 },
+					Enum.EasingStyle.Quint,
+					Enum.EasingDirection.Out
+				):Play()
+				task.wait(0.18)
+
+				if not alive() then
+					return
+				end
+
+				Tween(
+					WindowTitle,
+					0.22,
+					{ TextSize = Window.TitleTextSize },
+					Enum.EasingStyle.Quint,
+					Enum.EasingDirection.Out
+				):Play()
+				task.wait(anim.Delay)
+
+				if #messages > 1 or anim.Loop then
+					nextMessage()
+				else
+					break
+				end
+			end
+
+		elseif animType == "slidereveal" then
+			repeat
+				local baseTitle = getCurrentMessage()
+				WindowTitle.Text = baseTitle
+				WindowTitle.Position = UDim2.new(0, -10, 0, 0)
+				WindowTitle.TextTransparency = 1
+
+				Tween(
+					WindowTitle,
+					0.28,
+					{
+						Position = UDim2.new(0, 0, 0, 0),
+						TextTransparency = 0,
+					},
+					Enum.EasingStyle.Quint,
+					Enum.EasingDirection.Out
+				):Play()
+
+				if #messages <= 1 and not anim.Loop then
+					break
+				end
+
+				task.wait(anim.Delay)
+				nextMessage()
+			until not alive()
+
+			if alive() then
+				ResetWindowTitleVisual()
+			end
+		end
+	end)
+end-- batas
 
 	Window.UIElements.Main = New("Frame", {
 		Size = Window.Size,
@@ -1306,45 +1370,65 @@ return function(Config)
 	end
 
 	function Window:SetTitle(text)
-		Window.Title = text
+	Window.Title = text
 
-		if Window.Closed then
-			StopWindowTitleAnimation()
-		else
-			RunWindowTitleAnimation()
-		end
+	if Window.Closed then
+		StopWindowTitleAnimation()
+	else
+		RunWindowTitleAnimation()
+	end
+end
+
+function Window:SetSubTitle(text)
+	Window.SubTitle = text
+
+	if Window.Closed then
+		StopWindowTitleAnimation()
+	else
+		RunWindowTitleAnimation()
+	end
+end
+
+function Window:SetTitleMessages(messages)
+	Window.TitleMessages = messages
+
+	if Window.Closed then
+		StopWindowTitleAnimation()
+	else
+		RunWindowTitleAnimation()
+	end
+end
+
+function Window:SetTitleAnim(anim)
+	Window.TitleAnim = anim
+
+	if Window.Closed then
+		StopWindowTitleAnimation()
+	else
+		RunWindowTitleAnimation()
+	end
+end
+
+function Window:SetTitleStyle(fontId, fontWeight, textSize)
+	if fontId then
+		Window.TitleFont = fontId
+	end
+	if fontWeight then
+		Window.TitleFontWeight = fontWeight
+	end
+	if textSize then
+		Window.TitleTextSize = textSize
 	end
 
-	function Window:SetTitleAnim(anim)
-		Window.TitleAnim = anim
+	WindowTitle.FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight)
+	WindowTitle.TextSize = Window.TitleTextSize
 
-		if Window.Closed then
-			StopWindowTitleAnimation()
-		else
-			RunWindowTitleAnimation()
-		end
+	if Window.Closed then
+		StopWindowTitleAnimation()
+	else
+		RunWindowTitleAnimation()
 	end
-
-	function Window:SetTitleStyle(fontId, fontWeight, textSize)
-		if fontId then
-			Window.TitleFont = fontId
-		end
-		if fontWeight then
-			Window.TitleFontWeight = fontWeight
-		end
-		if textSize then
-			Window.TitleTextSize = textSize
-		end
-
-		WindowTitle.FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight)
-		WindowTitle.TextSize = Window.TitleTextSize
-
-		if Window.Closed then
-			StopWindowTitleAnimation()
-		else
-			RunWindowTitleAnimation()
-		end
-	end
+end
 
 	function Window:SetAuthor(text)
 		Window.Author = text
