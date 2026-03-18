@@ -5,17 +5,24 @@ local New = Creator.New
 local Tween = Creator.Tween
 
 local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
+
+local function Disconnect(conn)
+	if conn then
+		conn:Disconnect()
+		return nil
+	end
+	return nil
+end
 
 function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 	local Toggle = {
-		Value = Value == true,
+		Value = Value == true
 	}
 
 	local Radius = 24 / 2
-	local IconToggleFrame
 	local ParsedIcon = (Icon and Icon ~= "") and Creator.Icon(Icon) or nil
 	local FinalIconSize = IconSize or 13
+	local IconToggleFrame
 
 	if ParsedIcon then
 		IconToggleFrame = New("ImageLabel", {
@@ -28,6 +35,7 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 			ImageRectSize = ParsedIcon[2].ImageRectSize,
 			ImageTransparency = 1,
 			ImageColor3 = Color3.new(0, 0, 0),
+			ZIndex = 4,
 		})
 	end
 
@@ -40,27 +48,8 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 	local FrameWidth = NewElement and 30 or 20
 	local ToggleWidth = NewElement and (24 + 24 + 4) or (24 * 1.7)
 
-	local Glow = New("ImageLabel", {
-		Name = "BreathingGlow",
-		BackgroundTransparency = 1,
-		Image = "rbxassetid://1316045217",
-		ThemeTag = { ImageColor3 = "Accent" },
-		ImageTransparency = 1,
-		Size = UDim2.new(0, ToggleWidth + 15, 0, 24 + 15),
-		Position = UDim2.new(0, 0, 0.5, 0),
-		AnchorPoint = Vector2.new(1, 0.5),
-		ZIndex = 0,
-		Parent = ToggleContainer
-	})
-
-	local glowTweenInfo = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
-	local breathingAnim = TweenService:Create(Glow, glowTweenInfo, {
-		ImageTransparency = 0.5,
-		Size = UDim2.new(0, ToggleWidth + 30, 0, 24 + 30)
-	})
-
 	local ToggleFrame = Creator.NewRoundFrame(Radius, "Squircle", {
-		ImageTransparency = 0.85,
+		ImageTransparency = 0.88,
 		ThemeTag = {
 			ImageColor3 = "Text"
 		},
@@ -73,7 +62,7 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 			Size = UDim2.new(1, 0, 1, 0),
 			Name = "Layer",
 			ThemeTag = {
-				ImageColor3 = "Toggle",
+				ImageColor3 = "Accent",
 			},
 			ImageTransparency = 1,
 		}),
@@ -81,12 +70,12 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 			Size = UDim2.new(1, 0, 1, 0),
 			Name = "Stroke",
 			ImageColor3 = Color3.new(1, 1, 1),
-			ImageTransparency = 1,
+			ImageTransparency = 0.82,
 		}, {
 			New("UIGradient", {
 				Rotation = 90,
 				Transparency = NumberSequence.new({
-					NumberSequenceKeypoint.new(0, 0),
+					NumberSequenceKeypoint.new(0, 0.15),
 					NumberSequenceKeypoint.new(1, 1),
 				})
 			})
@@ -99,6 +88,18 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 			ImageTransparency = 1,
 			Name = "Frame",
 		}, {
+			Creator.NewRoundFrame(Radius + 6, "Squircle", {
+				Size = UDim2.new(1, 10, 1, 10),
+				Position = UDim2.new(0.5, 0, 0.5, 0),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Name = "Glow",
+				ThemeTag = {
+					ImageColor3 = "Accent",
+				},
+				ImageTransparency = 1,
+				ZIndex = 1,
+			}),
+
 			Creator.NewRoundFrame(Radius, "Squircle", {
 				Size = UDim2.new(1, 0, 1, 0),
 				ImageTransparency = 0,
@@ -107,13 +108,15 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 				},
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.new(0.5, 0, 0.5, 0),
-				Name = "Bar"
+				Name = "Bar",
+				ZIndex = 3,
 			}, {
 				Creator.NewRoundFrame(Radius, "Glass-1", {
 					Size = UDim2.new(1, 0, 1, 0),
 					ImageColor3 = Color3.new(1, 1, 1),
 					Name = "Highlight",
-					ImageTransparency = 0.4,
+					ImageTransparency = 0.45,
+					ZIndex = 4,
 				}),
 				IconToggleFrame,
 				New("UIScale", {
@@ -125,6 +128,37 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 
 	local dragConnection
 	local endConnection
+	local pulseToken = 0
+
+	local function PlayPulse()
+		pulseToken += 1
+		local currentToken = pulseToken
+
+		Tween(ToggleFrame.Frame.Bar.UIScale, 0.12, {
+			Scale = 1.08
+		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+
+		local glowGrow = Tween(ToggleFrame.Frame.Glow, 0.12, {
+			Size = UDim2.new(1, 16, 1, 16),
+			ImageTransparency = 0.62
+		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+		glowGrow:Play()
+
+		task.delay(0.13, function()
+			if currentToken ~= pulseToken then
+				return
+			end
+
+			Tween(ToggleFrame.Frame.Bar.UIScale, 0.18, {
+				Scale = 1
+			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+
+			Tween(ToggleFrame.Frame.Glow, 0.2, {
+				Size = UDim2.new(1, 10, 1, 10),
+				ImageTransparency = 0.76
+			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+		end)
+	end
 
 	function Toggle:Set(Toggled, isCallback, isAnim)
 		Toggle.Value = Toggled == true
@@ -132,11 +166,11 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 
 		if not isAnim then
 			if Toggle.Value then
-				Tween(ToggleFrame.Frame, 0.15, {
+				Tween(ToggleFrame.Frame, 0.16, {
 					Position = UDim2.new(0, ToggleWidth - FrameWidth - 2, 0.5, 0),
 				}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 			else
-				Tween(ToggleFrame.Frame, 0.15, {
+				Tween(ToggleFrame.Frame, 0.16, {
 					Position = UDim2.new(0, 2, 0.5, 0),
 				}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 			end
@@ -149,21 +183,51 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 		end
 
 		if Toggle.Value then
-			Tween(ToggleFrame.Layer, 0.1, { ImageTransparency = 0 }):Play()
-			if IconToggleFrame then
-				Tween(IconToggleFrame, 0.1, { ImageTransparency = 0 }):Play()
-			end
-			breathingAnim:Play()
-		else
-			Tween(ToggleFrame.Layer, 0.1, { ImageTransparency = 1 }):Play()
-			if IconToggleFrame then
-				Tween(IconToggleFrame, 0.1, { ImageTransparency = 1 }):Play()
-			end
-			breathingAnim:Cancel()
-			Tween(Glow, 0.3, {
-				ImageTransparency = 1,
-				Size = UDim2.new(0, ToggleWidth + 15, 0, 24 + 15)
+			Tween(ToggleFrame.Layer, 0.14, {
+				ImageTransparency = 0.3
 			}):Play()
+
+			Tween(ToggleFrame.Stroke, 0.14, {
+				ImageTransparency = 0.68
+			}):Play()
+
+			if IconToggleFrame then
+				Tween(IconToggleFrame, 0.1, {
+					ImageTransparency = 0
+				}):Play()
+			end
+
+			if isAnim then
+				ToggleFrame.Frame.Glow.ImageTransparency = 0.76
+				ToggleFrame.Frame.Glow.Size = UDim2.new(1, 10, 1, 10)
+			else
+				PlayPulse()
+			end
+		else
+			pulseToken += 1
+
+			Tween(ToggleFrame.Layer, 0.14, {
+				ImageTransparency = 1
+			}):Play()
+
+			Tween(ToggleFrame.Stroke, 0.14, {
+				ImageTransparency = 0.82
+			}):Play()
+
+			if IconToggleFrame then
+				Tween(IconToggleFrame, 0.1, {
+					ImageTransparency = 1
+				}):Play()
+			end
+
+			Tween(ToggleFrame.Frame.Glow, 0.18, {
+				ImageTransparency = 1,
+				Size = UDim2.new(1, 6, 1, 6)
+			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+
+			Tween(ToggleFrame.Frame.Bar.UIScale, 0.18, {
+				Scale = 1
+			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 		end
 
 		task.spawn(function()
@@ -185,13 +249,17 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 		local startFrameX = ToggleFrame.Frame.Position.X.Offset
 		local isScrolling = false
 
-		Tween(ToggleFrame.Frame.Bar.UIScale, 0.28, { Scale = 1.5 }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-		Tween(ToggleFrame.Frame.Bar, 0.28, { ImageTransparency = 0.85 }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+		Tween(ToggleFrame.Frame.Bar.UIScale, 0.18, {
+			Scale = 1.08
+		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
-		if dragConnection then
-			dragConnection:Disconnect()
-			dragConnection = nil
+		if ToggleObj.Value then
+			Tween(ToggleFrame.Frame.Glow, 0.18, {
+				ImageTransparency = 0.68
+			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 		end
+
+		dragConnection = Disconnect(dragConnection)
 
 		dragConnection = UserInputService.InputChanged:Connect(function(inputChanged)
 			if Config.Window.IsToggleDragging
@@ -209,20 +277,17 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 					isScrolling = true
 					Config.Window.IsToggleDragging = false
 
-					if dragConnection then
-						dragConnection:Disconnect()
-						dragConnection = nil
-					end
-					if endConnection then
-						endConnection:Disconnect()
-						endConnection = nil
-					end
+					dragConnection = Disconnect(dragConnection)
+					endConnection = Disconnect(endConnection)
 
 					Tween(ToggleFrame.Frame, 0.15, {
 						Position = UDim2.new(0, startFrameX, 0.5, 0)
 					}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-					Tween(ToggleFrame.Frame.Bar.UIScale, 0.23, { Scale = 1 }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-					Tween(ToggleFrame.Frame.Bar, 0.23, { ImageTransparency = 0 }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+
+					Tween(ToggleFrame.Frame.Bar.UIScale, 0.18, {
+						Scale = 1
+					}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+
 					return
 				end
 
@@ -235,10 +300,7 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 			end
 		end)
 
-		if endConnection then
-			endConnection:Disconnect()
-			endConnection = nil
-		end
+		endConnection = Disconnect(endConnection)
 
 		endConnection = UserInputService.InputEnded:Connect(function(inputEnded)
 			if Config.Window.IsToggleDragging
@@ -247,14 +309,8 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 
 				Config.Window.IsToggleDragging = false
 
-				if dragConnection then
-					dragConnection:Disconnect()
-					dragConnection = nil
-				end
-				if endConnection then
-					endConnection:Disconnect()
-					endConnection = nil
-				end
+				dragConnection = Disconnect(dragConnection)
+				endConnection = Disconnect(endConnection)
 
 				if isScrolling then
 					return
@@ -273,8 +329,9 @@ function Toggle.New(Value, Icon, IconSize, Parent, Callback, NewElement, Config)
 					ToggleObj:Set(newValue, true, false)
 				end
 
-				Tween(ToggleFrame.Frame.Bar.UIScale, 0.23, { Scale = 1 }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-				Tween(ToggleFrame.Frame.Bar, 0.23, { ImageTransparency = 0 }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+				Tween(ToggleFrame.Frame.Bar.UIScale, 0.18, {
+					Scale = 1
+				}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 			end
 		end)
 	end
