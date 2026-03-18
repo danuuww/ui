@@ -4,7 +4,7 @@
     | |/ |/ / / _ \/ _  / /_/ // /  
     |__/|__/_/_//_/\_,_/\____/___/
     
-    v1.6.64  |  2026-03-17  |  Roblox UI Library for scripts
+    v1.6.64  |  2026-03-18  |  Roblox UI Library for scripts
     
     To view the source code, see the `src/` folder on the official GitHub repository.
     
@@ -9806,8 +9806,6 @@ local al=a.load'w'.New
 
 
 local am={
-
-
 Tabs={},
 Containers={},
 SelectedTab=nil,
@@ -9856,14 +9854,6 @@ TabPaddingY=3+(Window.UIPadding/2),
 TitlePaddingY=0,
 }
 
-
-
-
-
-
-
-
-
 if ap.IconShape then
 ap.TabPaddingX=2+(Window.UIPadding/4)
 ap.TabPaddingY=2+(Window.UIPadding/4)
@@ -9892,20 +9882,6 @@ ImageColor3="TabBorder",
 },
 ImageTransparency=1,
 Name="Outline",
-},{
-
-
-
-
-
-
-
-
-
-
-
-
-
 }),
 ah.NewRoundFrame(ap.UICorner,"Squircle",{
 Size=UDim2.new(1,0,0,0),
@@ -9940,8 +9916,6 @@ BackgroundTransparency=1,
 },{
 aj("UIPadding",{
 PaddingTop=UDim.new(0,ap.TitlePaddingY),
-
-
 PaddingBottom=UDim.new(0,ap.TitlePaddingY),
 }),
 }),
@@ -10000,21 +9974,6 @@ ImageColor3="White",
 },
 ImageTransparency=0,
 Name="Outline",
-},
-{
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 ),
 }
@@ -10032,10 +9991,6 @@ ah.Image(ap.Icon,ap.Icon..":"..ap.Title,0,Window.Folder,ap.__type,true,ap.IconTh
 at.Size=UDim2.new(0,16,0,16)
 at.ImageLabel.ImageTransparency=not ap.Locked and 0 or 0.7
 ar=-30
-
-
-
-
 end
 
 ap.UIElements.ContainerFrame=aj("ScrollingFrame",{
@@ -10047,7 +10002,6 @@ CanvasSize=UDim2.new(0,0,0,0),
 AnchorPoint=Vector2.new(0,1),
 Position=UDim2.new(0,0,1,0),
 AutomaticCanvasSize="Y",
-
 ScrollingDirection="Y",
 },{
 aj("UIPadding",{
@@ -10062,10 +10016,6 @@ Padding=UDim.new(0,ap.Gap),
 HorizontalAlignment="Center",
 }),
 })
-
-
-
-
 
 ap.UIElements.ContainerFrameCanvas=aj("Frame",{
 Size=UDim2.new(1,0,1,0),
@@ -10091,7 +10041,6 @@ TextSize=20,
 TextTransparency=0.1,
 Size=UDim2.new(0,0,1,0),
 FontFace=Font.new(ah.Font,Enum.FontWeight.SemiBold),
-
 RichText=true,
 LayoutOrder=2,
 TextXAlignment="Left",
@@ -10123,8 +10072,8 @@ Visible=ap.ShowTabTitle or false,
 }),
 })
 
-am.Containers[aq]=ap.UIElements.ContainerFrameCanvas
-am.Tabs[aq]=ap
+am.Containers=ap.UIElements.ContainerFrameCanvas
+am.Tabs=ap
 
 ap.ContainerFrame=ap.UIElements.ContainerFrameCanvas
 
@@ -10142,7 +10091,6 @@ local au
 local av
 local aw
 local ax=false
-
 
 if ap.Desc then
 ah.AddSignal(ap.UIElements.Main.InputBegan,function()
@@ -10223,8 +10171,6 @@ end)
 return ap
 end
 
-
-
 local ay=a.load'V'
 
 ay.Load(
@@ -10238,8 +10184,126 @@ ay,
 ao
 )
 
-function ap.LockAll(az)
+function ap.SubTabGroup(az)
+local aA={}
+local aB={}
 
+local b=aj("Frame",{
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
+BackgroundTransparency=1,
+Parent=ap.UIElements.ContainerFrame
+},{
+aj("UIListLayout",{Padding=UDim.new(0,6),SortOrder="LayoutOrder"})
+})
+
+local d=aj("Frame",{
+Size=UDim2.new(1,0,0,32),
+BackgroundTransparency=1,
+Parent=b
+},{
+aj("UIListLayout",{Padding=UDim.new(0,5),FillDirection="Horizontal",HorizontalAlignment="Center"})
+})
+
+local f=aj("Frame",{
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
+BackgroundTransparency=1,
+Parent=b
+})
+
+function aA.AddSubTab(g,h,j)
+local l=setmetatable({
+Title=h,
+Name=h,
+__type="Tab",
+Elements={},
+UIElements={}
+},{__index=ap})
+
+local m=(#aB==0)
+local p=aj("Frame",{
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
+BackgroundTransparency=1,
+Visible=m,
+Parent=f
+},{
+aj("UIListLayout",{Padding=UDim.new(0,6),SortOrder="LayoutOrder"}),
+aj("UIPadding",{
+PaddingTop=UDim.new(0,2),
+PaddingLeft=UDim.new(0,2),
+PaddingRight=UDim.new(0,2),
+PaddingBottom=UDim.new(0,2)
+})
+})
+
+l.UIElements.ContainerFrame=p
+l.UIElements.Main=ap.UIElements.Main
+
+local r=aj("TextButton",{
+Size=UDim2.new(0,0,1,0),
+AutomaticSize="X",
+Text="",
+ThemeTag={BackgroundColor3=m and"Accent"or"Button"},
+BackgroundTransparency=m and 0 or 0.5,
+Parent=d
+},{
+aj("UICorner",{CornerRadius=UDim.new(0,6)}),
+aj("UIPadding",{PaddingLeft=UDim.new(0,12),PaddingRight=UDim.new(0,12)}),
+aj("UIListLayout",{Padding=UDim.new(0,6),FillDirection="Horizontal",VerticalAlignment="Center",HorizontalAlignment="Center"}),
+
+j and aj("ImageLabel",{
+Image=ah.Icon(j)[2],
+ImageRectOffset=ah.Icon(j)[1].ImageRectPosition,
+ImageRectSize=ah.Icon(j)[1].ImageRectSize,
+Size=UDim2.new(0,14,0,14),
+BackgroundTransparency=1,
+ThemeTag={ImageColor3="Text"}
+})or nil,
+
+aj("TextLabel",{
+Text=h,
+Size=UDim2.new(0,0,1,0),
+AutomaticSize="X",
+BackgroundTransparency=1,
+FontFace=Font.new(ah.Font,Enum.FontWeight.SemiBold),
+TextSize=14,
+ThemeTag={TextColor3="Text"}
+})
+})
+
+ah.AddSignal(r.MouseButton1Click,function()
+for u,v in pairs(aB)do
+v.Page.Visible=false
+ah.SetThemeTag(v.Button,{BackgroundColor3="Button"})
+v.Button.BackgroundTransparency=0.5
+end
+p.Visible=true
+ah.SetThemeTag(r,{BackgroundColor3="Accent"})
+r.BackgroundTransparency=0
+end)
+
+table.insert(aB,{Page=p,Button=r})
+
+ay.Load(
+l,
+p,
+ay.Elements,
+Window,
+WindUI,
+nil,
+ay,
+ao
+)
+
+return l
+end
+
+return aA
+end
+
+function ap.LockAll(az)
 for aA,aB in next,Window.AllElements do
 if aB.Tab and aB.Tab.Index and aB.Tab.Index==ap.Index and aB.Lock then
 aB:Lock()
@@ -10255,24 +10319,20 @@ end
 end
 function ap.GetLocked(az)
 local aA={}
-
 for aB,b in next,Window.AllElements do
 if b.Tab and b.Tab.Index and b.Tab.Index==ap.Index and b.Locked==true then
 table.insert(aA,b)
 end
 end
-
 return aA
 end
 function ap.GetUnlocked(az)
 local aA={}
-
 for aB,b in next,Window.AllElements do
 if b.Tab and b.Tab.Index and b.Tab.Index==ap.Index and b.Locked==false then
 table.insert(aA,b)
 end
 end
-
 return aA
 end
 
@@ -10301,17 +10361,6 @@ VerticalAlignment="Center",
 HorizontalAlignment="Center",
 FillDirection="Vertical",
 }),
-
-
-
-
-
-
-
-
-
-
-
 az,
 ap.CustomEmptyPage.Title
 and aj("TextLabel",{
@@ -10341,10 +10390,6 @@ FontFace=Font.new(ah.Font,Enum.FontWeight.Regular),
 or nil,
 })
 
-
-
-
-
 local aB
 aB=ah.AddSignal(ap.UIElements.ContainerFrame.ChildAdded,function()
 aA.Visible=false
@@ -10360,7 +10405,7 @@ am.OnChangeFunc=ao
 end
 
 function am.SelectTab(an,ao)
-if not am.Tabs[ao].Locked then
+if not am.Tabs.Locked then
 am.SelectedTab=ao
 
 for ap,aq in next,am.Tabs do
@@ -10384,34 +10429,34 @@ end
 aq.Selected=false
 end
 end
-ah.SetThemeTag(am.Tabs[ao].UIElements.Main,{
+ah.SetThemeTag(am.Tabs.UIElements.Main,{
 ImageTransparency="TabBackgroundActiveTransparency",
 },0.15)
-if am.Tabs[ao].Border then
-ah.SetThemeTag(am.Tabs[ao].UIElements.Main.Outline,{
+if am.Tabs.Border then
+ah.SetThemeTag(am.Tabs.UIElements.Main.Outline,{
 ImageTransparency="TabBorderTransparencyActive",
 },0.15)
 end
-ah.SetThemeTag(am.Tabs[ao].UIElements.Main.Frame.TextLabel,{
+ah.SetThemeTag(am.Tabs.UIElements.Main.Frame.TextLabel,{
 TextTransparency="TabTextTransparencyActive",
 },0.15)
-if am.Tabs[ao].UIElements.Icon and not am.Tabs[ao].IconColor then
-ah.SetThemeTag(am.Tabs[ao].UIElements.Icon.ImageLabel,{
+if am.Tabs.UIElements.Icon and not am.Tabs.IconColor then
+ah.SetThemeTag(am.Tabs.UIElements.Icon.ImageLabel,{
 ImageTransparency="TabIconTransparencyActive",
 },0.15)
 end
-am.Tabs[ao].Selected=true
+am.Tabs.Selected=true
 
 task.spawn(function()
 for ap,aq in next,am.Containers do
 aq.AnchorPoint=Vector2.new(0,0.05)
 aq.Visible=false
 end
-am.Containers[ao].Visible=true
+am.Containers.Visible=true
 local ap=game:GetService"TweenService"
 
 local aq=TweenInfo.new(0.15,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
-local ar=ap:Create(am.Containers[ao],aq,{
+local ar=ap:Create(am.Containers,aq,{
 AnchorPoint=Vector2.new(0,0),
 })
 ar:Play()
