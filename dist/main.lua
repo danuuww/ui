@@ -10577,49 +10577,179 @@ ao
 function ap.SubTabGroup(az)
 local aA={}
 local aB={}
+local b=1
 
-local b=aj("Frame",{
+local d=aj("Frame",{
 Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
 BackgroundTransparency=1,
 Parent=ap.UIElements.ContainerFrame
 },{
-aj("UIListLayout",{Padding=UDim.new(0,6),SortOrder="LayoutOrder"})
+aj("UIListLayout",{
+Padding=UDim.new(0,10),
+SortOrder="LayoutOrder"
 })
-
-local d=aj("Frame",{
-Size=UDim2.new(1,0,0,32),
-BackgroundTransparency=1,
-Parent=b
-},{
-aj("UIListLayout",{Padding=UDim.new(0,5),FillDirection="Horizontal",HorizontalAlignment="Center"})
 })
 
 local f=aj("Frame",{
+Size=UDim2.new(1,0,0,74),
+BackgroundTransparency=1,
+Parent=d
+})
+
+local g=ah.NewRoundFrame(999,"Squircle",{
+Size=UDim2.new(0,0,0,74),
+AutomaticSize="X",
+Position=UDim2.new(0.5,0,0,0),
+AnchorPoint=Vector2.new(0.5,0),
+ImageColor3=Color3.fromRGB(205,210,220),
+ImageTransparency=0.78,
+Parent=f,
+Name="NavigationBar",
+},{
+ah.NewRoundFrame(999,"Glass-1.4",{
+Size=UDim2.new(1,0,1,0),
+Name="Outline",
+ImageColor3=Color3.fromRGB(255,255,255),
+ImageTransparency=0.72,
+}),
+ah.NewRoundFrame(999,"Squircle",{
+Size=UDim2.new(1,-2,1,-2),
+Position=UDim2.new(0.5,0,0.5,0),
+AnchorPoint=Vector2.new(0.5,0.5),
+Name="InnerGlass",
+ImageColor3=Color3.fromRGB(170,176,188),
+ImageTransparency=0.92,
+}),
+aj("Frame",{
+Name="TopLine",
+BackgroundColor3=Color3.new(1,1,1),
+BackgroundTransparency=0.95,
+Size=UDim2.new(1,-18,0,1),
+Position=UDim2.new(0.5,0,0,1),
+AnchorPoint=Vector2.new(0.5,0),
+},{
+aj("UICorner",{
+CornerRadius=UDim.new(0,999),
+}),
+}),
+aj("ImageLabel",{
+BackgroundTransparency=1,
+Image="rbxassetid://1316045217",
+ImageColor3=Color3.fromRGB(255,255,255),
+ImageTransparency=0.975,
+Size=UDim2.new(0,54,0,54),
+Position=UDim2.new(1,-72,0,6),
+}),
+aj("ImageLabel",{
+BackgroundTransparency=1,
+Image="rbxassetid://1316045217",
+ImageColor3=Color3.fromRGB(240,244,255),
+ImageTransparency=0.982,
+Size=UDim2.new(0,38,0,38),
+Position=UDim2.new(1,-30,0,16),
+}),
+aj("UIPadding",{
+PaddingLeft=UDim.new(0,8),
+PaddingRight=UDim.new(0,8),
+PaddingTop=UDim.new(0,7),
+PaddingBottom=UDim.new(0,7),
+}),
+aj("UIListLayout",{
+Padding=UDim.new(0,6),
+FillDirection="Horizontal",
+HorizontalAlignment="Center",
+VerticalAlignment="Center",
+SortOrder="LayoutOrder",
+}),
+})
+
+local h=aj("Frame",{
 Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
 BackgroundTransparency=1,
-Parent=b
+Parent=d
+},{
+aj("UIListLayout",{
+Padding=UDim.new(0,6),
+SortOrder="LayoutOrder"
+}),
 })
 
-function aA.AddSubTab(g,h,j)
-local l=setmetatable({
-Title=h,
-Name=h,
+local function SetSubTab(j,l)
+b=j
+
+for m,p in ipairs(aB)do
+local r=(m==j)
+p.Page.Visible=r
+
+if l then
+p.Button.SelectedFill.ImageTransparency=r and 0.04 or 1
+p.Button.SelectedOutline.ImageTransparency=r and 0.82 or 1
+p.Label.TextTransparency=r and 0 or 0.22
+if p.Icon then
+p.Icon.ImageTransparency=r and 0 or 0.22
+end
+else
+Tween(
+p.Button.SelectedFill,
+0.18,
+{ImageTransparency=r and 0.04 or 1},
+Enum.EasingStyle.Quint,
+Enum.EasingDirection.Out
+):Play()
+
+Tween(
+p.Button.SelectedOutline,
+0.18,
+{ImageTransparency=r and 0.82 or 1},
+Enum.EasingStyle.Quint,
+Enum.EasingDirection.Out
+):Play()
+
+Tween(
+p.Label,
+0.18,
+{TextTransparency=r and 0 or 0.22},
+Enum.EasingStyle.Quint,
+Enum.EasingDirection.Out
+):Play()
+
+if p.Icon then
+Tween(
+p.Icon,
+0.18,
+{ImageTransparency=r and 0 or 0.22},
+Enum.EasingStyle.Quint,
+Enum.EasingDirection.Out
+):Play()
+end
+end
+end
+end
+
+function aA.AddSubTab(j,l,m)
+local p=setmetatable({
+Title=l,
+Name=l,
 __type="Tab",
 Elements={},
 UIElements={}
 },{__index=ap})
 
-local m=(#aB==0)
-local p=aj("Frame",{
+local r=(#aB==0)
+
+local u=aj("Frame",{
 Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
 BackgroundTransparency=1,
-Visible=m,
-Parent=f
+Visible=r,
+Parent=h
 },{
-aj("UIListLayout",{Padding=UDim.new(0,6),SortOrder="LayoutOrder"}),
+aj("UIListLayout",{
+Padding=UDim.new(0,6),
+SortOrder="LayoutOrder"
+}),
 aj("UIPadding",{
 PaddingTop=UDim.new(0,2),
 PaddingLeft=UDim.new(0,2),
@@ -10628,59 +10758,117 @@ PaddingBottom=UDim.new(0,2)
 })
 })
 
-l.UIElements.ContainerFrame=p
-l.UIElements.Main=ap.UIElements.Main
+local v=m and ah.Icon(m)
 
-local r=j and ah.Icon(j)
-
-local u=aj("TextButton",{
-Size=UDim2.new(0,0,1,0),
-AutomaticSize="X",
-Text="",
-ThemeTag={BackgroundColor3=m and"Accent"or"Button"},
-BackgroundTransparency=m and 0 or 0.5,
-Parent=d
-},{
-aj("UICorner",{CornerRadius=UDim.new(0,6)}),
-aj("UIPadding",{PaddingLeft=UDim.new(0,12),PaddingRight=UDim.new(0,12)}),
-aj("UIListLayout",{Padding=UDim.new(0,6),FillDirection="Horizontal",VerticalAlignment="Center",HorizontalAlignment="Center"}),
-
-r and aj("ImageLabel",{
-Image=r[1],
-ImageRectOffset=r[2].ImageRectPosition,
-ImageRectSize=r[2].ImageRectSize,
-Size=UDim2.new(0,14,0,14),
+local x=v and aj("ImageLabel",{
+Name="Icon",
+Image=v[1],
+ImageRectOffset=v[2].ImageRectPosition,
+ImageRectSize=v[2].ImageRectSize,
+Size=UDim2.new(0,20,0,20),
 BackgroundTransparency=1,
-ThemeTag={ImageColor3="Text"}
-})or nil,
+ImageColor3=Color3.new(1,1,1),
+ImageTransparency=r and 0 or 0.22,
+LayoutOrder=1,
+})or nil
 
-aj("TextLabel",{
-Text=h,
-Size=UDim2.new(0,0,1,0),
-AutomaticSize="X",
+local z=aj("TextLabel",{
+Name="Label",
+Text=l,
+Size=UDim2.new(1,-8,0,18),
 BackgroundTransparency=1,
+TextXAlignment="Center",
+TextYAlignment="Center",
+TextWrapped=false,
+TextTruncate="AtEnd",
+TextSize=12,
+TextColor3=Color3.new(1,1,1),
+TextTransparency=r and 0 or 0.22,
 FontFace=Font.new(ah.Font,Enum.FontWeight.SemiBold),
-TextSize=14,
-ThemeTag={TextColor3="Text"}
+LayoutOrder=2,
+})
+
+local A=aj("TextButton",{
+Size=UDim2.new(0,84,0,60),
+BackgroundTransparency=1,
+AutoButtonColor=false,
+Text="",
+Parent=g
+},{
+ah.NewRoundFrame(999,"Squircle",{
+Size=UDim2.new(1,0,1,0),
+Name="SelectedFill",
+ThemeTag={
+ImageColor3="Accent",
+},
+ImageTransparency=r and 0.04 or 1,
+}),
+ah.NewRoundFrame(999,"Glass-1",{
+Size=UDim2.new(1,0,1,0),
+Name="SelectedOutline",
+ImageColor3=Color3.new(1,1,1),
+ImageTransparency=r and 0.82 or 1,
+}),
+aj("Frame",{
+Name="Content",
+Size=UDim2.new(1,0,1,0),
+BackgroundTransparency=1,
+},{
+aj("UIListLayout",{
+FillDirection="Vertical",
+HorizontalAlignment="Center",
+VerticalAlignment="Center",
+Padding=UDim.new(0,3),
+SortOrder="LayoutOrder",
+}),
+x,
+z,
 })
 })
 
-ah.AddSignal(u.MouseButton1Click,function()
-for v,x in pairs(aB)do
-x.Page.Visible=false
-ah.SetThemeTag(x.Button,{BackgroundColor3="Button"})
-x.Button.BackgroundTransparency=0.5
-end
-p.Visible=true
-ah.SetThemeTag(u,{BackgroundColor3="Accent"})
-u.BackgroundTransparency=0
+p.UIElements.ContainerFrame=u
+p.UIElements.Main=A
+
+local B=#aB+1
+
+ah.AddSignal(A.MouseButton1Click,function()
+SetSubTab(B,false)
 end)
 
-table.insert(aB,{Page=p,Button=u})
+ah.AddSignal(A.MouseEnter,function()
+if b~=B then
+Tween(
+A.SelectedOutline,
+0.14,
+{ImageTransparency=0.92},
+Enum.EasingStyle.Quint,
+Enum.EasingDirection.Out
+):Play()
+end
+end)
+
+ah.AddSignal(A.MouseLeave,function()
+if b~=B then
+Tween(
+A.SelectedOutline,
+0.14,
+{ImageTransparency=1},
+Enum.EasingStyle.Quint,
+Enum.EasingDirection.Out
+):Play()
+end
+end)
+
+table.insert(aB,{
+Page=u,
+Button=A,
+Icon=x,
+Label=z,
+})
 
 ay.Load(
-l,
 p,
+u,
 ay.Elements,
 Window,
 WindUI,
@@ -10689,7 +10877,11 @@ ay,
 ao
 )
 
-return l
+if r then
+SetSubTab(1,true)
+end
+
+return p
 end
 
 return aA
