@@ -6062,101 +6062,102 @@ local ac=ab.New
 local ad=ab.Tween
 
 local ae=game:GetService"UserInputService"
-local af=game:GetService"TweenService"
 
-function aa.New(ag,ah,ai,aj,ak,al,am)
-local an={
-Value=ag==true,
+local function Disconnect(af)
+if af then
+af:Disconnect()
+return nil
+end
+return nil
+end
+
+function aa.New(af,ag,ah,ai,aj,ak,al)
+local am={
+Value=af==true
 }
 
-local ao=12
-local ap
-local aq=(ah and ah~="")and ab.Icon(ah)or nil
-local ar=ai or 13
+local an=12
+local ao=(ag and ag~="")and ab.Icon(ag)or nil
+local ap=ah or 13
+local aq
 
-if aq then
-ap=ac("ImageLabel",{
-Size=UDim2.new(0,ar,0,ar),
+if ao then
+aq=ac("ImageLabel",{
+Size=UDim2.new(0,ap,0,ap),
 BackgroundTransparency=1,
 AnchorPoint=Vector2.new(0.5,0.5),
 Position=UDim2.new(0.5,0,0.5,0),
-Image=aq[1],
-ImageRectOffset=aq[2].ImageRectPosition,
-ImageRectSize=aq[2].ImageRectSize,
+Image=ao[1],
+ImageRectOffset=ao[2].ImageRectPosition,
+ImageRectSize=ao[2].ImageRectSize,
 ImageTransparency=1,
 ImageColor3=Color3.new(0,0,0),
+ZIndex=4,
 })
 end
 
-local as=ac("Frame",{
+local ar=ac("Frame",{
 Size=UDim2.new(0,2,0,26),
 BackgroundTransparency=1,
-Parent=aj,
+Parent=ai,
 })
 
-local at=al and 30 or 20
-local au=al and(52)or(40.8)
+local as=ak and 30 or 20
+local at=ak and(52)or(40.8)
 
-local av=ac("ImageLabel",{
-Name="BreathingGlow",
-BackgroundTransparency=1,
-Image="rbxassetid://1316045217",
-ThemeTag={ImageColor3="Accent"},
-ImageTransparency=1,
-Size=UDim2.new(0,au+15,0,39),
-Position=UDim2.new(0,0,0.5,0),
-AnchorPoint=Vector2.new(1,0.5),
-ZIndex=0,
-Parent=as
-})
-
-local aw=TweenInfo.new(1,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut,-1,true)
-local ax=af:Create(av,aw,{
-ImageTransparency=0.5,
-Size=UDim2.new(0,au+30,0,54)
-})
-
-local ay=ab.NewRoundFrame(ao,"Squircle",{
-ImageTransparency=0.85,
+local au=ab.NewRoundFrame(an,"Squircle",{
+ImageTransparency=0.88,
 ThemeTag={
 ImageColor3="Text"
 },
-Parent=as,
-Size=UDim2.new(0,au,0,24),
+Parent=ar,
+Size=UDim2.new(0,at,0,24),
 AnchorPoint=Vector2.new(1,0.5),
 Position=UDim2.new(0,0,0.5,0),
 },{
-ab.NewRoundFrame(ao,"Squircle",{
+ab.NewRoundFrame(an,"Squircle",{
 Size=UDim2.new(1,0,1,0),
 Name="Layer",
 ThemeTag={
-ImageColor3="Toggle",
+ImageColor3="Accent",
 },
 ImageTransparency=1,
 }),
-ab.NewRoundFrame(ao,"SquircleOutline",{
+ab.NewRoundFrame(an,"SquircleOutline",{
 Size=UDim2.new(1,0,1,0),
 Name="Stroke",
 ImageColor3=Color3.new(1,1,1),
-ImageTransparency=1,
+ImageTransparency=0.82,
 },{
 ac("UIGradient",{
 Rotation=90,
 Transparency=NumberSequence.new{
-NumberSequenceKeypoint.new(0,0),
+NumberSequenceKeypoint.new(0,0.15),
 NumberSequenceKeypoint.new(1,1),
 }
 })
 }),
 
-ab.NewRoundFrame(ao,"Squircle",{
-Size=UDim2.new(0,at,0,20),
+ab.NewRoundFrame(an,"Squircle",{
+Size=UDim2.new(0,as,0,20),
 Position=UDim2.new(0,2,0.5,0),
 AnchorPoint=Vector2.new(0,0.5),
 ImageTransparency=1,
 Name="Frame",
 },{
-ab.NewRoundFrame(ao,"Squircle",{
+ab.NewRoundFrame(an+6,"Squircle",{
+Size=UDim2.new(1,10,1,10),
+Position=UDim2.new(0.5,0,0.5,0),
+AnchorPoint=Vector2.new(0.5,0.5),
+Name="Glow",
+ThemeTag={
+ImageColor3="Accent",
+},
+ImageTransparency=1,
+ZIndex=1,
+}),
+
+ab.NewRoundFrame(an,"Squircle",{
 Size=UDim2.new(1,0,1,0),
 ImageTransparency=0,
 ThemeTag={
@@ -6164,15 +6165,17 @@ ImageColor3="ToggleBar",
 },
 AnchorPoint=Vector2.new(0.5,0.5),
 Position=UDim2.new(0.5,0,0.5,0),
-Name="Bar"
+Name="Bar",
+ZIndex=3,
 },{
-ab.NewRoundFrame(ao,"Glass-1",{
+ab.NewRoundFrame(an,"Glass-1",{
 Size=UDim2.new(1,0,1,0),
 ImageColor3=Color3.new(1,1,1),
 Name="Highlight",
-ImageTransparency=0.4,
+ImageTransparency=0.45,
+ZIndex=4,
 }),
-ap,
+aq,
 ac("UIScale",{
 Scale=1,
 })
@@ -6180,163 +6183,217 @@ Scale=1,
 })
 })
 
-local az
-local aA
+local av
+local aw
+local ax=0
 
-function an.Set(aB,b,d,f)
-an.Value=b==true
-d=d~=false
+local function PlayPulse()
+ax+=1
+local ay=ax
 
-if not f then
-if an.Value then
-ad(ay.Frame,0.15,{
-Position=UDim2.new(0,au-at-2,0.5,0),
+ad(au.Frame.Bar.UIScale,0.12,{
+Scale=1.08
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+local az=ad(au.Frame.Glow,0.12,{
+Size=UDim2.new(1,16,1,16),
+ImageTransparency=0.62
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out)
+az:Play()
+
+task.delay(0.13,function()
+if ay~=ax then
+return
+end
+
+ad(au.Frame.Bar.UIScale,0.18,{
+Scale=1
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+ad(au.Frame.Glow,0.2,{
+Size=UDim2.new(1,10,1,10),
+ImageTransparency=0.76
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end)
+end
+
+function am.Set(ay,az,aA,aB)
+am.Value=az==true
+aA=aA~=false
+
+if not aB then
+if am.Value then
+ad(au.Frame,0.16,{
+Position=UDim2.new(0,at-as-2,0.5,0),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 else
-ad(ay.Frame,0.15,{
+ad(au.Frame,0.16,{
 Position=UDim2.new(0,2,0.5,0),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 else
-if an.Value then
-ay.Frame.Position=UDim2.new(0,au-at-2,0.5,0)
+if am.Value then
+au.Frame.Position=UDim2.new(0,at-as-2,0.5,0)
 else
-ay.Frame.Position=UDim2.new(0,2,0.5,0)
+au.Frame.Position=UDim2.new(0,2,0.5,0)
 end
 end
 
-if an.Value then
-ad(ay.Layer,0.1,{ImageTransparency=0}):Play()
-if ap then
-ad(ap,0.1,{ImageTransparency=0}):Play()
-end
-ax:Play()
-else
-ad(ay.Layer,0.1,{ImageTransparency=1}):Play()
-if ap then
-ad(ap,0.1,{ImageTransparency=1}):Play()
-end
-ax:Cancel()
-ad(av,0.3,{
-ImageTransparency=1,
-Size=UDim2.new(0,au+15,0,39)
+if am.Value then
+ad(au.Layer,0.14,{
+ImageTransparency=0.3
+}):Play()
+
+ad(au.Stroke,0.14,{
+ImageTransparency=0.68
+}):Play()
+
+if aq then
+ad(aq,0.1,{
+ImageTransparency=0
 }):Play()
 end
 
+if aB then
+au.Frame.Glow.ImageTransparency=0.76
+au.Frame.Glow.Size=UDim2.new(1,10,1,10)
+else
+PlayPulse()
+end
+else
+ax+=1
+
+ad(au.Layer,0.14,{
+ImageTransparency=1
+}):Play()
+
+ad(au.Stroke,0.14,{
+ImageTransparency=0.82
+}):Play()
+
+if aq then
+ad(aq,0.1,{
+ImageTransparency=1
+}):Play()
+end
+
+ad(au.Frame.Glow,0.18,{
+ImageTransparency=1,
+Size=UDim2.new(1,6,1,6)
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+ad(au.Frame.Bar.UIScale,0.18,{
+Scale=1
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+
 task.spawn(function()
-if ak and d then
-ab.SafeCallback(ak,an.Value)
+if aj and aA then
+ab.SafeCallback(aj,am.Value)
 end
 end)
 end
 
-function an.Animate(aB,b,d)
-if not am or not am.Window or am.Window.IsToggleDragging then
+function am.Animate(ay,az,aA)
+if not al or not al.Window or al.Window.IsToggleDragging then
 return
 end
 
-am.Window.IsToggleDragging=true
+al.Window.IsToggleDragging=true
 
-local f=b.Position.X
-local g=b.Position.Y
-local h=ay.Frame.Position.X.Offset
-local j=false
+local aB=az.Position.X
+local b=az.Position.Y
+local d=au.Frame.Position.X.Offset
+local f=false
 
-ad(ay.Frame.Bar.UIScale,0.28,{Scale=1.5},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-ad(ay.Frame.Bar,0.28,{ImageTransparency=0.85},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-
-if az then
-az:Disconnect()
-az=nil
-end
-
-az=ae.InputChanged:Connect(function(l)
-if am.Window.IsToggleDragging
-and(l.UserInputType==Enum.UserInputType.MouseMovement
-or l.UserInputType==Enum.UserInputType.Touch)then
-
-if j then
-return
-end
-
-local m=math.abs(l.Position.X-f)
-local p=math.abs(l.Position.Y-g)
-
-if p>m and p>10 then
-j=true
-am.Window.IsToggleDragging=false
-
-if az then
-az:Disconnect()
-az=nil
-end
-if aA then
-aA:Disconnect()
-aA=nil
-end
-
-ad(ay.Frame,0.15,{
-Position=UDim2.new(0,h,0.5,0)
+ad(au.Frame.Bar.UIScale,0.18,{
+Scale=1.08
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-ad(ay.Frame.Bar.UIScale,0.23,{Scale=1},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-ad(ay.Frame.Bar,0.23,{ImageTransparency=0},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+if aA.Value then
+ad(au.Frame.Glow,0.18,{
+ImageTransparency=0.68
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+end
+
+av=Disconnect(av)
+
+av=ae.InputChanged:Connect(function(g)
+if al.Window.IsToggleDragging
+and(g.UserInputType==Enum.UserInputType.MouseMovement
+or g.UserInputType==Enum.UserInputType.Touch)then
+
+if f then
 return
 end
 
-local r=l.Position.X-f
-local u=math.max(2,math.min(h+r,au-at-2))
+local h=math.abs(g.Position.X-aB)
+local j=math.abs(g.Position.Y-b)
 
-ad(ay.Frame,0.05,{
-Position=UDim2.new(0,u,0.5,0)
+if j>h and j>10 then
+f=true
+al.Window.IsToggleDragging=false
+
+av=Disconnect(av)
+aw=Disconnect(aw)
+
+ad(au.Frame,0.15,{
+Position=UDim2.new(0,d,0.5,0)
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+ad(au.Frame.Bar.UIScale,0.18,{
+Scale=1
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+return
+end
+
+local l=g.Position.X-aB
+local m=math.max(2,math.min(d+l,at-as-2))
+
+ad(au.Frame,0.05,{
+Position=UDim2.new(0,m,0.5,0)
 },Enum.EasingStyle.Linear,Enum.EasingDirection.Out):Play()
 end
 end)
 
-if aA then
-aA:Disconnect()
-aA=nil
-end
+aw=Disconnect(aw)
 
-aA=ae.InputEnded:Connect(function(l)
-if am.Window.IsToggleDragging
-and(l.UserInputType==Enum.UserInputType.MouseButton1
-or l.UserInputType==Enum.UserInputType.Touch)then
+aw=ae.InputEnded:Connect(function(g)
+if al.Window.IsToggleDragging
+and(g.UserInputType==Enum.UserInputType.MouseButton1
+or g.UserInputType==Enum.UserInputType.Touch)then
 
-am.Window.IsToggleDragging=false
+al.Window.IsToggleDragging=false
 
-if az then
-az:Disconnect()
-az=nil
-end
-if aA then
-aA:Disconnect()
-aA=nil
-end
+av=Disconnect(av)
+aw=Disconnect(aw)
 
-if j then
+if f then
 return
 end
 
-local m=ay.Frame.Position.X.Offset
-local p=math.abs(l.Position.X-f)
+local h=au.Frame.Position.X.Offset
+local j=math.abs(g.Position.X-aB)
 
-if p<10 then
-local r=not d.Value
-d:Set(r,true,false)
+if j<10 then
+local l=not aA.Value
+aA:Set(l,true,false)
 else
-local r=m+at/2
-local u=au/2
-local v=r>u
-d:Set(v,true,false)
+local l=h+as/2
+local m=at/2
+local p=l>m
+aA:Set(p,true,false)
 end
 
-ad(ay.Frame.Bar.UIScale,0.23,{Scale=1},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-ad(ay.Frame.Bar,0.23,{ImageTransparency=0},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+ad(au.Frame.Bar.UIScale,0.18,{
+Scale=1
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 end)
 end
 
-return as,an
+return ar,am
 end
 
 return aa end function a.F()
