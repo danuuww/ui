@@ -7105,7 +7105,21 @@ if al.Locked then
 al:Lock()
 end
 
-local d=ak.Tab.UIElements.ContainerFrame
+local function GetScrollingFrameParent()
+local d=ak.Tab and ak.Tab.UIElements and ak.Tab.UIElements.ContainerFrame
+if d and d:IsA"ScrollingFrame"then
+return d
+end
+
+local f=al.SliderFrame.UIElements.Main:FindFirstAncestorWhichIsA"ScrollingFrame"
+if f then
+return f
+end
+
+return nil
+end
+
+local d=GetScrollingFrameParent()
 
 local function UpdateVisuals(f,g,h)
 local j=ValueToDelta(f)
@@ -7151,7 +7165,9 @@ end
 
 if not al.IsFocusing and not ai and h and(h.UserInputType==Enum.UserInputType.MouseButton1 or h.UserInputType==Enum.UserInputType.Touch)then
 am=(h.UserInputType==Enum.UserInputType.Touch)
+if d then
 d.ScrollingEnabled=false
+end
 ai=true
 
 local function UpdateFromPointer()
@@ -7179,7 +7195,9 @@ ao=nil
 end
 
 ai=false
+if d then
 d.ScrollingEnabled=true
+end
 
 if ak.Window.NewElements then
 ag(al.UIElements.Fill.Thumb,0.2,{
