@@ -16,8 +16,6 @@ local CreateScrollSlider = require("../ui/ScrollSlider").New
 local Window, WindUI, UIScale
 
 local TabModule = {
-	--Window = nil,
-	--WindUI = nil,
 	Tabs = {},
 	Containers = {},
 	SelectedTab = nil,
@@ -66,14 +64,6 @@ function TabModule.New(Config, UIScale)
 		TitlePaddingY = 0,
 	}
 
-	-- if Tab.TabTitleAlign == "Left" then
-	-- 	Tab.TabTitleAlign = "Top"
-	-- elseif Tab.TabTitleAlign == "Right" then
-	-- 	Tab.TabTitleAlign = "Bottom"
-	-- elseif Tab.TabTitleAlign == "Center" then
-	-- 	Tab.TabTitleAlign = "Center"
-	-- end
-
 	if Tab.IconShape then
 		Tab.TabPaddingX = 2 + (Window.UIPadding / 4)
 		Tab.TabPaddingY = 2 + (Window.UIPadding / 4)
@@ -100,22 +90,8 @@ function TabModule.New(Config, UIScale)
 			ThemeTag = {
 				ImageColor3 = "TabBorder",
 			},
-			ImageTransparency = 1, -- .7
+			ImageTransparency = 1,
 			Name = "Outline",
-		}, {
-			-- New("UIGradient", {
-			--     Rotation = 80,
-			--     Color = ColorSequence.new({
-			--         ColorSequenceKeypoint.new(0.0, Color3.fromRGB(255, 255, 255)),
-			--         ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-			--         ColorSequenceKeypoint.new(1.0, Color3.fromRGB(255, 255, 255)),
-			--     }),
-			--     Transparency = NumberSequence.new({
-			--         NumberSequenceKeypoint.new(0.0, 0.1),
-			--         NumberSequenceKeypoint.new(0.5, 1),
-			--         NumberSequenceKeypoint.new(1.0, 0.1),
-			--     })
-			-- }),
 		}),
 		Creator.NewRoundFrame(Tab.UICorner, "Squircle", {
 			Size = UDim2.new(1, 0, 0, 0),
@@ -123,7 +99,7 @@ function TabModule.New(Config, UIScale)
 			ThemeTag = {
 				ImageColor3 = "Text",
 			},
-			ImageTransparency = 1, -- .95
+			ImageTransparency = 1,
 			Name = "Frame",
 		}, {
 			New("UIListLayout", {
@@ -150,8 +126,6 @@ function TabModule.New(Config, UIScale)
 			}, {
 				New("UIPadding", {
 					PaddingTop = UDim.new(0, Tab.TitlePaddingY),
-					--PaddingLeft = UDim.new(0,2+(Window.UIPadding/2)),
-					--PaddingRight = UDim.new(0,2+(Window.UIPadding/2)),
 					PaddingBottom = UDim.new(0, Tab.TitlePaddingY),
 				}),
 			}),
@@ -171,7 +145,7 @@ function TabModule.New(Config, UIScale)
 	if Tab.Icon then
 		Icon = Creator.Image(
 			Tab.Icon,
-			Tab.Icon .. ":" .. Tab.Title,
+			Tab.Icon.. ":".. Tab.Title,
 			0,
 			Window.Folder,
 			Tab.__type,
@@ -210,21 +184,6 @@ function TabModule.New(Config, UIScale)
 							},
 							ImageTransparency = 0,
 							Name = "Outline",
-						},
-						{
-							-- New("UIGradient", {
-							--     Rotation = 45,
-							--     Color = ColorSequence.new({
-							--         ColorSequenceKeypoint.new(0.0, Color3.fromRGB(255, 255, 255)),
-							--         ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-							--         ColorSequenceKeypoint.new(1.0, Color3.fromRGB(255, 255, 255)),
-							--     }),
-							--     Transparency = NumberSequence.new({
-							--         NumberSequenceKeypoint.new(0.0, 0.1),
-							--         NumberSequenceKeypoint.new(0.5, 1),
-							--         NumberSequenceKeypoint.new(1.0, 0.1),
-							--     })
-							-- }),
 						}
 					),
 				}
@@ -238,14 +197,10 @@ function TabModule.New(Config, UIScale)
 		end
 
 		Icon2 =
-			Creator.Image(Tab.Icon, Tab.Icon .. ":" .. Tab.Title, 0, Window.Folder, Tab.__type, true, Tab.IconThemed)
+			Creator.Image(Tab.Icon, Tab.Icon.. ":".. Tab.Title, 0, Window.Folder, Tab.__type, true, Tab.IconThemed)
 		Icon2.Size = UDim2.new(0, 16, 0, 16)
 		Icon2.ImageLabel.ImageTransparency = not Tab.Locked and 0 or 0.7
 		TextOffset = -30
-
-		--Icon2.Parent = Tab.UIElements.Main.Frame
-		--Tab.UIElements.Main.Frame.TextLabel.Size = UDim2.new(1,-30,0,0)
-		--Tab.UIElements.Icon = Icon
 	end
 
 	Tab.UIElements.ContainerFrame = New("ScrollingFrame", {
@@ -257,7 +212,6 @@ function TabModule.New(Config, UIScale)
 		AnchorPoint = Vector2.new(0, 1),
 		Position = UDim2.new(0, 0, 1, 0),
 		AutomaticCanvasSize = "Y",
-		--Visible = false,
 		ScrollingDirection = "Y",
 	}, {
 		New("UIPadding", {
@@ -272,10 +226,6 @@ function TabModule.New(Config, UIScale)
 			HorizontalAlignment = "Center",
 		}),
 	})
-
-	-- Tab.UIElements.ContainerFrame.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-	--     Tab.UIElements.ContainerFrame.CanvasSize = UDim2.new(0,0,0,Tab.UIElements.ContainerFrame.UIListLayout.AbsoluteContentSize.Y+Window.UIPadding*2)
-	-- end)
 
 	Tab.UIElements.ContainerFrameCanvas = New("Frame", {
 		Size = UDim2.new(1, 0, 1, 0),
@@ -301,7 +251,6 @@ function TabModule.New(Config, UIScale)
 				TextTransparency = 0.1,
 				Size = UDim2.new(0, 0, 1, 0),
 				FontFace = Font.new(Creator.Font, Enum.FontWeight.SemiBold),
-				--TextTruncate = "AtEnd",
 				RichText = true,
 				LayoutOrder = 2,
 				TextXAlignment = "Left",
@@ -333,8 +282,8 @@ function TabModule.New(Config, UIScale)
 		}),
 	})
 
-	TabModule.Containers[TabIndex] = Tab.UIElements.ContainerFrameCanvas
-	TabModule.Tabs[TabIndex] = Tab
+	TabModule.Containers = Tab.UIElements.ContainerFrameCanvas
+	TabModule.Tabs = Tab
 
 	Tab.ContainerFrame = Tab.UIElements.ContainerFrameCanvas
 
@@ -353,7 +302,6 @@ function TabModule.New(Config, UIScale)
 	local MouseConn
 	local IsHovering = false
 
-	-- ToolTip
 	if Tab.Desc then
 		Creator.AddSignal(Tab.UIElements.Main.InputBegan, function()
 			IsHovering = true
@@ -433,8 +381,6 @@ function TabModule.New(Config, UIScale)
 		return Tab
 	end
 
-	-- yo
-
 	local ElementsModule = require("../../elements/Init")
 
 	ElementsModule.Load(
@@ -448,8 +394,126 @@ function TabModule.New(Config, UIScale)
 		UIScale
 	)
 
+	function Tab:SubTabGroup()
+		local SubGroupModule = {}
+		local SubTabs = {} 
+        
+		local MainSubGroupContainer = New("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = "Y",
+			BackgroundTransparency = 1,
+			Parent = Tab.UIElements.ContainerFrame
+		}, {
+			New("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = "LayoutOrder" })
+		})
+
+		local NavigationBar = New("Frame", {
+			Size = UDim2.new(1, 0, 0, 32),
+			BackgroundTransparency = 1,
+			Parent = MainSubGroupContainer
+		}, {
+			New("UIListLayout", { Padding = UDim.new(0, 5), FillDirection = "Horizontal", HorizontalAlignment = "Center" })
+		})
+
+		local ContentContainer = New("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = "Y",
+			BackgroundTransparency = 1,
+			Parent = MainSubGroupContainer
+		})
+
+		function SubGroupModule:AddSubTab(SubTabTitle, IconName)
+			local SubTabObject = setmetatable({
+				Title = SubTabTitle,
+				Name = SubTabTitle,
+				__type = "Tab",
+				Elements = {},
+				UIElements = {}
+			}, { __index = Tab })
+
+			local isFirstTab = (#SubTabs == 0)
+			local PageFrame = New("Frame", {
+				Size = UDim2.new(1, 0, 0, 0),
+				AutomaticSize = "Y",
+				BackgroundTransparency = 1,
+				Visible = isFirstTab,
+				Parent = ContentContainer
+			}, {
+				New("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = "LayoutOrder" }),
+				New("UIPadding", { 
+					PaddingTop = UDim.new(0, 2),
+					PaddingLeft = UDim.new(0, 2),
+					PaddingRight = UDim.new(0, 2),
+					PaddingBottom = UDim.new(0, 2)
+				})
+			})
+
+			SubTabObject.UIElements.ContainerFrame = PageFrame
+			SubTabObject.UIElements.Main = Tab.UIElements.Main
+
+			local NavButton = New("TextButton", {
+				Size = UDim2.new(0, 0, 1, 0), 
+				AutomaticSize = "X", 
+				Text = "", 
+				ThemeTag = { BackgroundColor3 = isFirstTab and "Accent" or "Button" },
+				BackgroundTransparency = isFirstTab and 0 or 0.5,
+				Parent = NavigationBar
+			}, {
+				New("UICorner", { CornerRadius = UDim.new(0, 6) }),
+				New("UIPadding", { PaddingLeft = UDim.new(0, 12), PaddingRight = UDim.new(0, 12) }),
+				New("UIListLayout", { Padding = UDim.new(0, 6), FillDirection = "Horizontal", VerticalAlignment = "Center", HorizontalAlignment = "Center" }),
+				
+				IconName and New("ImageLabel", {
+					Image = Creator.Icon(IconName)[2],
+					ImageRectOffset = Creator.Icon(IconName)[1].ImageRectPosition,
+					ImageRectSize = Creator.Icon(IconName)[1].ImageRectSize,
+					Size = UDim2.new(0, 14, 0, 14),
+					BackgroundTransparency = 1,
+					ThemeTag = { ImageColor3 = "Text" }
+				}) or nil,
+				
+				New("TextLabel", {
+					Text = SubTabTitle,
+					Size = UDim2.new(0, 0, 1, 0),
+					AutomaticSize = "X",
+					BackgroundTransparency = 1,
+					FontFace = Font.new(Creator.Font, Enum.FontWeight.SemiBold),
+					TextSize = 14,
+					ThemeTag = { TextColor3 = "Text" }
+				})
+			})
+
+			Creator.AddSignal(NavButton.MouseButton1Click, function()
+				for _, other in pairs(SubTabs) do
+					other.Page.Visible = false
+					Creator.SetThemeTag(other.Button, {BackgroundColor3 = "Button"})
+					other.Button.BackgroundTransparency = 0.5
+				end
+				PageFrame.Visible = true
+				Creator.SetThemeTag(NavButton, {BackgroundColor3 = "Accent"})
+				NavButton.BackgroundTransparency = 0
+			end)
+
+			table.insert(SubTabs, {Page = PageFrame, Button = NavButton})
+
+			ElementsModule.Load(
+				SubTabObject, 
+				PageFrame, 
+				ElementsModule.Elements, 
+				Window, 
+				WindUI, 
+				nil, 
+				ElementsModule, 
+				UIScale
+			)
+
+			return SubTabObject
+		end
+
+		return SubGroupModule
+	end
+
 	function Tab:LockAll()
-		--print("LockAll called, number of elements: " .. #self.Elements)
 		for _, element in next, Window.AllElements do
 			if element.Tab and element.Tab.Index and element.Tab.Index == Tab.Index and element.Lock then
 				element:Lock()
@@ -465,24 +529,20 @@ function TabModule.New(Config, UIScale)
 	end
 	function Tab:GetLocked()
 		local LockedElements = {}
-
 		for _, element in next, Window.AllElements do
 			if element.Tab and element.Tab.Index and element.Tab.Index == Tab.Index and element.Locked == true then
 				table.insert(LockedElements, element)
 			end
 		end
-
 		return LockedElements
 	end
 	function Tab:GetUnlocked()
 		local UnlockedElements = {}
-
 		for _, element in next, Window.AllElements do
 			if element.Tab and element.Tab.Index and element.Tab.Index == Tab.Index and element.Locked == false then
 				table.insert(UnlockedElements, element)
 			end
 		end
-
 		return UnlockedElements
 	end
 
@@ -511,20 +571,9 @@ function TabModule.New(Config, UIScale)
 				HorizontalAlignment = "Center",
 				FillDirection = "Vertical",
 			}),
-			-- New("ImageLabel", {
-			-- 	Size = UDim2.new(0, 48, 0, 48),
-			-- 	Image = Creator.Icon("frown")[1],
-			-- 	ImageRectOffset = Creator.Icon("frown")[2].ImageRectPosition,
-			-- 	ImageRectSize = Creator.Icon("frown")[2].ImageRectSize,
-			-- 	ThemeTag = {
-			-- 		ImageColor3 = "Icon",
-			-- 	},
-			-- 	BackgroundTransparency = 1,
-			-- 	ImageTransparency = 0.6,
-			-- }),
 			EmptyPageIcon,
 			Tab.CustomEmptyPage.Title
-					and New("TextLabel", { -- Title
+					and New("TextLabel", { 
 						AutomaticSize = "XY",
 						Text = Tab.CustomEmptyPage.Title,
 						ThemeTag = {
@@ -537,7 +586,7 @@ function TabModule.New(Config, UIScale)
 					})
 				or nil,
 			Tab.CustomEmptyPage.Desc
-					and New("TextLabel", { -- Desc
+					and New("TextLabel", { 
 						AutomaticSize = "XY",
 						Text = Tab.CustomEmptyPage.Desc,
 						ThemeTag = {
@@ -550,10 +599,6 @@ function TabModule.New(Config, UIScale)
 					})
 				or nil,
 		})
-
-		-- Empty.TextLabel:GetPropertyChangedSignal("TextBounds"):Connect(function()
-		--     Empty.TextLabel.Size = UDim2.new(0,Empty.TextLabel.TextBounds.X,0,Empty.TextLabel.TextBounds.Y)
-		-- end)
 
 		local CreationConn
 		CreationConn = Creator.AddSignal(Tab.UIElements.ContainerFrame.ChildAdded, function()
@@ -570,7 +615,7 @@ function TabModule:OnChange(func)
 end
 
 function TabModule:SelectTab(TabIndex)
-	if not TabModule.Tabs[TabIndex].Locked then
+	if not TabModule.Tabs.Locked then
 		TabModule.SelectedTab = TabIndex
 
 		for _, TabObject in next, TabModule.Tabs do
@@ -594,34 +639,34 @@ function TabModule:SelectTab(TabIndex)
 				TabObject.Selected = false
 			end
 		end
-		Creator.SetThemeTag(TabModule.Tabs[TabIndex].UIElements.Main, {
+		Creator.SetThemeTag(TabModule.Tabs.UIElements.Main, {
 			ImageTransparency = "TabBackgroundActiveTransparency",
 		}, 0.15)
-		if TabModule.Tabs[TabIndex].Border then
-			Creator.SetThemeTag(TabModule.Tabs[TabIndex].UIElements.Main.Outline, {
+		if TabModule.Tabs.Border then
+			Creator.SetThemeTag(TabModule.Tabs.UIElements.Main.Outline, {
 				ImageTransparency = "TabBorderTransparencyActive",
 			}, 0.15)
 		end
-		Creator.SetThemeTag(TabModule.Tabs[TabIndex].UIElements.Main.Frame.TextLabel, {
+		Creator.SetThemeTag(TabModule.Tabs.UIElements.Main.Frame.TextLabel, {
 			TextTransparency = "TabTextTransparencyActive",
 		}, 0.15)
-		if TabModule.Tabs[TabIndex].UIElements.Icon and not TabModule.Tabs[TabIndex].IconColor then
-			Creator.SetThemeTag(TabModule.Tabs[TabIndex].UIElements.Icon.ImageLabel, {
+		if TabModule.Tabs.UIElements.Icon and not TabModule.Tabs.IconColor then
+			Creator.SetThemeTag(TabModule.Tabs.UIElements.Icon.ImageLabel, {
 				ImageTransparency = "TabIconTransparencyActive",
 			}, 0.15)
 		end
-		TabModule.Tabs[TabIndex].Selected = true
+		TabModule.Tabs.Selected = true
 
 		task.spawn(function()
 			for _, ContainerObject in next, TabModule.Containers do
 				ContainerObject.AnchorPoint = Vector2.new(0, 0.05)
 				ContainerObject.Visible = false
 			end
-			TabModule.Containers[TabIndex].Visible = true
+			TabModule.Containers.Visible = true
 			local TweenService = game:GetService("TweenService")
 
 			local tweenInfo = TweenInfo.new(0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-			local tween = TweenService:Create(TabModule.Containers[TabIndex], tweenInfo, {
+			local tween = TweenService:Create(TabModule.Containers, tweenInfo, {
 				AnchorPoint = Vector2.new(0, 0),
 			})
 			tween:Play()
