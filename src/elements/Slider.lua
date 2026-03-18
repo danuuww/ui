@@ -180,7 +180,7 @@ function Element:New(Config)
 		TextXAlignment = "Left",
 		TextYAlignment = "Center",
 		TextSize = 15,
-		FontFace = Font.new(Creator.Font, Enum.FontWeight.Semibold),
+		FontFace = Font.new(Creator.Font, Enum.FontWeight.SemiBold),
 		ThemeTag = {
 			TextColor3 = "Text"
 		},
