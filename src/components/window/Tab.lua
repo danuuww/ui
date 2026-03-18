@@ -464,9 +464,9 @@ function TabModule.New(Config, UIScale)
 				New("UIListLayout", { Padding = UDim.new(0, 6), FillDirection = "Horizontal", VerticalAlignment = "Center", HorizontalAlignment = "Center" }),
 				
 				IconName and New("ImageLabel", {
-					Image = Creator.Icon(IconName)[2],
-					ImageRectOffset = Creator.Icon(IconName)[1].ImageRectPosition,
-					ImageRectSize = Creator.Icon(IconName)[1].ImageRectSize,
+					Image = Creator.Icon(IconName)[1],
+					ImageRectOffset = Creator.Icon(IconName)[2].ImageRectPosition,
+					ImageRectSize = Creator.Icon(IconName)[2].ImageRectSize,
 					Size = UDim2.new(0, 14, 0, 14),
 					BackgroundTransparency = 1,
 					ThemeTag = { ImageColor3 = "Text" }
