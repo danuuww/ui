@@ -12,7 +12,7 @@ local CurrentCamera = workspace.CurrentCamera
 
 local NotificationModule = {
 	UICorner = 30,
-	UIPadding = 14,
+	UIPadding = 12,
 	NotificationIndex = 0,
 	Notifications = {},
 }
@@ -23,11 +23,11 @@ end
 
 local function GetHolderWidth()
 	local viewportX = GetViewportX()
-	return math.clamp(math.floor(viewportX * 0.42), 300, 390)
+	return math.clamp(math.floor(viewportX * 0.32), 260, 332)
 end
 
 local function GetTopOffset(lower)
-	return lower and 62 or 18
+	return lower and 52 or 10
 end
 
 local function GetUserAvatarByUserId(userId)
@@ -79,6 +79,18 @@ local function ResolveAvatar(avatarValue)
 	return GetDefaultAvatar()
 end
 
+local function CreateGlowBlob(size, position, color, transparency)
+	return New("ImageLabel", {
+		BackgroundTransparency = 1,
+		Image = "rbxassetid://1316045217",
+		ImageColor3 = color,
+		ImageTransparency = transparency,
+		ScaleType = "Fit",
+		Size = size,
+		Position = position,
+	})
+end
+
 function NotificationModule.Init(Parent)
 	local NotModule = {
 		Lower = false
@@ -108,7 +120,7 @@ function NotificationModule.Init(Parent)
 			HorizontalAlignment = "Center",
 			SortOrder = "LayoutOrder",
 			VerticalAlignment = "Top",
-			Padding = UDim.new(0, 10),
+			Padding = UDim.new(0, 8),
 		}),
 	})
 
@@ -141,8 +153,10 @@ function NotificationModule.New(Config)
 	NotificationModule.Notifications[NotificationModule.NotificationIndex] = Notification
 
 	local HolderWidth = GetHolderWidth()
-	local AvatarSize = 52
-	local BadgeSize = 18
+	local AvatarSize = 44
+	local BadgeSize = 16
+	local NotificationHeight = 72
+
 	local AvatarImage = ResolveAvatar(Notification.Avatar)
 	local HasAvatar = AvatarImage ~= nil
 
@@ -163,11 +177,10 @@ function NotificationModule.New(Config)
 	end
 
 	local Main = Creator.NewRoundFrame(NotificationModule.UICorner, "Squircle", {
-		Size = UDim2.new(1, 0, 0, 84),
-		AutomaticSize = "Y",
+		Size = UDim2.new(1, 0, 0, NotificationHeight),
 		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0, -14),
-		ImageColor3 = Color3.fromRGB(42, 42, 48),
+		Position = UDim2.new(0.5, 0, 0, -12),
+		ImageColor3 = Color3.fromRGB(205, 210, 220),
 		ImageTransparency = 1,
 		Parent = nil,
 	}, {
@@ -175,7 +188,7 @@ function NotificationModule.New(Config)
 			Size = UDim2.new(1, 0, 1, 0),
 			Name = "Outline",
 			ImageColor3 = Color3.fromRGB(255, 255, 255),
-			ImageTransparency = 0.82,
+			ImageTransparency = 0.66,
 		}),
 
 		Creator.NewRoundFrame(NotificationModule.UICorner, "Squircle", {
@@ -183,14 +196,14 @@ function NotificationModule.New(Config)
 			Position = UDim2.new(0.5, 0, 0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Name = "InnerGlass",
-			ImageColor3 = Color3.fromRGB(72, 72, 80),
-			ImageTransparency = 0.9,
+			ImageColor3 = Color3.fromRGB(170, 176, 188),
+			ImageTransparency = 0.88,
 		}),
 
 		New("Frame", {
-			Name = "TopSheen",
+			Name = "TopLine",
 			BackgroundColor3 = Color3.new(1, 1, 1),
-			BackgroundTransparency = 0.96,
+			BackgroundTransparency = 0.94,
 			Size = UDim2.new(1, -18, 0, 1),
 			Position = UDim2.new(0.5, 0, 0, 1),
 			AnchorPoint = Vector2.new(0.5, 0),
@@ -201,30 +214,38 @@ function NotificationModule.New(Config)
 		}),
 
 		New("Frame", {
-			Name = "RightOrb1",
-			BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-			BackgroundTransparency = 0.975,
-			Size = UDim2.new(0, 42, 0, 42),
-			Position = UDim2.new(1, -66, 0, 9),
-			Visible = true,
+			Name = "BottomShade",
+			BackgroundColor3 = Color3.fromRGB(10, 10, 14),
+			BackgroundTransparency = 0.985,
+			Size = UDim2.new(1, -8, 0, 18),
+			Position = UDim2.new(0.5, 0, 1, -4),
+			AnchorPoint = Vector2.new(0.5, 1),
 		}, {
 			New("UICorner", {
-				CornerRadius = UDim.new(1, 0),
+				CornerRadius = UDim.new(0, 999),
 			}),
 		}),
 
-		New("Frame", {
-			Name = "RightOrb2",
-			BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-			BackgroundTransparency = 0.982,
-			Size = UDim2.new(0, 30, 0, 30),
-			Position = UDim2.new(1, -28, 0, 15),
-			Visible = true,
-		}, {
-			New("UICorner", {
-				CornerRadius = UDim.new(1, 0),
-			}),
-		}),
+		CreateGlowBlob(
+			UDim2.new(0, 54, 0, 54),
+			UDim2.new(1, -74, 0, 6),
+			Color3.fromRGB(255, 255, 255),
+			0.95
+		),
+
+		CreateGlowBlob(
+			UDim2.new(0, 38, 0, 38),
+			UDim2.new(1, -34, 0, 14),
+			Color3.fromRGB(240, 244, 255),
+			0.965
+		),
+
+		CreateGlowBlob(
+			UDim2.new(0, 80, 0, 52),
+			UDim2.new(0.5, -18, 0, -18),
+			Color3.fromRGB(255, 255, 255),
+			0.975
+		),
 
 		New("ImageLabel", {
 			Name = "Background",
@@ -243,8 +264,7 @@ function NotificationModule.New(Config)
 		New("Frame", {
 			Name = "Content",
 			BackgroundTransparency = 1,
-			AutomaticSize = "Y",
-			Size = UDim2.new(1, 0, 0, 0),
+			Size = UDim2.new(1, 0, 1, 0),
 		}, {
 			New("UIPadding", {
 				PaddingTop = UDim.new(0, NotificationModule.UIPadding),
@@ -257,7 +277,8 @@ function NotificationModule.New(Config)
 				Name = "AvatarHolder",
 				BackgroundTransparency = 1,
 				Size = UDim2.new(0, HasAvatar and AvatarSize or 0, 0, AvatarSize),
-				Position = UDim2.new(0, 0, 0, 0),
+				Position = UDim2.new(0, 0, 0.5, 0),
+				AnchorPoint = Vector2.new(0, 0.5),
 				Visible = HasAvatar,
 			}, {
 				New("ImageLabel", {
@@ -275,10 +296,10 @@ function NotificationModule.New(Config)
 				New("Frame", {
 					Name = "BadgeBack",
 					Size = UDim2.new(0, BadgeSize + 6, 0, BadgeSize + 6),
-					Position = UDim2.new(0, 2, 1, -2),
+					Position = UDim2.new(0, 1, 1, -1),
 					AnchorPoint = Vector2.new(0, 1),
-					BackgroundColor3 = Color3.fromRGB(28, 28, 32),
-					BackgroundTransparency = 0.08,
+					BackgroundColor3 = Color3.fromRGB(34, 34, 38),
+					BackgroundTransparency = 0.05,
 					Visible = AppBadge ~= nil,
 				}, {
 					New("UICorner", {
@@ -292,57 +313,57 @@ function NotificationModule.New(Config)
 				Name = "Time",
 				Text = Notification.TimeText,
 				BackgroundTransparency = 1,
-				Size = UDim2.new(0, 52, 0, 18),
-				Position = UDim2.new(1, -2, 0, 1),
+				Size = UDim2.new(0, 48, 0, 18),
+				Position = UDim2.new(1, 0, 0, 2),
 				AnchorPoint = Vector2.new(1, 0),
 				TextXAlignment = "Right",
 				TextYAlignment = "Top",
-				TextSize = 13,
+				TextSize = 12,
 				Font = Enum.Font.BuilderSansMedium,
-				TextColor3 = Color3.fromRGB(235, 235, 239),
-				TextTransparency = 0.08,
+				TextColor3 = Color3.fromRGB(245, 246, 250),
+				TextTransparency = 0.12,
 			}),
 
 			New("Frame", {
 				Name = "TextContainer",
 				BackgroundTransparency = 1,
-				AutomaticSize = "Y",
-				Size = UDim2.new(1, -((HasAvatar and (AvatarSize + 12) or 0) + 58), 0, 0),
-				Position = UDim2.new(0, HasAvatar and (AvatarSize + 12) or 0, 0, 1),
+				Size = UDim2.new(1, -((HasAvatar and (AvatarSize + 10) or 0) + 54), 0, 38),
+				Position = UDim2.new(0, HasAvatar and (AvatarSize + 10) or 0, 0.5, 0),
+				AnchorPoint = Vector2.new(0, 0.5),
 			}, {
 				New("UIListLayout", {
-					Padding = UDim.new(0, 1),
+					Padding = UDim.new(0, 0),
 					SortOrder = "LayoutOrder",
-					VerticalAlignment = "Top",
+					VerticalAlignment = "Center",
 				}),
 
 				New("TextLabel", {
 					Name = "Title",
 					Text = Notification.Title,
 					BackgroundTransparency = 1,
-					AutomaticSize = "Y",
-					Size = UDim2.new(1, 0, 0, 0),
-					TextWrapped = true,
+					Size = UDim2.new(1, 0, 0, 18),
+					TextWrapped = false,
+					TextTruncate = "AtEnd",
 					TextXAlignment = "Left",
-					TextYAlignment = "Top",
-					TextSize = 17,
+					TextYAlignment = "Center",
+					TextSize = 15,
 					Font = Enum.Font.BuilderSansBold,
-					TextColor3 = Color3.fromRGB(247, 247, 250),
+					TextColor3 = Color3.fromRGB(248, 248, 251),
 				}),
 
 				New("TextLabel", {
 					Name = "Content",
 					Text = Notification.Content or "",
 					BackgroundTransparency = 1,
-					AutomaticSize = "Y",
-					Size = UDim2.new(1, 0, 0, 0),
-					TextWrapped = true,
+					Size = UDim2.new(1, 0, 0, 18),
+					TextWrapped = false,
+					TextTruncate = "AtEnd",
 					TextXAlignment = "Left",
-					TextYAlignment = "Top",
-					TextSize = 16,
+					TextYAlignment = "Center",
+					TextSize = 14,
 					Font = Enum.Font.BuilderSansMedium,
-					TextColor3 = Color3.fromRGB(239, 239, 243),
-					TextTransparency = 0.02,
+					TextColor3 = Color3.fromRGB(239, 240, 244),
+					TextTransparency = 0.05,
 					Visible = Notification.Content ~= nil,
 				}),
 			}),
@@ -379,16 +400,16 @@ function NotificationModule.New(Config)
 
 		Notification.Closed = true
 
-		Tween(MainContainer, 0.28, {
+		Tween(MainContainer, 0.24, {
 			Size = UDim2.new(1, 0, 0, 0),
 		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
-		Tween(Main, 0.28, {
-			Position = UDim2.new(0.5, 0, 0, -12),
+		Tween(Main, 0.24, {
+			Position = UDim2.new(0.5, 0, 0, -10),
 			ImageTransparency = 1,
 		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
-		task.wait(0.29)
+		task.wait(0.25)
 		if MainContainer then
 			MainContainer:Destroy()
 		end
@@ -397,19 +418,17 @@ function NotificationModule.New(Config)
 	task.spawn(function()
 		task.wait()
 
-		local targetHeight = Main.AbsoluteSize.Y
-
 		MainContainer.Size = UDim2.new(1, 0, 0, 0)
-		Main.Position = UDim2.new(0.5, 0, 0, -12)
+		Main.Position = UDim2.new(0.5, 0, 0, -10)
 		Main.ImageTransparency = 1
 
-		Tween(MainContainer, 0.3, {
-			Size = UDim2.new(1, 0, 0, targetHeight),
+		Tween(MainContainer, 0.26, {
+			Size = UDim2.new(1, 0, 0, NotificationHeight),
 		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
-		Tween(Main, 0.3, {
+		Tween(Main, 0.26, {
 			Position = UDim2.new(0.5, 0, 0, 0),
-			ImageTransparency = 0.16,
+			ImageTransparency = 0.72,
 		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
 		if Notification.Duration and Notification.Duration > 0 then
