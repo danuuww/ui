@@ -10604,7 +10604,7 @@ BackgroundTransparency=1,
 Parent=aq.UIElements.ContainerFrame,
 },{
 aj("UIListLayout",{
-Padding=UDim.new(0,10),
+Padding=UDim.new(0,6),
 SortOrder="LayoutOrder",
 }),
 })
@@ -10718,7 +10718,7 @@ BackgroundTransparency=1,
 Parent=m,
 },{
 aj("UIListLayout",{
-Padding=UDim.new(0,6),
+Padding=UDim.new(0,0),
 SortOrder="LayoutOrder",
 }),
 })
@@ -10818,14 +10818,14 @@ Visible=G,
 Parent=z,
 },{
 aj("UIListLayout",{
-Padding=UDim.new(0,6),
+Padding=UDim.new(0,2),
 SortOrder="LayoutOrder",
 }),
 aj("UIPadding",{
-PaddingTop=UDim.new(0,2),
+PaddingTop=UDim.new(0,0),
 PaddingLeft=UDim.new(0,2),
 PaddingRight=UDim.new(0,2),
-PaddingBottom=UDim.new(0,2),
+PaddingBottom=UDim.new(0,0),
 }),
 })
 
