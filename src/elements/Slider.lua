@@ -344,7 +344,21 @@ function Element:New(Config)
 		Slider:Lock()
 	end
 
-	local ScrollingFrameParent = Config.Tab.UIElements.ContainerFrame
+	local function GetScrollingFrameParent()
+					local candidate = Config.Tab and Config.Tab.UIElements and Config.Tab.UIElements.ContainerFrame
+					if candidate and candidate:IsA("ScrollingFrame") then
+								return candidate
+					end
+
+					local ancestor = Slider.SliderFrame.UIElements.Main:FindFirstAncestorWhichIsA("ScrollingFrame")
+					if ancestor then
+								return ancestor
+					end
+
+					return nil
+		end
+
+		local ScrollingFrameParent = GetScrollingFrameParent()
 
 	local function UpdateVisuals(newValue, shouldTween, preserveInputText)
 		local delta = ValueToDelta(newValue)
@@ -390,7 +404,9 @@ function Element:New(Config)
 
 		if not Slider.IsFocusing and not IsSliderHolding and input and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
 			isTouch = (input.UserInputType == Enum.UserInputType.Touch)
-			ScrollingFrameParent.ScrollingEnabled = false
+			if ScrollingFrameParent then
+						ScrollingFrameParent.ScrollingEnabled = false
+			end
 			IsSliderHolding = true
 
 			local function UpdateFromPointer()
@@ -418,7 +434,9 @@ function Element:New(Config)
 					end
 
 					IsSliderHolding = false
-					ScrollingFrameParent.ScrollingEnabled = true
+					if ScrollingFrameParent then
+								ScrollingFrameParent.ScrollingEnabled = true
+					end
 
 					if Config.Window.NewElements then
 						Tween(Slider.UIElements.Fill.Thumb, 0.2, {
