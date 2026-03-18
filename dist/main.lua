@@ -10045,8 +10045,8 @@ Visible=ap.ShowTabTitle or false,
 }),
 })
 
-am.Containers=ap.UIElements.ContainerFrameCanvas
-am.Tabs=ap
+table.insert(am.Containers,ap.UIElements.ContainerFrameCanvas)
+table.insert(am.Tabs,ap)
 
 ap.ContainerFrame=ap.UIElements.ContainerFrameCanvas
 
@@ -10214,7 +10214,9 @@ PaddingBottom=UDim.new(0,2)
 l.UIElements.ContainerFrame=p
 l.UIElements.Main=ap.UIElements.Main
 
-local r=aj("TextButton",{
+local r=j and ah.Icon(j)
+
+local u=aj("TextButton",{
 Size=UDim2.new(0,0,1,0),
 AutomaticSize="X",
 Text="",
@@ -10226,10 +10228,10 @@ aj("UICorner",{CornerRadius=UDim.new(0,6)}),
 aj("UIPadding",{PaddingLeft=UDim.new(0,12),PaddingRight=UDim.new(0,12)}),
 aj("UIListLayout",{Padding=UDim.new(0,6),FillDirection="Horizontal",VerticalAlignment="Center",HorizontalAlignment="Center"}),
 
-j and aj("ImageLabel",{
-Image=ah.Icon(j)[1],
-ImageRectOffset=ah.Icon(j)[2].ImageRectPosition,
-ImageRectSize=ah.Icon(j)[2].ImageRectSize,
+r and aj("ImageLabel",{
+Image=r[1],
+ImageRectOffset=r[2].ImageRectPosition,
+ImageRectSize=r[2].ImageRectSize,
 Size=UDim2.new(0,14,0,14),
 BackgroundTransparency=1,
 ThemeTag={ImageColor3="Text"}
@@ -10246,18 +10248,18 @@ ThemeTag={TextColor3="Text"}
 })
 })
 
-ah.AddSignal(r.MouseButton1Click,function()
-for u,v in pairs(aB)do
-v.Page.Visible=false
-ah.SetThemeTag(v.Button,{BackgroundColor3="Button"})
-v.Button.BackgroundTransparency=0.5
+ah.AddSignal(u.MouseButton1Click,function()
+for v,x in pairs(aB)do
+x.Page.Visible=false
+ah.SetThemeTag(x.Button,{BackgroundColor3="Button"})
+x.Button.BackgroundTransparency=0.5
 end
 p.Visible=true
-ah.SetThemeTag(r,{BackgroundColor3="Accent"})
-r.BackgroundTransparency=0
+ah.SetThemeTag(u,{BackgroundColor3="Accent"})
+u.BackgroundTransparency=0
 end)
 
-table.insert(aB,{Page=p,Button=r})
+table.insert(aB,{Page=p,Button=u})
 
 ay.Load(
 l,
@@ -10378,65 +10380,71 @@ am.OnChangeFunc=ao
 end
 
 function am.SelectTab(an,ao)
-if not am.Tabs.Locked then
+local ap=am.Tabs[ao]
+local aq=am.Containers[ao]
+
+if not ap or not aq or ap.Locked then
+return
+end
+
 am.SelectedTab=ao
 
-for ap,aq in next,am.Tabs do
-if not aq.Locked then
-ah.SetThemeTag(aq.UIElements.Main,{
+for ar,as in next,am.Tabs do
+if not as.Locked then
+ah.SetThemeTag(as.UIElements.Main,{
 ImageTransparency="TabBorderTransparency",
 },0.15)
-if aq.Border then
-ah.SetThemeTag(aq.UIElements.Main.Outline,{
+if as.Border then
+ah.SetThemeTag(as.UIElements.Main.Outline,{
 ImageTransparency="TabBorderTransparency",
 },0.15)
 end
-ah.SetThemeTag(aq.UIElements.Main.Frame.TextLabel,{
+ah.SetThemeTag(as.UIElements.Main.Frame.TextLabel,{
 TextTransparency="TabTextTransparency",
 },0.15)
-if aq.UIElements.Icon and not aq.IconColor then
-ah.SetThemeTag(aq.UIElements.Icon.ImageLabel,{
+if as.UIElements.Icon and not as.IconColor then
+ah.SetThemeTag(as.UIElements.Icon.ImageLabel,{
 ImageTransparency="TabIconTransparency",
 },0.15)
 end
-aq.Selected=false
+as.Selected=false
 end
 end
-ah.SetThemeTag(am.Tabs.UIElements.Main,{
+
+ah.SetThemeTag(ap.UIElements.Main,{
 ImageTransparency="TabBackgroundActiveTransparency",
 },0.15)
-if am.Tabs.Border then
-ah.SetThemeTag(am.Tabs.UIElements.Main.Outline,{
+if ap.Border then
+ah.SetThemeTag(ap.UIElements.Main.Outline,{
 ImageTransparency="TabBorderTransparencyActive",
 },0.15)
 end
-ah.SetThemeTag(am.Tabs.UIElements.Main.Frame.TextLabel,{
+ah.SetThemeTag(ap.UIElements.Main.Frame.TextLabel,{
 TextTransparency="TabTextTransparencyActive",
 },0.15)
-if am.Tabs.UIElements.Icon and not am.Tabs.IconColor then
-ah.SetThemeTag(am.Tabs.UIElements.Icon.ImageLabel,{
+if ap.UIElements.Icon and not ap.IconColor then
+ah.SetThemeTag(ap.UIElements.Icon.ImageLabel,{
 ImageTransparency="TabIconTransparencyActive",
 },0.15)
 end
-am.Tabs.Selected=true
+ap.Selected=true
 
 task.spawn(function()
-for ap,aq in next,am.Containers do
-aq.AnchorPoint=Vector2.new(0,0.05)
-aq.Visible=false
+for ar,as in next,am.Containers do
+as.AnchorPoint=Vector2.new(0,0.05)
+as.Visible=false
 end
-am.Containers.Visible=true
-local ap=game:GetService"TweenService"
+aq.Visible=true
+local ar=game:GetService"TweenService"
 
-local aq=TweenInfo.new(0.15,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
-local ar=ap:Create(am.Containers,aq,{
+local as=TweenInfo.new(0.15,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)
+local at=ar:Create(aq,as,{
 AnchorPoint=Vector2.new(0,0),
 })
-ar:Play()
+at:Play()
 end)
 
 am.OnChangeFunc(ao)
-end
 end
 
 return am end function a.X()
