@@ -10514,6 +10514,7 @@ ImageColor3="TabBackgroundHover",
 },0.1)
 end
 end)
+
 ah.AddSignal(aq.UIElements.Main.InputEnded,function()
 if aq.Desc then
 ay=false
@@ -10619,51 +10620,39 @@ Name="NavigationBar",
 Size=UDim2.new(0,0,0,h),
 Position=UDim2.new(0.5,0,0,0),
 AnchorPoint=Vector2.new(0.5,0),
-ImageColor3=Color3.fromRGB(205,210,220),
-ImageTransparency=0.78,
+ThemeTag={
+ImageColor3="Text",
+},
+ImageTransparency=0.93,
 Parent=p,
 },{
 ah.NewRoundFrame(999,"Glass-1.4",{
 Size=UDim2.new(1,0,1,0),
 Name="Outline",
-ImageColor3=Color3.fromRGB(255,255,255),
-ImageTransparency=0.72,
+ImageColor3=Color3.new(1,1,1),
+ImageTransparency=0.82,
 }),
 ah.NewRoundFrame(999,"Squircle",{
 Size=UDim2.new(1,-2,1,-2),
 Position=UDim2.new(0.5,0,0.5,0),
 AnchorPoint=Vector2.new(0.5,0.5),
 Name="InnerGlass",
-ImageColor3=Color3.fromRGB(170,176,188),
-ImageTransparency=0.92,
+ThemeTag={
+ImageColor3="Text",
+},
+ImageTransparency=0.965,
 }),
 aj("Frame",{
 Name="TopLine",
 BackgroundColor3=Color3.new(1,1,1),
-BackgroundTransparency=0.95,
-Size=UDim2.new(1,-18,0,1),
+BackgroundTransparency=0.965,
+Size=UDim2.new(1,-20,0,1),
 Position=UDim2.new(0.5,0,0,1),
 AnchorPoint=Vector2.new(0.5,0),
 },{
 aj("UICorner",{
 CornerRadius=UDim.new(0,999),
 }),
-}),
-aj("ImageLabel",{
-BackgroundTransparency=1,
-Image="rbxassetid://1316045217",
-ImageColor3=Color3.fromRGB(255,255,255),
-ImageTransparency=0.975,
-Size=UDim2.new(0,54,0,54),
-Position=UDim2.new(1,-72,0,6),
-}),
-aj("ImageLabel",{
-BackgroundTransparency=1,
-Image="rbxassetid://1316045217",
-ImageColor3=Color3.fromRGB(240,244,255),
-ImageTransparency=0.982,
-Size=UDim2.new(0,38,0,38),
-Position=UDim2.new(1,-30,0,16),
 }),
 })
 
@@ -10678,12 +10667,12 @@ Parent=r,
 
 local v=ah.NewRoundFrame(999,"Squircle",{
 Name="ActivePill",
-Size=UDim2.new(0,l,0,g),
-Position=UDim2.new(0,0,0,0),
+Size=UDim2.new(0,l-4,0,g-4),
+Position=UDim2.new(0,2,0,2),
 ThemeTag={
 ImageColor3="Accent",
 },
-ImageTransparency=0.04,
+ImageTransparency=0.06,
 Visible=false,
 Parent=u,
 },{
@@ -10691,12 +10680,12 @@ ah.NewRoundFrame(999,"Glass-1",{
 Size=UDim2.new(1,0,1,0),
 Name="Outline",
 ImageColor3=Color3.new(1,1,1),
-ImageTransparency=0.82,
+ImageTransparency=0.86,
 }),
 aj("Frame",{
 Name="TopLine",
 BackgroundColor3=Color3.new(1,1,1),
-BackgroundTransparency=0.94,
+BackgroundTransparency=0.96,
 Size=UDim2.new(1,-18,0,1),
 Position=UDim2.new(0.5,0,0,1),
 AnchorPoint=Vector2.new(0.5,0),
@@ -10752,7 +10741,7 @@ for C,F in ipairs(b)do
 F.Button.Size=UDim2.new(0,l,0,g)
 end
 
-v.Size=UDim2.new(0,l,0,g)
+v.Size=UDim2.new(0,l-4,0,g-4)
 r.Size=UDim2.new(0,B+(j*2),0,h)
 u.Size=UDim2.new(0,B,0,g)
 x.Size=UDim2.new(0,B,0,g)
@@ -10760,15 +10749,15 @@ v.Visible=true
 end
 
 local function MoveActivePill(A,B)
-local C=(A-1)*(l+f)
+local C=((A-1)*(l+f))+2
 
 if B then
-v.Position=UDim2.new(0,C,0,0)
+v.Position=UDim2.new(0,C,0,2)
 else
 ak(
 v,
 0.22,
-{Position=UDim2.new(0,C,0,0)},
+{Position=UDim2.new(0,C,0,2)},
 Enum.EasingStyle.Quint,
 Enum.EasingDirection.Out
 ):Play()
@@ -10892,7 +10881,7 @@ SortOrder="LayoutOrder",
 }),
 L,
 M,
-})
+}),
 })
 
 F.UIElements.ContainerFrame=H
@@ -10987,6 +10976,7 @@ b:Lock()
 end
 end
 end
+
 function aq.UnlockAll(aA)
 for aB,b in next,Window.AllElements do
 if b.Tab and b.Tab.Index and b.Tab.Index==aq.Index and b.Unlock then
@@ -10994,6 +10984,7 @@ b:Unlock()
 end
 end
 end
+
 function aq.GetLocked(aA)
 local aB={}
 for b,d in next,Window.AllElements do
@@ -11003,6 +10994,7 @@ end
 end
 return aB
 end
+
 function aq.GetUnlocked(aA)
 local aB={}
 for b,d in next,Window.AllElements do
