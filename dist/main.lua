@@ -11471,6 +11471,8 @@ local as=a.load'y'
 return function(at)
 local au={
 Title=at.Title or"UI Library",
+SubTitle=at.SubTitle,
+TitleMessages=at.TitleMessages,
 TitleAnim=at.TitleAnim,
 TitleFont=at.TitleFont or al.Font,
 TitleFontWeight=at.TitleFontWeight or Enum.FontWeight.SemiBold,
@@ -12122,6 +12124,32 @@ TextColor3="WindowTopbarTitle",
 
 local u=0
 
+local function GetTitleMessages()
+local v={}
+
+if type(au.TitleMessages)=="table"and#au.TitleMessages>0 then
+for x,z in ipairs(au.TitleMessages)do
+if type(z)=="string"and z~=""then
+table.insert(v,z)
+end
+end
+else
+if type(au.Title)=="string"and au.Title~=""then
+table.insert(v,au.Title)
+end
+
+if type(au.SubTitle)=="string"and au.SubTitle~=""and au.SubTitle~=au.Title then
+table.insert(v,au.SubTitle)
+end
+end
+
+if#v==0 then
+v={"UI Library"}
+end
+
+return v
+end
+
 local function GetTitleAnimConfig()
 local v=au.TitleAnim
 
@@ -12130,11 +12158,11 @@ return nil
 end
 
 if type(v)=="string"then
-local x=(v=="FadeLoop"or v=="Pulse"or v=="TypingCursor")
+local x=(v=="FadeLoop"or v=="Pulse"or v=="TypingCursor"or v=="TypingWrite")
 return{
 Type=v,
 Speed=0.055,
-Delay=6,
+Delay=3.5,
 Loop=x,
 CursorChar="▏",
 }
@@ -12142,12 +12170,12 @@ end
 
 if type(v)=="table"then
 local x=v.Type or v.Name or"TypingWrite"
-local z=(x=="FadeLoop"or x=="Pulse"or x=="TypingCursor")
+local z=(x=="FadeLoop"or x=="Pulse"or x=="TypingCursor"or x=="TypingWrite")
 
 return{
 Type=x,
 Speed=v.Speed or 0.055,
-Delay=v.Delay or 6,
+Delay=v.Delay or 3.5,
 Loop=v.Loop==nil and z or v.Loop,
 CursorChar=v.CursorChar or"▏",
 }
@@ -12161,6 +12189,7 @@ r.Text=au.Title
 r.TextTransparency=0
 r.Position=UDim2.new(0,0,0,0)
 r.TextSize=au.TitleTextSize
+r.FontFace=Font.new(au.TitleFont,au.TitleFontWeight)
 end
 
 local function StopWindowTitleAnimation()
@@ -12177,7 +12206,7 @@ return
 end
 
 local x=u
-local z=au.Title or"UI Library"
+local z=GetTitleMessages()
 local A=string.lower(tostring(v.Type))
 
 task.spawn(function()
@@ -12185,51 +12214,65 @@ local function alive()
 return x==u and not au.Destroyed
 end
 
+local B=1
+
+local function getCurrentMessage()
+return z[B]or au.Title or"UI Library"
+end
+
+local function nextMessage()
+B+=1
+if B>#z then
+B=1
+end
+end
+
 if A=="typingwrite"or A=="typingcursor"then
 repeat
+local C=getCurrentMessage()
+
 r.Text=""
 r.TextTransparency=0
 
-for B=1,#z do
+for F=1,#C do
 if not alive()then
 return
 end
 
-local C=string.sub(z,1,B)
+local G=string.sub(C,1,F)
 if A=="typingcursor"then
-r.Text=C..v.CursorChar
+r.Text=G..v.CursorChar
 else
-r.Text=C
+r.Text=G
 end
 
 task.wait(v.Speed)
 end
 
-r.Text=z
+r.Text=C
 
 if A=="typingcursor"then
-local B=v.Loop and 6 or 4
-
-for C=1,B do
+for F=1,4 do
 if not alive()then
 return
 end
-r.Text=z..v.CursorChar
-task.wait(0.35)
+r.Text=C..v.CursorChar
+task.wait(0.3)
 
 if not alive()then
 return
 end
-r.Text=z
-task.wait(0.35)
+r.Text=C
+task.wait(0.3)
 end
 end
 
-if not v.Loop then
+if#z<=1 and not v.Loop then
 break
 end
 
 task.wait(v.Delay)
+nextMessage()
 until not alive()
 
 if alive()then
@@ -12238,6 +12281,9 @@ end
 
 elseif A=="fadeloop"then
 while alive()do
+local C=getCurrentMessage()
+r.Text=C
+
 an(
 r,
 0.8,
@@ -12259,10 +12305,19 @@ Enum.EasingStyle.Sine,
 Enum.EasingDirection.InOut
 ):Play()
 task.wait(v.Delay)
+
+if#z>1 or v.Loop then
+nextMessage()
+else
+break
+end
 end
 
 elseif A=="pulse"then
 while alive()do
+local C=getCurrentMessage()
+r.Text=C
+
 an(
 r,
 0.18,
@@ -12284,10 +12339,18 @@ Enum.EasingStyle.Quint,
 Enum.EasingDirection.Out
 ):Play()
 task.wait(v.Delay)
+
+if#z>1 or v.Loop then
+nextMessage()
+else
+break
+end
 end
 
 elseif A=="slidereveal"then
 repeat
+local C=getCurrentMessage()
+r.Text=C
 r.Position=UDim2.new(0,-10,0,0)
 r.TextTransparency=1
 
@@ -12302,11 +12365,12 @@ Enum.EasingStyle.Quint,
 Enum.EasingDirection.Out
 ):Play()
 
-if not v.Loop then
+if#z<=1 and not v.Loop then
 break
 end
 
 task.wait(v.Delay)
+nextMessage()
 until not alive()
 
 if alive()then
@@ -12749,6 +12813,26 @@ end
 
 function au.SetTitle(x,z)
 au.Title=z
+
+if au.Closed then
+StopWindowTitleAnimation()
+else
+RunWindowTitleAnimation()
+end
+end
+
+function au.SetSubTitle(x,z)
+au.SubTitle=z
+
+if au.Closed then
+StopWindowTitleAnimation()
+else
+RunWindowTitleAnimation()
+end
+end
+
+function au.SetTitleMessages(x,z)
+au.TitleMessages=z
 
 if au.Closed then
 StopWindowTitleAnimation()
