@@ -1201,310 +1201,368 @@ end
 
 
 return b end function a.e()
-local b=a.load'c'
-local d=b.New
-local e=b.Tween
+local b=(cloneref or clonereference or function(b)
+return b
+end)
 
-local f={
-Size=UDim2.new(0,300,1,-156),
-SizeLower=UDim2.new(0,300,1,-56),
-UICorner=18,
-UIPadding=14,
+local d=a.load'c'
+local e=d.New
+local f=d.Tween
 
-Holder=nil,
+local g=b(game:GetService"Players")
+local h=g.LocalPlayer
+local j=workspace.CurrentCamera
+
+local l={
+UICorner=28,
+UIPadding=16,
 NotificationIndex=0,
-Notifications={}
+Notifications={},
 }
 
-function f.Init(g)
-local h={
-Lower=false
-}
-
-function h.SetLower(j)
-h.Lower=j
-h.Frame.Size=j and f.SizeLower or f.Size
+local function GetHolderWidth()
+local m=j and j.ViewportSize.X or 800
+return math.clamp(m-28,300,430)
 end
 
-h.Frame=d("Frame",{
-Position=UDim2.new(1,-29,0,56),
-AnchorPoint=Vector2.new(1,0),
-Size=f.Size,
-Parent=g,
+local function GetDefaultAvatar()
+local m,p=pcall(function()
+return g:GetUserThumbnailAsync(
+h and h.UserId or 1,
+Enum.ThumbnailType.HeadShot,
+Enum.ThumbnailSize.Size150x150
+)
+end)
+
+if m and p then
+return p
+end
+
+return"rbxasset://textures/ui/GuiImagePlaceholder.png"
+end
+
+function l.Init(m)
+local p={
+Lower=false,
+}
+
+local function ApplyHolderLayout()
+local r=GetHolderWidth()
+local u=p.Lower and 94 or 62
+
+p.Frame.Position=UDim2.new(0.5,0,0,u)
+p.Frame.Size=UDim2.new(0,r,1,-(u+20))
+end
+
+function p.SetLower(r)
+p.Lower=r
+ApplyHolderLayout()
+end
+
+p.Frame=e("Frame",{
+Position=UDim2.new(0.5,0,0,62),
+AnchorPoint=Vector2.new(0.5,0),
+Size=UDim2.new(0,GetHolderWidth(),1,-82),
+Parent=m,
 BackgroundTransparency=1,
-
-
-
-
+ClipsDescendants=false,
 },{
-d("UIListLayout",{
+e("UIListLayout",{
 HorizontalAlignment="Center",
 SortOrder="LayoutOrder",
-VerticalAlignment="Bottom",
-Padding=UDim.new(0,8),
+VerticalAlignment="Top",
+Padding=UDim.new(0,10),
 }),
-d("UIPadding",{
-PaddingBottom=UDim.new(0,29)
 })
-})
-return h
+
+if j then
+d.AddSignal(j:GetPropertyChangedSignal"ViewportSize",function()
+ApplyHolderLayout()
+end)
 end
 
-function f.New(g)
-local h={
-Title=g.Title or"Notification",
-Content=g.Content or nil,
-Icon=g.Icon or nil,
-IconThemed=g.IconThemed,
-Background=g.Background,
-BackgroundImageTransparency=g.BackgroundImageTransparency,
-Duration=g.Duration or 5,
-Buttons=g.Buttons or{},
-CanClose=g.CanClose~=false,
+return p
+end
+
+function l.New(m)
+local p={
+Title=m.Title or"Notification",
+Content=m.Content or nil,
+Icon=m.Icon or nil,
+IconThemed=m.IconThemed,
+Avatar=m.Avatar or nil,
+TimeText=m.TimeText or"now",
+Background=m.Background,
+BackgroundImageTransparency=m.BackgroundImageTransparency or 1,
+Duration=m.Duration or 5,
+Buttons=m.Buttons or{},
+CanClose=m.CanClose~=false,
 UIElements={},
 Closed=false,
 }
 
+l.NotificationIndex=l.NotificationIndex+1
+l.Notifications[l.NotificationIndex]=p
 
+local r=58
+local u=22
+GetHolderWidth()
 
-f.NotificationIndex=f.NotificationIndex+1
-f.Notifications[f.NotificationIndex]=h
+local v=p.Avatar or GetDefaultAvatar()
 
-
-
-
-
-
-
-
-
-local j
-
-if h.Icon then
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-j=b.Image(
-h.Icon,
-h.Title..":"..h.Icon,
+local x
+if p.Icon then
+x=d.Image(
+p.Icon,
+p.Title..":"..p.Icon,
 0,
-g.Window,
-"Notification",
-h.IconThemed
+m.Window,
+"NotificationBadge",
+true,
+p.IconThemed
 )
-j.Size=UDim2.new(0,26,0,26)
-j.Position=UDim2.new(0,f.UIPadding,0,f.UIPadding)
-
+x.Size=UDim2.new(0,u,0,u)
+x.AnchorPoint=Vector2.new(0.5,0.5)
+x.Position=UDim2.new(1,-2,1,-2)
 end
 
-local l
-if h.CanClose then
-l=d("ImageButton",{
-Image=b.Icon"x"[1],
-ImageRectSize=b.Icon"x"[2].ImageRectSize,
-ImageRectOffset=b.Icon"x"[2].ImageRectPosition,
-BackgroundTransparency=1,
-Size=UDim2.new(0,16,0,16),
-Position=UDim2.new(1,-f.UIPadding,0,f.UIPadding),
-AnchorPoint=Vector2.new(1,0),
+local z=d.NewRoundFrame(l.UICorner,"Squircle",{
+Size=UDim2.new(1,0,0,92),
+AutomaticSize="Y",
+AnchorPoint=Vector2.new(0.5,0),
+Position=UDim2.new(0.5,0,0,-22),
+ImageTransparency=0.1,
 ThemeTag={
-ImageColor3="Text"
+ImageColor3="Notification",
 },
-ImageTransparency=.4,
+Parent=nil,
 },{
-d("TextButton",{
-Size=UDim2.new(1,8,1,8),
-BackgroundTransparency=1,
-AnchorPoint=Vector2.new(0.5,0.5),
-Position=UDim2.new(0.5,0,0.5,0),
-Text="",
-})
-})
-end
-
-local m=b.NewRoundFrame(f.UICorner,"Squircle",{
-Size=UDim2.new(0,0,1,0),
-ThemeTag={
-ImageTransparency="NotificationDurationTransparency",
-ImageColor3="NotificationDuration",
-},
-
-})
-
-local p=d("Frame",{
-Size=UDim2.new(1,
-h.Icon and-28-f.UIPadding or 0,
-1,0),
-Position=UDim2.new(1,0,0,0),
-AnchorPoint=Vector2.new(1,0),
-BackgroundTransparency=1,
-AutomaticSize="Y",
-},{
-d("UIPadding",{
-PaddingTop=UDim.new(0,f.UIPadding),
-PaddingLeft=UDim.new(0,f.UIPadding),
-PaddingRight=UDim.new(0,f.UIPadding),
-PaddingBottom=UDim.new(0,f.UIPadding),
-}),
-d("TextLabel",{
-AutomaticSize="Y",
-Size=UDim2.new(1,-30-f.UIPadding,0,0),
-TextWrapped=true,
-TextXAlignment="Left",
-RichText=true,
-BackgroundTransparency=1,
-TextSize=18,
-ThemeTag={
-TextColor3="NotificationTitle",
-TextTransparency="NotificationTitleTransparency",
-},
-Text=h.Title,
-FontFace=Font.new(b.Font,Enum.FontWeight.SemiBold)
-}),
-d("UIListLayout",{
-Padding=UDim.new(0,f.UIPadding/3)
-})
-})
-
-if h.Content then
-d("TextLabel",{
-AutomaticSize="Y",
-Size=UDim2.new(1,0,0,0),
-TextWrapped=true,
-TextXAlignment="Left",
-RichText=true,
-BackgroundTransparency=1,
-
-TextSize=15,
-ThemeTag={
-TextColor3="NotificationContent",
-TextTransparency="NotificationContentTransparency",
-},
-Text=h.Content,
-FontFace=Font.new(b.Font,Enum.FontWeight.Medium),
-Parent=p
-})
-end
-
-
-local r=b.NewRoundFrame(f.UICorner,"Squircle",{
-Size=UDim2.new(1,0,0,0),
-Position=UDim2.new(2,0,1,0),
-AnchorPoint=Vector2.new(0,1),
-AutomaticSize="Y",
-ImageTransparency=.05,
-ThemeTag={
-ImageColor3="Notification"
-},
-
-},{
-b.NewRoundFrame(f.UICorner,"Glass-1",{
+d.NewRoundFrame(l.UICorner,"Glass-1.4",{
 Size=UDim2.new(1,0,1,0),
+Name="Outline",
+ImageTransparency=0.68,
 ThemeTag={
 ImageColor3="NotificationBorder",
-ImageTransparency="NotificationBorderTransparency",
 },
 }),
-d("Frame",{
-Size=UDim2.new(1,0,1,0),
-BackgroundTransparency=1,
-Name="DurationFrame",
-},{
-d("Frame",{
-Size=UDim2.new(1,0,1,0),
-BackgroundTransparency=1,
-ClipsDescendants=true,
-},{
-m,
-}),
 
-
-
-
-
-}),
-d("ImageLabel",{
+e("ImageLabel",{
 Name="Background",
-Image=h.Background,
+Image=p.Background,
 BackgroundTransparency=1,
 Size=UDim2.new(1,0,1,0),
 ScaleType="Crop",
-ImageTransparency=h.BackgroundImageTransparency
-
+ImageTransparency=p.BackgroundImageTransparency,
+Visible=p.Background~=nil,
 },{
-d("UICorner",{
-CornerRadius=UDim.new(0,f.UICorner),
-})
+e("UICorner",{
+CornerRadius=UDim.new(0,l.UICorner),
+}),
 }),
 
-p,
-j,l,
+e("Frame",{
+Name="Gloss",
+BackgroundTransparency=1,
+Size=UDim2.new(1,0,1,0),
+},{
+e("Frame",{
+BackgroundColor3=Color3.new(1,1,1),
+BackgroundTransparency=0.97,
+Size=UDim2.new(1,-10,0,1),
+Position=UDim2.new(0.5,0,0,1),
+AnchorPoint=Vector2.new(0.5,0),
+},{
+e("UICorner",{
+CornerRadius=UDim.new(0,999),
+}),
+}),
+}),
+
+e("Frame",{
+Name="Content",
+BackgroundTransparency=1,
+AutomaticSize="Y",
+Size=UDim2.new(1,0,0,0),
+},{
+e("UIPadding",{
+PaddingTop=UDim.new(0,l.UIPadding),
+PaddingLeft=UDim.new(0,l.UIPadding),
+PaddingRight=UDim.new(0,l.UIPadding),
+PaddingBottom=UDim.new(0,l.UIPadding),
+}),
+
+e("Frame",{
+Name="AvatarHolder",
+BackgroundTransparency=1,
+Size=UDim2.new(0,r,0,r),
+Position=UDim2.new(0,0,0,0),
+},{
+e("ImageLabel",{
+Name="Avatar",
+Image=v,
+BackgroundTransparency=1,
+Size=UDim2.new(0,r,0,r),
+ScaleType="Crop",
+},{
+e("UICorner",{
+CornerRadius=UDim.new(1,0),
+}),
+}),
+e("Frame",{
+Size=UDim2.new(0,u+4,0,u+4),
+Position=UDim2.new(1,-2,1,-2),
+AnchorPoint=Vector2.new(0.5,0.5),
+BackgroundColor3=Color3.fromRGB(24,24,26),
+BackgroundTransparency=0.05,
+Visible=x~=nil,
+},{
+e("UICorner",{
+CornerRadius=UDim.new(1,0),
+}),
+x,
+}),
+}),
+
+e("TextLabel",{
+Name="Time",
+Text=p.TimeText,
+BackgroundTransparency=1,
+Size=UDim2.new(0,48,0,20),
+Position=UDim2.new(1,0,0,1),
+AnchorPoint=Vector2.new(1,0),
+TextXAlignment="Right",
+TextYAlignment="Top",
+TextSize=14,
+Font=Enum.Font.BuilderSansMedium,
+TextColor3=Color3.fromRGB(218,218,223),
+TextTransparency=0.12,
+}),
+
+e("Frame",{
+Name="TextContainer",
+BackgroundTransparency=1,
+AutomaticSize="Y",
+Size=UDim2.new(1,-(r+12+52),0,0),
+Position=UDim2.new(0,r+14,0,2),
+},{
+e("UIListLayout",{
+Padding=UDim.new(0,2),
+SortOrder="LayoutOrder",
+VerticalAlignment="Top",
+}),
+
+e("TextLabel",{
+Name="Title",
+Text=p.Title,
+BackgroundTransparency=1,
+AutomaticSize="Y",
+Size=UDim2.new(1,0,0,0),
+TextWrapped=true,
+TextXAlignment="Left",
+TextYAlignment="Top",
+TextSize=17,
+Font=Enum.Font.BuilderSansBold,
+TextColor3=Color3.fromRGB(245,245,247),
+}),
+
+e("TextLabel",{
+Name="Content",
+Text=p.Content or"",
+BackgroundTransparency=1,
+AutomaticSize="Y",
+Size=UDim2.new(1,0,0,0),
+TextWrapped=true,
+TextXAlignment="Left",
+TextYAlignment="Top",
+TextSize=16,
+Font=Enum.Font.BuilderSansMedium,
+TextColor3=Color3.fromRGB(232,232,236),
+TextTransparency=0.04,
+Visible=p.Content~=nil,
+}),
+}),
+}),
 })
 
-local u=d("Frame",{
+local A
+if p.CanClose then
+A=e("TextButton",{
+Size=UDim2.new(1,0,1,0),
+BackgroundTransparency=1,
+Text="",
+Parent=z,
+})
+end
+
+local B=e("Frame",{
 BackgroundTransparency=1,
 Size=UDim2.new(1,0,0,0),
-Parent=g.Holder
+AutomaticSize="None",
+Parent=m.Holder,
+ClipsDescendants=false,
 },{
-r
+z,
 })
 
-function h.Close(v)
-if not h.Closed then
-h.Closed=true
-e(u,0.45,{Size=UDim2.new(1,0,0,-8)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-e(r,0.55,{Position=UDim2.new(2,0,1,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-task.wait(.45)
-u:Destroy()
+p.UIElements.Main=z
+p.UIElements.MainContainer=B
+
+function p.Close(C)
+if p.Closed then
+return
+end
+
+p.Closed=true
+
+f(B,0.35,{
+Size=UDim2.new(1,0,0,0),
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+f(z,0.35,{
+Position=UDim2.new(0.5,0,0,-18),
+ImageTransparency=1,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+task.wait(0.36)
+if B then
+B:Destroy()
 end
 end
 
 task.spawn(function()
 task.wait()
-e(u,0.45,{Size=UDim2.new(
-1,
-0,
-0,
-r.AbsoluteSize.Y
-)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-e(r,0.45,{Position=UDim2.new(0,0,1,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-if h.Duration then
-m.Size=UDim2.new(0,r.DurationFrame.AbsoluteSize.X,1,0)
-e(r.DurationFrame.Frame,h.Duration,{Size=UDim2.new(0,0,1,0)},Enum.EasingStyle.Linear,Enum.EasingDirection.InOut):Play()
-task.wait(h.Duration)
-h:Close()
+
+local C=z.AbsoluteSize.Y
+
+B.Size=UDim2.new(1,0,0,0)
+z.Position=UDim2.new(0.5,0,0,-22)
+z.ImageTransparency=1
+
+f(B,0.38,{
+Size=UDim2.new(1,0,0,C),
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+f(z,0.38,{
+Position=UDim2.new(0.5,0,0,0),
+ImageTransparency=0.1,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+if p.Duration and p.Duration>0 then
+task.wait(p.Duration)
+p:Close()
 end
 end)
 
-if l then
-b.AddSignal(l.TextButton.MouseButton1Click,function()
-h:Close()
+if A then
+d.AddSignal(A.MouseButton1Click,function()
+p:Close()
 end)
 end
 
-
-return h
+return p
 end
 
-return f end function a.f()
+return l end function a.f()
 
 
 
