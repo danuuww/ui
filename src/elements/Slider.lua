@@ -29,7 +29,7 @@ function Element:New(Config)
 		IsTooltip = Config.IsTooltip or false,
 
 		InputBox = Config.InputBox,
-		IsTextbox = Config.IsTextbox, -- backward compatibility
+		IsTextbox = Config.IsTextbox,
 		Step = Config.Step or 1,
 		Precision = Config.Precision,
 
@@ -97,6 +97,10 @@ function Element:New(Config)
 		end
 		return math.clamp((val - MinValue) / (MaxValue - MinValue), 0, 1)
 	end
+
+	local ThumbWidth = Config.Window.NewElements and (Slider.ThumbSize * 2) or (Slider.ThumbSize + 2)
+	local ThumbHeight = Config.Window.NewElements and (Slider.ThumbSize + 4) or (Slider.ThumbSize + 2)
+	local ThumbInset = math.floor(ThumbWidth / 2)
 
 	local IconFrom, IconTo
 	local LeftIconOffset = 0
@@ -169,11 +173,25 @@ function Element:New(Config)
 		Visible = ShowHeader,
 		Parent = Slider.UIElements.Root,
 		LayoutOrder = 1,
+		ClipsDescendants = false,
 	})
 
+	if Slider.Title then
+		Slider.UIElements.TitleAccent = Creator.NewRoundFrame(999, "Squircle", {
+			Size = UDim2.new(0, 10, 0, 3),
+			Position = UDim2.new(0, 0, 0.5, 0),
+			AnchorPoint = Vector2.new(0, 0.5),
+			ThemeTag = {
+				ImageColor3 = "Slider",
+			},
+			ImageTransparency = 0.08,
+			Parent = Slider.UIElements.HeaderRow,
+		})
+	end
+
 	Slider.UIElements.TitleLabel = New("TextLabel", {
-		Size = UDim2.new(1, Slider.InputBox and -(Slider.TextBoxWidth + 8) or 0, 1, 0),
-		Position = UDim2.new(0, 0, 0, 0),
+		Size = UDim2.new(1, Slider.InputBox and -(Slider.TextBoxWidth + 12) or 0, 1, 0),
+		Position = UDim2.new(0, Slider.Title and 16 or 0, 0, 0),
 		BackgroundTransparency = 1,
 		Text = Slider.Title or "",
 		Visible = Slider.Title ~= nil,
@@ -184,14 +202,14 @@ function Element:New(Config)
 		ThemeTag = {
 			TextColor3 = "Text"
 		},
-		TextTransparency = 0.05,
+		TextTransparency = 0.04,
 		Parent = Slider.UIElements.HeaderRow,
 	})
 
 	if Slider.InputBox then
 		Slider.UIElements.TextBox = New("TextBox", {
 			Size = UDim2.new(0, Slider.TextBoxWidth, 0, Slider.TextBoxHeight),
-			Position = UDim2.new(1, 0, 0.5, 0),
+			Position = UDim2.new(1, 2, 0.5, 0),
 			AnchorPoint = Vector2.new(1, 0.5),
 			TextXAlignment = "Center",
 			ClearTextOnFocus = false,
@@ -252,6 +270,14 @@ function Element:New(Config)
 		AnchorPoint = Vector2.new(0, 0.5),
 		BackgroundTransparency = 1,
 		Parent = Slider.UIElements.BodyRow,
+		ClipsDescendants = false,
+	})
+
+	Slider.UIElements.TrackInset = New("Frame", {
+		Size = UDim2.new(1, -(ThumbInset * 2), 1, 0),
+		Position = UDim2.new(0, ThumbInset, 0, 0),
+		BackgroundTransparency = 1,
+		Parent = Slider.UIElements.RailHitbox,
 	})
 
 	Slider.UIElements.Track = Creator.NewRoundFrame(99, "Squircle", {
@@ -263,7 +289,7 @@ function Element:New(Config)
 		ThemeTag = {
 			ImageColor3 = "Text",
 		},
-		Parent = Slider.UIElements.RailHitbox,
+		Parent = Slider.UIElements.TrackInset,
 	})
 
 	Slider.UIElements.Fill = Creator.NewRoundFrame(99, "Squircle", {
@@ -276,24 +302,21 @@ function Element:New(Config)
 		Parent = Slider.UIElements.Track,
 	}, {
 		Creator.NewRoundFrame(99, "Squircle", {
-			Size = UDim2.new(
-				0,
-				Config.Window.NewElements and (Slider.ThumbSize * 2) or (Slider.ThumbSize + 2),
-				0,
-				Config.Window.NewElements and (Slider.ThumbSize + 4) or (Slider.ThumbSize + 2)
-			),
+			Size = UDim2.new(0, ThumbWidth, 0, ThumbHeight),
 			Position = UDim2.new(1, 0, 0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			ThemeTag = {
 				ImageColor3 = "SliderThumb",
 			},
 			Name = "Thumb",
+			ZIndex = 2,
 		}, {
 			Creator.NewRoundFrame(99, "Glass-1", {
 				Size = UDim2.new(1, 0, 1, 0),
 				ImageColor3 = Color3.new(1, 1, 1),
 				Name = "Highlight",
 				ImageTransparency = 0.6,
+				ZIndex = 3,
 			}),
 		})
 	})
@@ -372,7 +395,7 @@ function Element:New(Config)
 
 			local function UpdateFromPointer()
 				local inputPosition = isTouch and input.Position.X or UserInputService:GetMouseLocation().X
-				local delta = math.clamp((inputPosition - Slider.UIElements.RailHitbox.AbsolutePosition.X) / Slider.UIElements.RailHitbox.AbsoluteSize.X, 0, 1)
+				local delta = math.clamp((inputPosition - Slider.UIElements.TrackInset.AbsolutePosition.X) / Slider.UIElements.TrackInset.AbsoluteSize.X, 0, 1)
 				local rawValue = MinValue + delta * (MaxValue - MinValue)
 				CommitValue(rawValue, true, true, false)
 			end
@@ -400,12 +423,7 @@ function Element:New(Config)
 					if Config.Window.NewElements then
 						Tween(Slider.UIElements.Fill.Thumb, 0.2, {
 							ImageTransparency = 0,
-							Size = UDim2.new(
-								0,
-								Config.Window.NewElements and (Slider.ThumbSize * 2) or (Slider.ThumbSize + 2),
-								0,
-								Config.Window.NewElements and (Slider.ThumbSize + 4) or (Slider.ThumbSize + 2)
-							)
+							Size = UDim2.new(0, ThumbWidth, 0, ThumbHeight)
 						}, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut):Play()
 					end
 
@@ -492,12 +510,7 @@ function Element:New(Config)
 			if Config.Window.NewElements then
 				Tween(Slider.UIElements.Fill.Thumb, 0.24, {
 					ImageTransparency = 0.85,
-					Size = UDim2.new(
-						0,
-						(Config.Window.NewElements and (Slider.ThumbSize * 2) or Slider.ThumbSize) + 8,
-						0,
-						Slider.ThumbSize + 8
-					)
+					Size = UDim2.new(0, ThumbWidth + 8, 0, ThumbHeight + 4)
 				}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 			end
 
