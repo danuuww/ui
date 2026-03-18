@@ -6062,43 +6062,68 @@ local ac=ab.New
 local ad=ab.Tween
 
 local ae=game:GetService"UserInputService"
+local af=game:GetService"TweenService"
 
-function aa.New(af,ag,ah,ai,aj,ak,al)
-local am={}
+function aa.New(ag,ah,ai,aj,ak,al,am)
+local an={}
 
-local an=12
-local ao
-if ag and ag~=""then
-ao=ac("ImageLabel",{
+local ao=12
+local ap
+if ah and ah~=""then
+ap=ac("ImageLabel",{
 Size=UDim2.new(0,13,0,13),
 BackgroundTransparency=1,
 AnchorPoint=Vector2.new(0.5,0.5),
 Position=UDim2.new(0.5,0,0.5,0),
-Image=ab.Icon(ag)[1],
-ImageRectOffset=ab.Icon(ag)[2].ImageRectPosition,
-ImageRectSize=ab.Icon(ag)[2].ImageRectSize,
+Image=ab.Icon(ah)[2],
+ImageRectOffset=ab.Icon(ah)[1].ImageRectPosition,
+ImageRectSize=ab.Icon(ah)[1].ImageRectSize,
 ImageTransparency=1,
 ImageColor3=Color3.new(0,0,0),
 })
 end
 
-local ap=ac("Frame",{
+local aq=ac("Frame",{
 Size=UDim2.new(0,2,0,26),
 BackgroundTransparency=1,
-Parent=ai,
+Parent=aj,
 })
 
-local aq=ab.NewRoundFrame(an,"Squircle",{
+local ar=al and 30 or 20
+local as=al and(52)or(40.8)
+
+
+local at=ac("ImageLabel",{
+Name="BreathingGlow",
+BackgroundTransparency=1,
+Image="rbxassetid://1316045217",
+ThemeTag={ImageColor3="Accent"},
+ImageTransparency=1,
+Size=UDim2.new(0,as+15,0,39),
+Position=UDim2.new(0,0,0.5,0),
+AnchorPoint=Vector2.new(1,0.5),
+ZIndex=0,
+Parent=aq
+})
+
+local au=TweenInfo.new(1,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut,-1,true)
+local av=af:Create(at,au,{
+ImageTransparency=0.5,
+Size=UDim2.new(0,as+30,0,54)
+})
+
+
+local aw=ab.NewRoundFrame(ao,"Squircle",{
 ImageTransparency=.85,
 ThemeTag={
 ImageColor3="Text"
 },
-Parent=ap,
-Size=UDim2.new(0,ak and(52)or(40.8),0,24),
+Parent=aq,
+Size=UDim2.new(0,as,0,24),
 AnchorPoint=Vector2.new(1,0.5),
 Position=UDim2.new(0,0,0.5,0),
 },{
-ab.NewRoundFrame(an,"Squircle",{
+ab.NewRoundFrame(ao,"Squircle",{
 Size=UDim2.new(1,0,1,0),
 Name="Layer",
 ThemeTag={
@@ -6106,7 +6131,7 @@ ImageColor3="Toggle",
 },
 ImageTransparency=1,
 }),
-ab.NewRoundFrame(an,"SquircleOutline",{
+ab.NewRoundFrame(ao,"SquircleOutline",{
 Size=UDim2.new(1,0,1,0),
 Name="Stroke",
 ImageColor3=Color3.new(1,1,1),
@@ -6122,14 +6147,14 @@ NumberSequenceKeypoint.new(1,1),
 }),
 
 
-ab.NewRoundFrame(an,"Squircle",{
-Size=UDim2.new(0,ak and 30 or 20,0,20),
+ab.NewRoundFrame(ao,"Squircle",{
+Size=UDim2.new(0,ar,0,20),
 Position=UDim2.new(0,2,0.5,0),
 AnchorPoint=Vector2.new(0,0.5),
 ImageTransparency=1,
 Name="Frame",
 },{
-ab.NewRoundFrame(an,"Squircle",{
+ab.NewRoundFrame(ao,"Squircle",{
 Size=UDim2.new(1,0,1,0),
 ImageTransparency=0,
 ThemeTag={
@@ -6139,27 +6164,13 @@ AnchorPoint=Vector2.new(0.5,0.5),
 Position=UDim2.new(0.5,0,0.5,0),
 Name="Bar"
 },{
-ab.NewRoundFrame(an,"Glass-1",{
+ab.NewRoundFrame(ao,"Glass-1",{
 Size=UDim2.new(1,0,1,0),
 ImageColor3=Color3.new(1,1,1),
 Name="Highlight",
 ImageTransparency=0.4,
-},{
-
-
-
-
-
-
-
-
-
-
-
-
-
 }),
-ao,
+ap,
 ac("UIScale",{
 Scale=1,
 })
@@ -6167,172 +6178,134 @@ Scale=1,
 })
 })
 
-local ar
-local as
+local ax
+local ay
 
-local at=ak and 30 or 20
-local au=aq.Size.X.Offset
 
-function am.Set(av,aw,ax,ay)
-if not ay then
-if aw then
-ad(aq.Frame,0.15,{
-Position=UDim2.new(0,au-at-2,0.5,0),
+function an.Set(az,aA,aB,b)
+if not b then
+if aA then
+ad(aw.Frame,0.15,{
+Position=UDim2.new(0,as-ar-2,0.5,0),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 else
-ad(aq.Frame,0.15,{
+ad(aw.Frame,0.15,{
 Position=UDim2.new(0,2,0.5,0),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 else
-if aw then
-aq.Frame.Position=UDim2.new(0,au-at-2,0.5,0)
+if aA then
+aw.Frame.Position=UDim2.new(0,as-ar-2,0.5,0)
 else
-aq.Frame.Position=UDim2.new(0,2,0.5,0)
+aw.Frame.Position=UDim2.new(0,2,0.5,0)
 end
 end
 
-if aw then
-ad(aq.Layer,0.1,{
-ImageTransparency=0,
-}):Play()
-
-if ao then
-ad(ao,0.1,{
-ImageTransparency=0,
-}):Play()
+if aA then
+ad(aw.Layer,0.1,{ImageTransparency=0}):Play()
+if ap then
+ad(ap,0.1,{ImageTransparency=0}):Play()
 end
+
+av:Play()
 else
-ad(aq.Layer,0.1,{
-ImageTransparency=1,
-}):Play()
-
-if ao then
-ad(ao,0.1,{
-ImageTransparency=1,
-}):Play()
-end
+ad(aw.Layer,0.1,{ImageTransparency=1}):Play()
+if ap then
+ad(ap,0.1,{ImageTransparency=1}):Play()
 end
 
-ax=ax~=false
+av:Cancel()
+ad(at,0.3,{ImageTransparency=1,Size=UDim2.new(0,as+15,0,39)}):Play()
+end
+
+aB=aB~=false
 
 task.spawn(function()
-if aj and ax then
-ab.SafeCallback(aj,aw)
+if ak and aB then
+ab.SafeCallback(ak,aA)
 end
 end)
 end
 
+function an.Animate(az,aA,aB)
+if not am.Window.IsToggleDragging then
+am.Window.IsToggleDragging=true
 
-function am.Animate(av,aw,ax)
-if not al.Window.IsToggleDragging then
-al.Window.IsToggleDragging=true
+local b=aA.Position.X
+local d=aA.Position.Y
+local f=aw.Frame.Position.X.Offset
+local g=false
 
-local ay=aw.Position.X
-local az=aw.Position.Y
-local aA=aq.Frame.Position.X.Offset
-local aB=false
+ad(aw.Frame.Bar.UIScale,0.28,{Scale=1.5},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+ad(aw.Frame.Bar,0.28,{ImageTransparency=.85},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
-ad(aq.Frame.Bar.UIScale,0.28,{Scale=1.5},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-ad(aq.Frame.Bar,0.28,{ImageTransparency=.85},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-
-if ar then
-ar:Disconnect()
+if ax then
+ax:Disconnect()
 end
 
-ar=ae.InputChanged:Connect(function(b)
-if al.Window.IsToggleDragging and(b.UserInputType==Enum.UserInputType.MouseMovement or b.UserInputType==Enum.UserInputType.Touch)then
-if aB then
+ax=ae.InputChanged:Connect(function(h)
+if am.Window.IsToggleDragging and(h.UserInputType==Enum.UserInputType.MouseMovement or h.UserInputType==Enum.UserInputType.Touch)then
+if g then return end
+
+local j=math.abs(h.Position.X-b)
+local l=math.abs(h.Position.Y-d)
+
+if l>j and l>10 then
+g=true
+am.Window.IsToggleDragging=false
+
+if ax then ax:Disconnect()ax=nil end
+if ay then ay:Disconnect()ay=nil end
+
+ad(aw.Frame,0.15,{Position=UDim2.new(0,f,0.5,0)},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+ad(aw.Frame.Bar.UIScale,0.23,{Scale=1},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+ad(aw.Frame.Bar,0.23,{ImageTransparency=0},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 return
 end
 
-local d=math.abs(b.Position.X-ay)
-local f=math.abs(b.Position.Y-az)
+local m=h.Position.X-b
+local p=math.max(2,math.min(f+m,as-ar-2))
 
-if f>d and f>10 then
-aB=true
-al.Window.IsToggleDragging=false
-
-if ar then
-ar:Disconnect()
-ar=nil
-end
-if as then
-as:Disconnect()
-as=nil
-end
-
-ad(aq.Frame,0.15,{
-Position=UDim2.new(0,aA,0.5,0)
-},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-
-ad(aq.Frame.Bar.UIScale,0.23,{Scale=1},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-ad(aq.Frame.Bar,0.23,{ImageTransparency=0},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-return
-end
-
-local g=b.Position.X-ay
-local h=math.max(2,math.min(aA+g,au-at-2))local j=
-
-(aq.Frame.Position.X.Offset-2)/(au-at-4)
-
-ad(aq.Frame,0.05,{
-Position=UDim2.new(0,h,0.5,0)
-},Enum.EasingStyle.Linear,Enum.EasingDirection.Out):Play()
-
-
-
-
-
+ad(aw.Frame,0.05,{Position=UDim2.new(0,p,0.5,0)},Enum.EasingStyle.Linear,Enum.EasingDirection.Out):Play()
 end
 end)
 
-if as then
-as:Disconnect()
-end
+if ay then ay:Disconnect()end
 
-as=ae.InputEnded:Connect(function(b)
-if al.Window.IsToggleDragging and(b.UserInputType==Enum.UserInputType.MouseButton1 or b.UserInputType==Enum.UserInputType.Touch)then
-al.Window.IsToggleDragging=false
+ay=ae.InputEnded:Connect(function(h)
+if am.Window.IsToggleDragging and(h.UserInputType==Enum.UserInputType.MouseButton1 or h.UserInputType==Enum.UserInputType.Touch)then
+am.Window.IsToggleDragging=false
 
-if ar then
-ar:Disconnect()
-ar=nil
-end
+if ax then ax:Disconnect()ax=nil end
+if ay then ay:Disconnect()ay=nil end
 
-if as then
-as:Disconnect()
-as=nil
-end
+if g then return end
 
-if aB then
-return
-end
+local j=aw.Frame.Position.X.Offset
+local l=math.abs(h.Position.X-b)
 
-local d=aq.Frame.Position.X.Offset
-local f=math.abs(b.Position.X-ay)
-
-if f<10 then
-local g=not ax.Value
-ax:Set(g,true,false)
+if l<10 then
+local m=not aB.Value
+aB:Set(m,true,false)
 else
-local g=d+at/2
-local h=au/2
-local j=g>h
-ax:Set(j,true,false)
+local m=j+ar/2
+local p=as/2
+local r=m>p
+aB:Set(r,true,false)
 end
 
-ad(aq.Frame.Bar.UIScale,0.23,{Scale=1},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-ad(aq.Frame.Bar,0.23,{ImageTransparency=0},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+ad(aw.Frame.Bar.UIScale,0.23,{Scale=1},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+ad(aw.Frame.Bar,0.23,{ImageTransparency=0},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 end)
 end
 end
 
-return ap,am
+return aq,an
 end
 
 return aa end function a.F()
+
 local aa={}
 
 local ab=a.load'c'local ac=
