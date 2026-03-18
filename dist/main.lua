@@ -6708,13 +6708,17 @@ end
 return math.clamp((au-ap)/(aq-ap),0,1)
 end
 
-local au,av
-local aw=0
-local ax=0
+local au=ak.Window.NewElements and(al.ThumbSize*2)or(al.ThumbSize+2)
+local av=ak.Window.NewElements and(al.ThumbSize+4)or(al.ThumbSize+2)
+local aw=math.floor(au/2)
+
+local ax,ay
+local az=0
+local aA=0
 
 if al.Icons then
 if al.Icons.From then
-au=ae.Image(
+ax=ae.Image(
 al.Icons.From,
 al.Icons.From,
 0,
@@ -6724,12 +6728,12 @@ true,
 true,
 "SliderIconFrom"
 )
-au.Size=UDim2.new(0,al.IconSize,0,al.IconSize)
-aw=al.IconSize+6
+ax.Size=UDim2.new(0,al.IconSize,0,al.IconSize)
+az=al.IconSize+6
 end
 
 if al.Icons.To then
-av=ae.Image(
+ay=ae.Image(
 al.Icons.To,
 al.Icons.To,
 0,
@@ -6739,8 +6743,8 @@ true,
 true,
 "SliderIconTo"
 )
-av.Size=UDim2.new(0,al.IconSize,0,al.IconSize)
-ax=al.IconSize+6
+ay.Size=UDim2.new(0,al.IconSize,0,al.IconSize)
+aA=al.IconSize+6
 end
 end
 
@@ -6771,19 +6775,33 @@ SortOrder="LayoutOrder",
 })
 })
 
-local ay=al.Title~=nil or al.InputBox
+local aB=al.Title~=nil or al.InputBox
 
 al.UIElements.HeaderRow=af("Frame",{
-Size=UDim2.new(1,0,0,ay and al.TextBoxHeight or 0),
+Size=UDim2.new(1,0,0,aB and al.TextBoxHeight or 0),
 BackgroundTransparency=1,
-Visible=ay,
+Visible=aB,
 Parent=al.UIElements.Root,
 LayoutOrder=1,
+ClipsDescendants=false,
 })
 
+if al.Title then
+al.UIElements.TitleAccent=ae.NewRoundFrame(999,"Squircle",{
+Size=UDim2.new(0,10,0,3),
+Position=UDim2.new(0,0,0.5,0),
+AnchorPoint=Vector2.new(0,0.5),
+ThemeTag={
+ImageColor3="Slider",
+},
+ImageTransparency=0.08,
+Parent=al.UIElements.HeaderRow,
+})
+end
+
 al.UIElements.TitleLabel=af("TextLabel",{
-Size=UDim2.new(1,al.InputBox and-(al.TextBoxWidth+8)or 0,1,0),
-Position=UDim2.new(0,0,0,0),
+Size=UDim2.new(1,al.InputBox and-(al.TextBoxWidth+12)or 0,1,0),
+Position=UDim2.new(0,al.Title and 16 or 0,0,0),
 BackgroundTransparency=1,
 Text=al.Title or"",
 Visible=al.Title~=nil,
@@ -6794,14 +6812,14 @@ FontFace=Font.new(ae.Font,Enum.FontWeight.SemiBold),
 ThemeTag={
 TextColor3="Text"
 },
-TextTransparency=0.05,
+TextTransparency=0.04,
 Parent=al.UIElements.HeaderRow,
 })
 
 if al.InputBox then
 al.UIElements.TextBox=af("TextBox",{
 Size=UDim2.new(0,al.TextBoxWidth,0,al.TextBoxHeight),
-Position=UDim2.new(1,0,0.5,0),
+Position=UDim2.new(1,2,0.5,0),
 AnchorPoint=Vector2.new(1,0.5),
 TextXAlignment="Center",
 ClearTextOnFocus=false,
@@ -6844,24 +6862,32 @@ Parent=al.UIElements.Root,
 LayoutOrder=2,
 })
 
-if au then
-au.AnchorPoint=Vector2.new(0,0.5)
-au.Position=UDim2.new(0,0,0.5,0)
-au.Parent=al.UIElements.BodyRow
+if ax then
+ax.AnchorPoint=Vector2.new(0,0.5)
+ax.Position=UDim2.new(0,0,0.5,0)
+ax.Parent=al.UIElements.BodyRow
 end
 
-if av then
-av.AnchorPoint=Vector2.new(1,0.5)
-av.Position=UDim2.new(1,0,0.5,0)
-av.Parent=al.UIElements.BodyRow
+if ay then
+ay.AnchorPoint=Vector2.new(1,0.5)
+ay.Position=UDim2.new(1,0,0.5,0)
+ay.Parent=al.UIElements.BodyRow
 end
 
 al.UIElements.RailHitbox=af("Frame",{
-Size=UDim2.new(1,-(aw+ax),0,al.BodyHeight),
-Position=UDim2.new(0,aw,0.5,0),
+Size=UDim2.new(1,-(az+aA),0,al.BodyHeight),
+Position=UDim2.new(0,az,0.5,0),
 AnchorPoint=Vector2.new(0,0.5),
 BackgroundTransparency=1,
 Parent=al.UIElements.BodyRow,
+ClipsDescendants=false,
+})
+
+al.UIElements.TrackInset=af("Frame",{
+Size=UDim2.new(1,-(aw*2),1,0),
+Position=UDim2.new(0,aw,0,0),
+BackgroundTransparency=1,
+Parent=al.UIElements.RailHitbox,
 })
 
 al.UIElements.Track=ae.NewRoundFrame(99,"Squircle",{
@@ -6873,7 +6899,7 @@ Name="Track",
 ThemeTag={
 ImageColor3="Text",
 },
-Parent=al.UIElements.RailHitbox,
+Parent=al.UIElements.TrackInset,
 })
 
 al.UIElements.Fill=ae.NewRoundFrame(99,"Squircle",{
@@ -6886,42 +6912,39 @@ ImageColor3="Slider",
 Parent=al.UIElements.Track,
 },{
 ae.NewRoundFrame(99,"Squircle",{
-Size=UDim2.new(
-0,
-ak.Window.NewElements and(al.ThumbSize*2)or(al.ThumbSize+2),
-0,
-ak.Window.NewElements and(al.ThumbSize+4)or(al.ThumbSize+2)
-),
+Size=UDim2.new(0,au,0,av),
 Position=UDim2.new(1,0,0.5,0),
 AnchorPoint=Vector2.new(0.5,0.5),
 ThemeTag={
 ImageColor3="SliderThumb",
 },
 Name="Thumb",
+ZIndex=2,
 },{
 ae.NewRoundFrame(99,"Glass-1",{
 Size=UDim2.new(1,0,1,0),
 ImageColor3=Color3.new(1,1,1),
 Name="Highlight",
 ImageTransparency=0.6,
+ZIndex=3,
 }),
 })
 })
 
-local az
+local b
 if al.IsTooltip then
-az=a.load'A'.New(ar,al.UIElements.Fill.Thumb,true,"Secondary","Small",false)
-az.Container.AnchorPoint=Vector2.new(0.5,1)
-az.Container.Position=UDim2.new(0.5,0,0,-8)
+b=a.load'A'.New(ar,al.UIElements.Fill.Thumb,true,"Secondary","Small",false)
+b.Container.AnchorPoint=Vector2.new(0.5,1)
+b.Container.Position=UDim2.new(0.5,0,0,-8)
 end
 
-function al.Lock(aA)
+function al.Lock(d)
 al.Locked=true
 as=false
 return al.SliderFrame:Lock(al.LockedTitle)
 end
 
-function al.Unlock(aA)
+function al.Unlock(d)
 al.Locked=false
 as=true
 return al.SliderFrame:Unlock()
@@ -6931,60 +6954,60 @@ if al.Locked then
 al:Lock()
 end
 
-local aA=ak.Tab.UIElements.ContainerFrame
+local d=ak.Tab.UIElements.ContainerFrame
 
-local function UpdateVisuals(aB,b,d)
-local f=ValueToDelta(aB)
+local function UpdateVisuals(f,g,h)
+local j=ValueToDelta(f)
 
-if b then
+if g then
 ag(al.UIElements.Fill,0.05,{
-Size=UDim2.new(f,0,1,0)
+Size=UDim2.new(j,0,1,0)
 }):Play()
 else
-al.UIElements.Fill.Size=UDim2.new(f,0,1,0)
+al.UIElements.Fill.Size=UDim2.new(j,0,1,0)
 end
 
-if al.InputBox and al.UIElements.TextBox and not d then
-al.UIElements.TextBox.Text=FormatValue(aB)
+if al.InputBox and al.UIElements.TextBox and not h then
+al.UIElements.TextBox.Text=FormatValue(f)
 end
 
-if az then
-az.TitleFrame.Text=FormatValue(aB)
+if b then
+b.TitleFrame.Text=FormatValue(f)
 end
 end
 
-local function CommitValue(aB,b,d,f)
+local function CommitValue(f,g,h,j)
 if not as then
 return
 end
 
-aB=NormalizeValue(aB)
-UpdateVisuals(aB,d,f)
+f=NormalizeValue(f)
+UpdateVisuals(f,h,j)
 
-local g=aB~=ar
-ar=aB
-al.Value.Default=aB
+local l=f~=ar
+ar=f
+al.Value.Default=f
 
-if g and b then
-ae.SafeCallback(al.Callback,aB)
+if l and g then
+ae.SafeCallback(al.Callback,f)
 end
 end
 
-function al.Set(aB,b,d)
+function al.Set(f,g,h)
 if not as then
 return
 end
 
-if not al.IsFocusing and not ai and d and(d.UserInputType==Enum.UserInputType.MouseButton1 or d.UserInputType==Enum.UserInputType.Touch)then
-am=(d.UserInputType==Enum.UserInputType.Touch)
-aA.ScrollingEnabled=false
+if not al.IsFocusing and not ai and h and(h.UserInputType==Enum.UserInputType.MouseButton1 or h.UserInputType==Enum.UserInputType.Touch)then
+am=(h.UserInputType==Enum.UserInputType.Touch)
+d.ScrollingEnabled=false
 ai=true
 
 local function UpdateFromPointer()
-local f=am and d.Position.X or ac:GetMouseLocation().X
-local g=math.clamp((f-al.UIElements.RailHitbox.AbsolutePosition.X)/al.UIElements.RailHitbox.AbsoluteSize.X,0,1)
-local h=ap+g*(aq-ap)
-CommitValue(h,true,true,false)
+local j=am and h.Position.X or ac:GetMouseLocation().X
+local l=math.clamp((j-al.UIElements.TrackInset.AbsolutePosition.X)/al.UIElements.TrackInset.AbsoluteSize.X,0,1)
+local m=ap+l*(aq-ap)
+CommitValue(m,true,true,false)
 end
 
 UpdateFromPointer()
@@ -6993,8 +7016,8 @@ an=ad.RenderStepped:Connect(function()
 UpdateFromPointer()
 end)
 
-ao=ac.InputEnded:Connect(function(f)
-if(f.UserInputType==Enum.UserInputType.MouseButton1 or f.UserInputType==Enum.UserInputType.Touch)and d==f then
+ao=ac.InputEnded:Connect(function(j)
+if(j.UserInputType==Enum.UserInputType.MouseButton1 or j.UserInputType==Enum.UserInputType.Touch)and h==j then
 if an then
 an:Disconnect()
 an=nil
@@ -7005,47 +7028,42 @@ ao=nil
 end
 
 ai=false
-aA.ScrollingEnabled=true
+d.ScrollingEnabled=true
 
 if ak.Window.NewElements then
 ag(al.UIElements.Fill.Thumb,0.2,{
 ImageTransparency=0,
-Size=UDim2.new(
-0,
-ak.Window.NewElements and(al.ThumbSize*2)or(al.ThumbSize+2),
-0,
-ak.Window.NewElements and(al.ThumbSize+4)or(al.ThumbSize+2)
-)
+Size=UDim2.new(0,au,0,av)
 },Enum.EasingStyle.Quint,Enum.EasingDirection.InOut):Play()
 end
 
-if az then
-az:Close(false)
+if b then
+b:Close(false)
 end
 end
 end)
-elseif not d then
-CommitValue(b,true,true,false)
+elseif not h then
+CommitValue(g,true,true,false)
 end
 end
 
-function al.SetMax(aB,b)
-aq=b
-al.Value.Max=b
+function al.SetMax(f,g)
+aq=g
+al.Value.Max=g
 
-if ar>b then
-al:Set(b)
+if ar>g then
+al:Set(g)
 else
 UpdateVisuals(ar,true,al.IsFocusing)
 end
 end
 
-function al.SetMin(aB,b)
-ap=b
-al.Value.Min=b
+function al.SetMin(f,g)
+ap=g
+al.Value.Min=g
 
-if ar<b then
-al:Set(b)
+if ar<g then
+al:Set(g)
 else
 UpdateVisuals(ar,true,al.IsFocusing)
 end
@@ -7065,10 +7083,10 @@ if not al.IsFocusing then
 return
 end
 
-local aB=tonumber(al.UIElements.TextBox.Text)
-if aB~=nil then
-local b=NormalizeValue(aB)
-UpdateVisuals(b,true,true)
+local f=tonumber(al.UIElements.TextBox.Text)
+if f~=nil then
+local g=NormalizeValue(f)
+UpdateVisuals(g,true,true)
 end
 end)
 
@@ -7079,40 +7097,35 @@ ag(al.UIElements.TextBox.Stroke,0.12,{
 ImageTransparency=0.78
 }):Play()
 
-local aB=tonumber(al.UIElements.TextBox.Text)
-if aB~=nil then
-CommitValue(aB,true,true,false)
+local f=tonumber(al.UIElements.TextBox.Text)
+if f~=nil then
+CommitValue(f,true,true,false)
 else
 al.UIElements.TextBox.Text=FormatValue(ar)
-if az then
-az.TitleFrame.Text=FormatValue(ar)
+if b then
+b.TitleFrame.Text=FormatValue(ar)
 end
 end
 end)
 end
 
-ae.AddSignal(al.UIElements.RailHitbox.InputBegan,function(aB)
+ae.AddSignal(al.UIElements.RailHitbox.InputBegan,function(f)
 if al.Locked or ai then
 return
 end
 
-al:Set(ar,aB)
+al:Set(ar,f)
 
-if aB.UserInputType==Enum.UserInputType.MouseButton1 or aB.UserInputType==Enum.UserInputType.Touch then
+if f.UserInputType==Enum.UserInputType.MouseButton1 or f.UserInputType==Enum.UserInputType.Touch then
 if ak.Window.NewElements then
 ag(al.UIElements.Fill.Thumb,0.24,{
 ImageTransparency=0.85,
-Size=UDim2.new(
-0,
-(ak.Window.NewElements and(al.ThumbSize*2)or al.ThumbSize)+8,
-0,
-al.ThumbSize+8
-)
+Size=UDim2.new(0,au+8,0,av+4)
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 
-if az then
-az:Open()
+if b then
+b:Open()
 end
 end
 end)
