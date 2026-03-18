@@ -400,19 +400,19 @@ function TabModule.New(Config, UIScale)
 		local SubTabs = {}
 		local SelectedSubTab = 1
 
-		local BUTTON_GAP = 6
-		local BUTTON_HEIGHT = 58
-		local BAR_HEIGHT = 74
-		local BAR_PADDING_X = 8
+		local BUTTON_GAP = 5
+		local BUTTON_HEIGHT = 50
+		local BAR_HEIGHT = 64
+		local BAR_PADDING_X = 7
 		local CurrentButtonWidth = 76
 
 		local function GetButtonWidth(count)
 			if count <= 2 then
-				return 96
+				return 84
 			elseif count == 3 then
-				return 86
-			else
 				return 76
+			else
+				return 68
 			end
 		end
 
@@ -667,7 +667,7 @@ function TabModule.New(Config, UIScale)
 				Image = IconData[1],
 				ImageRectOffset = IconData[2].ImageRectPosition,
 				ImageRectSize = IconData[2].ImageRectSize,
-				Size = UDim2.new(0, 20, 0, 20),
+				Size = UDim2.new(0, 18, 0, 18),
 				BackgroundTransparency = 1,
 				ImageColor3 = Color3.new(1, 1, 1),
 				ImageTransparency = isFirstTab and 0 or 0.22,
@@ -683,7 +683,7 @@ function TabModule.New(Config, UIScale)
 				TextYAlignment = "Center",
 				TextWrapped = false,
 				TextTruncate = "AtEnd",
-				TextSize = 12,
+				TextSize = 11,
 				TextColor3 = Color3.new(1, 1, 1),
 				TextTransparency = isFirstTab and 0 or 0.22,
 				FontFace = Font.new(Creator.Font, Enum.FontWeight.SemiBold),
@@ -707,7 +707,7 @@ function TabModule.New(Config, UIScale)
 						FillDirection = "Vertical",
 						HorizontalAlignment = "Center",
 						VerticalAlignment = "Center",
-						Padding = UDim.new(0, 3),
+						Padding = UDim.new(0, 2),
 						SortOrder = "LayoutOrder",
 					}),
 					IconImage,
