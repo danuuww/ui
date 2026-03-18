@@ -6790,7 +6790,7 @@ Visible=al.Title~=nil,
 TextXAlignment="Left",
 TextYAlignment="Center",
 TextSize=15,
-FontFace=Font.new(ae.Font,Enum.FontWeight.Semibold),
+FontFace=Font.new(ae.Font,Enum.FontWeight.SemiBold),
 ThemeTag={
 TextColor3="Text"
 },
