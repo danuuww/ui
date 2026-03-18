@@ -424,7 +424,7 @@ function TabModule.New(Config, UIScale)
 			Parent = Tab.UIElements.ContainerFrame,
 		}, {
 			New("UIListLayout", {
-				Padding = UDim.new(0, 10),
+				Padding = UDim.new(0, 6),
 				SortOrder = "LayoutOrder",
 			}),
 		})
@@ -538,7 +538,7 @@ function TabModule.New(Config, UIScale)
 			Parent = MainSubGroupContainer,
 		}, {
 			New("UIListLayout", {
-				Padding = UDim.new(0, 6),
+				Padding = UDim.new(0, 0),
 				SortOrder = "LayoutOrder",
 			}),
 		})
@@ -638,14 +638,14 @@ function TabModule.New(Config, UIScale)
 				Parent = ContentContainer,
 			}, {
 				New("UIListLayout", {
-					Padding = UDim.new(0, 6),
+					Padding = UDim.new(0, 2),
 					SortOrder = "LayoutOrder",
 				}),
 				New("UIPadding", {
-					PaddingTop = UDim.new(0, 2),
+					PaddingTop = UDim.new(0, 0),
 					PaddingLeft = UDim.new(0, 2),
 					PaddingRight = UDim.new(0, 2),
-					PaddingBottom = UDim.new(0, 2),
+					PaddingBottom = UDim.new(0, 0),
 				}),
 			})
 
