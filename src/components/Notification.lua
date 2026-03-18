@@ -154,7 +154,7 @@ function NotificationModule.New(Config)
 
 	local HolderWidth = GetHolderWidth()
 	local AvatarSize = 44
-	local BadgeSize = 16
+	local BadgeSize = 14
 	local NotificationHeight = 72
 
 	local AvatarImage = ResolveAvatar(Notification.Avatar)
@@ -294,19 +294,25 @@ function NotificationModule.New(Config)
 				}),
 
 				New("Frame", {
-					Name = "BadgeBack",
-					Size = UDim2.new(0, BadgeSize + 6, 0, BadgeSize + 6),
-					Position = UDim2.new(0, 1, 1, -1),
-					AnchorPoint = Vector2.new(0, 1),
-					BackgroundColor3 = Color3.fromRGB(34, 34, 38),
-					BackgroundTransparency = 0.05,
-					Visible = AppBadge ~= nil,
-				}, {
-					New("UICorner", {
-						CornerRadius = UDim.new(1, 0),
-					}),
-					AppBadge,
-				}),
+	               Name = "BadgeBack",
+	               Size = UDim2.new(0, BadgeSize + 4, 0, BadgeSize + 4),
+	               Position = UDim2.new(1, 2, 1, 2),
+	               AnchorPoint = Vector2.new(1, 1),
+	               BackgroundColor3 = Color3.fromRGB(24, 24, 28),
+	               BackgroundTransparency = 0.18,
+	               Visible = AppBadge ~= nil,
+	               ZIndex = 6,
+                }, {
+	               New("UICorner", {
+		              CornerRadius = UDim.new(1, 0),
+	               }),
+	               New("UIStroke", {
+		              Color = Color3.new(1, 1, 1),
+		              Transparency = 0.55,
+		              Thickness = 1,
+	               }),
+	               AppBadge,
+                }),
 			}),
 
 			New("TextLabel", {
