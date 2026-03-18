@@ -10227,9 +10227,9 @@ aj("UIPadding",{PaddingLeft=UDim.new(0,12),PaddingRight=UDim.new(0,12)}),
 aj("UIListLayout",{Padding=UDim.new(0,6),FillDirection="Horizontal",VerticalAlignment="Center",HorizontalAlignment="Center"}),
 
 j and aj("ImageLabel",{
-Image=ah.Icon(j)[2],
-ImageRectOffset=ah.Icon(j)[1].ImageRectPosition,
-ImageRectSize=ah.Icon(j)[1].ImageRectSize,
+Image=ah.Icon(j)[1],
+ImageRectOffset=ah.Icon(j)[2].ImageRectPosition,
+ImageRectSize=ah.Icon(j)[2].ImageRectSize,
 Size=UDim2.new(0,14,0,14),
 BackgroundTransparency=1,
 ThemeTag={ImageColor3="Text"}
