@@ -667,9 +667,8 @@ return function(Config)
 		WindowAuthor = createAuthor(Window.Author)
 	end
 
-	local WindowTitle = New("TextLabel", {
+	local WindowTitleProps = {
 	Text = Window.Title,
-	FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight),
 	BackgroundTransparency = 1,
 	AutomaticSize = "XY",
 	Name = "Title",
@@ -678,7 +677,24 @@ return function(Config)
 	ThemeTag = {
 		TextColor3 = "WindowTopbarTitle",
 	},
-})
+}
+
+if typeof(Window.TitleFont) == "EnumItem" then
+	WindowTitleProps.Font = Window.TitleFont
+else
+	WindowTitleProps.FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight)
+end
+
+local WindowTitle = New("TextLabel", WindowTitleProps)
+local function ApplyWindowTitleFont()
+	if typeof(Window.TitleFont) == "EnumItem" then
+		WindowTitle.Font = Window.TitleFont
+	else
+		WindowTitle.FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight)
+	end
+
+	WindowTitle.TextSize = Window.TitleTextSize
+end
 
 local TitleAnimToken = 0
 
@@ -747,7 +763,7 @@ local function ResetWindowTitleVisual()
 	WindowTitle.TextTransparency = 0
 	WindowTitle.Position = UDim2.new(0, 0, 0, 0)
 	WindowTitle.TextSize = Window.TitleTextSize
-	WindowTitle.FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight)
+	ApplyWindowTitleFont()
 end
 
 local function StopWindowTitleAnimation()
@@ -1420,8 +1436,7 @@ function Window:SetTitleStyle(fontId, fontWeight, textSize)
 		Window.TitleTextSize = textSize
 	end
 
-	WindowTitle.FontFace = Font.new(Window.TitleFont, Window.TitleFontWeight)
-	WindowTitle.TextSize = Window.TitleTextSize
+	ApplyWindowTitleFont()
 
 	if Window.Closed then
 		StopWindowTitleAnimation()
