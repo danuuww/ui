@@ -1357,7 +1357,7 @@ l.Notifications[l.NotificationIndex]=p
 
 GetHolderWidth()
 local r=44
-local u=16
+local u=14
 local v=72
 
 local x=ResolveAvatar(p.Avatar)
@@ -1498,15 +1498,21 @@ CornerRadius=UDim.new(1,0),
 
 e("Frame",{
 Name="BadgeBack",
-Size=UDim2.new(0,u+6,0,u+6),
-Position=UDim2.new(0,1,1,-1),
-AnchorPoint=Vector2.new(0,1),
-BackgroundColor3=Color3.fromRGB(34,34,38),
-BackgroundTransparency=0.05,
+Size=UDim2.new(0,u+4,0,u+4),
+Position=UDim2.new(1,2,1,2),
+AnchorPoint=Vector2.new(1,1),
+BackgroundColor3=Color3.fromRGB(24,24,28),
+BackgroundTransparency=0.18,
 Visible=A~=nil,
+ZIndex=6,
 },{
 e("UICorner",{
 CornerRadius=UDim.new(1,0),
+}),
+e("UIStroke",{
+Color=Color3.new(1,1,1),
+Transparency=0.55,
+Thickness=1,
 }),
 A,
 }),
