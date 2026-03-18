@@ -10580,19 +10580,19 @@ local aB={}
 local b={}
 local d=1
 
-local f=6
-local g=58
-local h=74
-local j=8
+local f=5
+local g=50
+local h=64
+local j=7
 local l=76
 
 local function GetButtonWidth(m)
 if m<=2 then
-return 96
+return 84
 elseif m==3 then
-return 86
-else
 return 76
+else
+return 68
 end
 end
 
@@ -10847,7 +10847,7 @@ Name="Icon",
 Image=J[1],
 ImageRectOffset=J[2].ImageRectPosition,
 ImageRectSize=J[2].ImageRectSize,
-Size=UDim2.new(0,20,0,20),
+Size=UDim2.new(0,18,0,18),
 BackgroundTransparency=1,
 ImageColor3=Color3.new(1,1,1),
 ImageTransparency=G and 0 or 0.22,
@@ -10863,7 +10863,7 @@ TextXAlignment="Center",
 TextYAlignment="Center",
 TextWrapped=false,
 TextTruncate="AtEnd",
-TextSize=12,
+TextSize=11,
 TextColor3=Color3.new(1,1,1),
 TextTransparency=G and 0 or 0.22,
 FontFace=Font.new(ah.Font,Enum.FontWeight.SemiBold),
@@ -10887,7 +10887,7 @@ aj("UIListLayout",{
 FillDirection="Vertical",
 HorizontalAlignment="Center",
 VerticalAlignment="Center",
-Padding=UDim.new(0,3),
+Padding=UDim.new(0,2),
 SortOrder="LayoutOrder",
 }),
 L,
