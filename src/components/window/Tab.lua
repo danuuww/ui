@@ -334,6 +334,7 @@ function TabModule.New(Config, UIScale)
 			}, 0.1)
 		end
 	end)
+
 	Creator.AddSignal(Tab.UIElements.Main.InputEnded, function()
 		if Tab.Desc then
 			IsHovering = false
@@ -439,51 +440,39 @@ function TabModule.New(Config, UIScale)
 			Size = UDim2.new(0, 0, 0, BAR_HEIGHT),
 			Position = UDim2.new(0.5, 0, 0, 0),
 			AnchorPoint = Vector2.new(0.5, 0),
-			ImageColor3 = Color3.fromRGB(205, 210, 220),
-			ImageTransparency = 0.78,
+			ThemeTag = {
+				ImageColor3 = "Text",
+			},
+			ImageTransparency = 0.93,
 			Parent = NavigationBarHolder,
 		}, {
 			Creator.NewRoundFrame(999, "Glass-1.4", {
 				Size = UDim2.new(1, 0, 1, 0),
 				Name = "Outline",
-				ImageColor3 = Color3.fromRGB(255, 255, 255),
-				ImageTransparency = 0.72,
+				ImageColor3 = Color3.new(1, 1, 1),
+				ImageTransparency = 0.82,
 			}),
 			Creator.NewRoundFrame(999, "Squircle", {
 				Size = UDim2.new(1, -2, 1, -2),
 				Position = UDim2.new(0.5, 0, 0.5, 0),
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Name = "InnerGlass",
-				ImageColor3 = Color3.fromRGB(170, 176, 188),
-				ImageTransparency = 0.92,
+				ThemeTag = {
+					ImageColor3 = "Text",
+				},
+				ImageTransparency = 0.965,
 			}),
 			New("Frame", {
 				Name = "TopLine",
 				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.95,
-				Size = UDim2.new(1, -18, 0, 1),
+				BackgroundTransparency = 0.965,
+				Size = UDim2.new(1, -20, 0, 1),
 				Position = UDim2.new(0.5, 0, 0, 1),
 				AnchorPoint = Vector2.new(0.5, 0),
 			}, {
 				New("UICorner", {
 					CornerRadius = UDim.new(0, 999),
 				}),
-			}),
-			New("ImageLabel", {
-				BackgroundTransparency = 1,
-				Image = "rbxassetid://1316045217",
-				ImageColor3 = Color3.fromRGB(255, 255, 255),
-				ImageTransparency = 0.975,
-				Size = UDim2.new(0, 54, 0, 54),
-				Position = UDim2.new(1, -72, 0, 6),
-			}),
-			New("ImageLabel", {
-				BackgroundTransparency = 1,
-				Image = "rbxassetid://1316045217",
-				ImageColor3 = Color3.fromRGB(240, 244, 255),
-				ImageTransparency = 0.982,
-				Size = UDim2.new(0, 38, 0, 38),
-				Position = UDim2.new(1, -30, 0, 16),
 			}),
 		})
 
@@ -498,12 +487,12 @@ function TabModule.New(Config, UIScale)
 
 		local ActivePill = Creator.NewRoundFrame(999, "Squircle", {
 			Name = "ActivePill",
-			Size = UDim2.new(0, CurrentButtonWidth, 0, BUTTON_HEIGHT),
-			Position = UDim2.new(0, 0, 0, 0),
+			Size = UDim2.new(0, CurrentButtonWidth - 4, 0, BUTTON_HEIGHT - 4),
+			Position = UDim2.new(0, 2, 0, 2),
 			ThemeTag = {
 				ImageColor3 = "Accent",
 			},
-			ImageTransparency = 0.04,
+			ImageTransparency = 0.06,
 			Visible = false,
 			Parent = ButtonsWrap,
 		}, {
@@ -511,12 +500,12 @@ function TabModule.New(Config, UIScale)
 				Size = UDim2.new(1, 0, 1, 0),
 				Name = "Outline",
 				ImageColor3 = Color3.new(1, 1, 1),
-				ImageTransparency = 0.82,
+				ImageTransparency = 0.86,
 			}),
 			New("Frame", {
 				Name = "TopLine",
 				BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.94,
+				BackgroundTransparency = 0.96,
 				Size = UDim2.new(1, -18, 0, 1),
 				Position = UDim2.new(0.5, 0, 0, 1),
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -572,7 +561,7 @@ function TabModule.New(Config, UIScale)
 				item.Button.Size = UDim2.new(0, CurrentButtonWidth, 0, BUTTON_HEIGHT)
 			end
 
-			ActivePill.Size = UDim2.new(0, CurrentButtonWidth, 0, BUTTON_HEIGHT)
+			ActivePill.Size = UDim2.new(0, CurrentButtonWidth - 4, 0, BUTTON_HEIGHT - 4)
 			NavigationBar.Size = UDim2.new(0, buttonsWidth + (BAR_PADDING_X * 2), 0, BAR_HEIGHT)
 			ButtonsWrap.Size = UDim2.new(0, buttonsWidth, 0, BUTTON_HEIGHT)
 			ItemsFrame.Size = UDim2.new(0, buttonsWidth, 0, BUTTON_HEIGHT)
@@ -580,15 +569,15 @@ function TabModule.New(Config, UIScale)
 		end
 
 		local function MoveActivePill(index, instant)
-			local x = (index - 1) * (CurrentButtonWidth + BUTTON_GAP)
+			local x = ((index - 1) * (CurrentButtonWidth + BUTTON_GAP)) + 2
 
 			if instant then
-				ActivePill.Position = UDim2.new(0, x, 0, 0)
+				ActivePill.Position = UDim2.new(0, x, 0, 2)
 			else
 				Tween(
 					ActivePill,
 					0.22,
-					{ Position = UDim2.new(0, x, 0, 0) },
+					{ Position = UDim2.new(0, x, 0, 2) },
 					Enum.EasingStyle.Quint,
 					Enum.EasingDirection.Out
 				):Play()
@@ -712,7 +701,7 @@ function TabModule.New(Config, UIScale)
 					}),
 					IconImage,
 					LabelText,
-				})
+				}),
 			})
 
 			SubTabObject.UIElements.ContainerFrame = PageFrame
@@ -807,6 +796,7 @@ function TabModule.New(Config, UIScale)
 			end
 		end
 	end
+
 	function Tab:UnlockAll()
 		for _, element in next, Window.AllElements do
 			if element.Tab and element.Tab.Index and element.Tab.Index == Tab.Index and element.Unlock then
@@ -814,6 +804,7 @@ function TabModule.New(Config, UIScale)
 			end
 		end
 	end
+
 	function Tab:GetLocked()
 		local LockedElements = {}
 		for _, element in next, Window.AllElements do
@@ -823,6 +814,7 @@ function TabModule.New(Config, UIScale)
 		end
 		return LockedElements
 	end
+
 	function Tab:GetUnlocked()
 		local UnlockedElements = {}
 		for _, element in next, Window.AllElements do
@@ -860,30 +852,30 @@ function TabModule.New(Config, UIScale)
 			}),
 			EmptyPageIcon,
 			Tab.CustomEmptyPage.Title
-					and New("TextLabel", {
-						AutomaticSize = "XY",
-						Text = Tab.CustomEmptyPage.Title,
-						ThemeTag = {
-							TextColor3 = "Text",
-						},
-						TextSize = 18,
-						TextTransparency = 0.5,
-						BackgroundTransparency = 1,
-						FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
-					})
+				and New("TextLabel", {
+					AutomaticSize = "XY",
+					Text = Tab.CustomEmptyPage.Title,
+					ThemeTag = {
+						TextColor3 = "Text",
+					},
+					TextSize = 18,
+					TextTransparency = 0.5,
+					BackgroundTransparency = 1,
+					FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
+				})
 				or nil,
 			Tab.CustomEmptyPage.Desc
-					and New("TextLabel", {
-						AutomaticSize = "XY",
-						Text = Tab.CustomEmptyPage.Desc,
-						ThemeTag = {
-							TextColor3 = "Text",
-						},
-						TextSize = 15,
-						TextTransparency = 0.65,
-						BackgroundTransparency = 1,
-						FontFace = Font.new(Creator.Font, Enum.FontWeight.Regular),
-					})
+				and New("TextLabel", {
+					AutomaticSize = "XY",
+					Text = Tab.CustomEmptyPage.Desc,
+					ThemeTag = {
+						TextColor3 = "Text",
+					},
+					TextSize = 15,
+					TextTransparency = 0.65,
+					BackgroundTransparency = 1,
+					FontFace = Font.new(Creator.Font, Enum.FontWeight.Regular),
+				})
 				or nil,
 		})
 
