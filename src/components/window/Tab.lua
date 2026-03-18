@@ -9,6 +9,7 @@ local Mouse = Players.LocalPlayer:GetMouse()
 
 local Creator = require("../../modules/Creator")
 local New = Creator.New
+local Tween = Creator.Tween
 
 local CreateToolTip = require("../ui/Tooltip").New
 local CreateScrollSlider = require("../ui/ScrollSlider").New
@@ -395,317 +396,409 @@ function TabModule.New(Config, UIScale)
 	)
 
 	function Tab:SubTabGroup()
-	 local SubGroupModule = {}
-	 local SubTabs = {}
-	 local SelectedSubTab = 1
+		local SubGroupModule = {}
+		local SubTabs = {}
+		local SelectedSubTab = 1
 
-	 local MainSubGroupContainer = New("Frame", {
-		 Size = UDim2.new(1, 0, 0, 0),
-		 AutomaticSize = "Y",
-		 BackgroundTransparency = 1,
-		 Parent = Tab.UIElements.ContainerFrame
-	 }, {
-		 New("UIListLayout", {
-			 Padding = UDim.new(0, 10),
-			 SortOrder = "LayoutOrder"
-		 })
-	 })
+		local BUTTON_GAP = 6
+		local BUTTON_HEIGHT = 58
+		local BAR_HEIGHT = 74
+		local BAR_PADDING_X = 8
+		local CurrentButtonWidth = 76
 
-	 local NavigationBarHolder = New("Frame", {
-		 Size = UDim2.new(1, 0, 0, 74),
-		 BackgroundTransparency = 1,
-		 Parent = MainSubGroupContainer
-	 })
-
-	 local NavigationBar = Creator.NewRoundFrame(999, "Squircle", {
-		 Size = UDim2.new(0, 0, 0, 74),
-		 AutomaticSize = "X",
-		 Position = UDim2.new(0.5, 0, 0, 0),
-		 AnchorPoint = Vector2.new(0.5, 0),
-		 ImageColor3 = Color3.fromRGB(205, 210, 220),
-		 ImageTransparency = 0.78,
-		 Parent = NavigationBarHolder,
-		 Name = "NavigationBar",
-	 }, {
-		 Creator.NewRoundFrame(999, "Glass-1.4", {
-			 Size = UDim2.new(1, 0, 1, 0),
-			 Name = "Outline",
-			 ImageColor3 = Color3.fromRGB(255, 255, 255),
-			 ImageTransparency = 0.72,
-		 }),
-		 Creator.NewRoundFrame(999, "Squircle", {
-			 Size = UDim2.new(1, -2, 1, -2),
-			 Position = UDim2.new(0.5, 0, 0.5, 0),
-			 AnchorPoint = Vector2.new(0.5, 0.5),
-			 Name = "InnerGlass",
-			 ImageColor3 = Color3.fromRGB(170, 176, 188),
-			 ImageTransparency = 0.92,
-		 }),
-		 New("Frame", {
-			 Name = "TopLine",
-			 BackgroundColor3 = Color3.new(1, 1, 1),
-			 BackgroundTransparency = 0.95,
-			 Size = UDim2.new(1, -18, 0, 1),
-			 Position = UDim2.new(0.5, 0, 0, 1),
-			 AnchorPoint = Vector2.new(0.5, 0),
-		 }, {
-			 New("UICorner", {
-				 CornerRadius = UDim.new(0, 999),
-			 }),
-		 }),
-		 New("ImageLabel", {
-			 BackgroundTransparency = 1,
-			 Image = "rbxassetid://1316045217",
-			 ImageColor3 = Color3.fromRGB(255, 255, 255),
-			 ImageTransparency = 0.975,
-			 Size = UDim2.new(0, 54, 0, 54),
-			 Position = UDim2.new(1, -72, 0, 6),
-		 }),
-		 New("ImageLabel", {
-			 BackgroundTransparency = 1,
-			 Image = "rbxassetid://1316045217",
-			 ImageColor3 = Color3.fromRGB(240, 244, 255),
-			 ImageTransparency = 0.982,
-			 Size = UDim2.new(0, 38, 0, 38),
-			 Position = UDim2.new(1, -30, 0, 16),
-		 }),
-		 New("UIPadding", {
-			 PaddingLeft = UDim.new(0, 8),
-			 PaddingRight = UDim.new(0, 8),
-			 PaddingTop = UDim.new(0, 7),
-			 PaddingBottom = UDim.new(0, 7),
-		 }),
-		 New("UIListLayout", {
-			 Padding = UDim.new(0, 6),
-			 FillDirection = "Horizontal",
-			 HorizontalAlignment = "Center",
-			 VerticalAlignment = "Center",
-			 SortOrder = "LayoutOrder",
-		 }),
-	 })
-
-	 local ContentContainer = New("Frame", {
-		 Size = UDim2.new(1, 0, 0, 0),
-		 AutomaticSize = "Y",
-		 BackgroundTransparency = 1,
-		 Parent = MainSubGroupContainer
-	 }, {
-		 New("UIListLayout", {
-			 Padding = UDim.new(0, 6),
-			 SortOrder = "LayoutOrder"
-		 }),
-	 })
-
-	 local function SetSubTab(index, instant)
-		 SelectedSubTab = index
-
-		 for i, other in ipairs(SubTabs) do
-			 local isSelected = (i == index)
-			 other.Page.Visible = isSelected
-
-			 if instant then
-				 other.Button.SelectedFill.ImageTransparency = isSelected and 0.04 or 1
-				 other.Button.SelectedOutline.ImageTransparency = isSelected and 0.82 or 1
-				 other.Label.TextTransparency = isSelected and 0 or 0.22
-				 if other.Icon then
-					 other.Icon.ImageTransparency = isSelected and 0 or 0.22
-				 end
-			 else
-				 Tween(
-					 other.Button.SelectedFill,
-					 0.18,
-					 { ImageTransparency = isSelected and 0.04 or 1 },
-					 Enum.EasingStyle.Quint,
-					 Enum.EasingDirection.Out
-				 ):Play()
-
-				 Tween(
-					 other.Button.SelectedOutline,
-					 0.18,
-					 { ImageTransparency = isSelected and 0.82 or 1 },
-					 Enum.EasingStyle.Quint,
-					 Enum.EasingDirection.Out
-				 ):Play()
-
-				 Tween(
-					 other.Label,
-					 0.18,
-					 { TextTransparency = isSelected and 0 or 0.22 },
-					 Enum.EasingStyle.Quint,
-					 Enum.EasingDirection.Out
-				 ):Play()
-
-				 if other.Icon then
-					 Tween(
-						 other.Icon,
-						 0.18,
-						 { ImageTransparency = isSelected and 0 or 0.22 },
-						 Enum.EasingStyle.Quint,
-						 Enum.EasingDirection.Out
-					 ):Play()
-				 end
-			 end
-		 end
-	 end
-
-	 function SubGroupModule:AddSubTab(SubTabTitle, IconName)
-		 local SubTabObject = setmetatable({
-			 Title = SubTabTitle,
-			 Name = SubTabTitle,
-			 __type = "Tab",
-			 Elements = {},
-			 UIElements = {}
-		 }, { __index = Tab })
-
-		 local isFirstTab = (#SubTabs == 0)
-
-		 local PageFrame = New("Frame", {
-			 Size = UDim2.new(1, 0, 0, 0),
-			 AutomaticSize = "Y",
-			 BackgroundTransparency = 1,
-			 Visible = isFirstTab,
-			 Parent = ContentContainer
-		 }, {
-			 New("UIListLayout", {
-				 Padding = UDim.new(0, 6),
-				 SortOrder = "LayoutOrder"
-			 }),
-			 New("UIPadding", {
-				 PaddingTop = UDim.new(0, 2),
-				 PaddingLeft = UDim.new(0, 2),
-				 PaddingRight = UDim.new(0, 2),
-				 PaddingBottom = UDim.new(0, 2)
-			 })
-		 })
-
-		 local IconData = IconName and Creator.Icon(IconName)
-
-		 local IconImage = IconData and New("ImageLabel", {
-			 Name = "Icon",
-			 Image = IconData[1],
-			 ImageRectOffset = IconData[2].ImageRectPosition,
-			 ImageRectSize = IconData[2].ImageRectSize,
-			 Size = UDim2.new(0, 20, 0, 20),
-			 BackgroundTransparency = 1,
-			 ImageColor3 = Color3.new(1, 1, 1),
-			 ImageTransparency = isFirstTab and 0 or 0.22,
-			 LayoutOrder = 1,
-		 }) or nil
-
-		 local LabelText = New("TextLabel", {
-			 Name = "Label",
-			 Text = SubTabTitle,
-			 Size = UDim2.new(1, -8, 0, 18),
-			 BackgroundTransparency = 1,
-			 TextXAlignment = "Center",
-			 TextYAlignment = "Center",
-			 TextWrapped = false,
-			 TextTruncate = "AtEnd",
-			 TextSize = 12,
-			 TextColor3 = Color3.new(1, 1, 1),
-			 TextTransparency = isFirstTab and 0 or 0.22,
-			 FontFace = Font.new(Creator.Font, Enum.FontWeight.SemiBold),
-			 LayoutOrder = 2,
-		 })
-
-		local NavButton = New("TextButton", {
-			Size = UDim2.new(0, 84, 0, 60),
-			BackgroundTransparency = 1,
-			AutoButtonColor = false,
-			Text = "",
-			Parent = NavigationBar
-		}, {
-			Creator.NewRoundFrame(999, "Squircle", {
-				Size = UDim2.new(1, 0, 1, 0),
-				Name = "SelectedFill",
-				ThemeTag = {
-					ImageColor3 = "Accent",
-				},
-				ImageTransparency = isFirstTab and 0.04 or 1,
-			}),
-			Creator.NewRoundFrame(999, "Glass-1", {
-				Size = UDim2.new(1, 0, 1, 0),
-				Name = "SelectedOutline",
-				ImageColor3 = Color3.new(1, 1, 1),
-				ImageTransparency = isFirstTab and 0.82 or 1,
-			}),
-			New("Frame", {
-				Name = "Content",
-				Size = UDim2.new(1, 0, 1, 0),
-				BackgroundTransparency = 1,
-			}, {
-				New("UIListLayout", {
-					FillDirection = "Vertical",
-					HorizontalAlignment = "Center",
-					VerticalAlignment = "Center",
-					Padding = UDim.new(0, 3),
-					SortOrder = "LayoutOrder",
-				}),
-				IconImage,
-				LabelText,
-			})
-		})
-
-		SubTabObject.UIElements.ContainerFrame = PageFrame
-		SubTabObject.UIElements.Main = NavButton
-
-		local CurrentIndex = #SubTabs + 1
-
-		Creator.AddSignal(NavButton.MouseButton1Click, function()
-			SetSubTab(CurrentIndex, false)
-		end)
-
-		Creator.AddSignal(NavButton.MouseEnter, function()
-			if SelectedSubTab ~= CurrentIndex then
-				Tween(
-					NavButton.SelectedOutline,
-					0.14,
-					{ ImageTransparency = 0.92 },
-					Enum.EasingStyle.Quint,
-					Enum.EasingDirection.Out
-				):Play()
+		local function GetButtonWidth(count)
+			if count <= 2 then
+				return 96
+			elseif count == 3 then
+				return 86
+			else
+				return 76
 			end
-		end)
-
-		Creator.AddSignal(NavButton.MouseLeave, function()
-			if SelectedSubTab ~= CurrentIndex then
-				Tween(
-					NavButton.SelectedOutline,
-					0.14,
-					{ ImageTransparency = 1 },
-					Enum.EasingStyle.Quint,
-					Enum.EasingDirection.Out
-				):Play()
-			end
-		end)
-
-		table.insert(SubTabs, {
-			Page = PageFrame,
-			Button = NavButton,
-			Icon = IconImage,
-			Label = LabelText,
-		})
-
-		ElementsModule.Load(
-			SubTabObject,
-			PageFrame,
-			ElementsModule.Elements,
-			Window,
-			WindUI,
-			nil,
-			ElementsModule,
-			UIScale
-		)
-
-		if isFirstTab then
-			SetSubTab(1, true)
 		end
 
-		return SubTabObject
-	end
+		local MainSubGroupContainer = New("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = "Y",
+			BackgroundTransparency = 1,
+			Parent = Tab.UIElements.ContainerFrame,
+		}, {
+			New("UIListLayout", {
+				Padding = UDim.new(0, 10),
+				SortOrder = "LayoutOrder",
+			}),
+		})
 
-	return SubGroupModule
-end
+		local NavigationBarHolder = New("Frame", {
+			Size = UDim2.new(1, 0, 0, BAR_HEIGHT),
+			BackgroundTransparency = 1,
+			Parent = MainSubGroupContainer,
+		})
+
+		local NavigationBar = Creator.NewRoundFrame(999, "Squircle", {
+			Name = "NavigationBar",
+			Size = UDim2.new(0, 0, 0, BAR_HEIGHT),
+			Position = UDim2.new(0.5, 0, 0, 0),
+			AnchorPoint = Vector2.new(0.5, 0),
+			ImageColor3 = Color3.fromRGB(205, 210, 220),
+			ImageTransparency = 0.78,
+			Parent = NavigationBarHolder,
+		}, {
+			Creator.NewRoundFrame(999, "Glass-1.4", {
+				Size = UDim2.new(1, 0, 1, 0),
+				Name = "Outline",
+				ImageColor3 = Color3.fromRGB(255, 255, 255),
+				ImageTransparency = 0.72,
+			}),
+			Creator.NewRoundFrame(999, "Squircle", {
+				Size = UDim2.new(1, -2, 1, -2),
+				Position = UDim2.new(0.5, 0, 0.5, 0),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Name = "InnerGlass",
+				ImageColor3 = Color3.fromRGB(170, 176, 188),
+				ImageTransparency = 0.92,
+			}),
+			New("Frame", {
+				Name = "TopLine",
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				BackgroundTransparency = 0.95,
+				Size = UDim2.new(1, -18, 0, 1),
+				Position = UDim2.new(0.5, 0, 0, 1),
+				AnchorPoint = Vector2.new(0.5, 0),
+			}, {
+				New("UICorner", {
+					CornerRadius = UDim.new(0, 999),
+				}),
+			}),
+			New("ImageLabel", {
+				BackgroundTransparency = 1,
+				Image = "rbxassetid://1316045217",
+				ImageColor3 = Color3.fromRGB(255, 255, 255),
+				ImageTransparency = 0.975,
+				Size = UDim2.new(0, 54, 0, 54),
+				Position = UDim2.new(1, -72, 0, 6),
+			}),
+			New("ImageLabel", {
+				BackgroundTransparency = 1,
+				Image = "rbxassetid://1316045217",
+				ImageColor3 = Color3.fromRGB(240, 244, 255),
+				ImageTransparency = 0.982,
+				Size = UDim2.new(0, 38, 0, 38),
+				Position = UDim2.new(1, -30, 0, 16),
+			}),
+		})
+
+		local ButtonsWrap = New("Frame", {
+			Name = "ButtonsWrap",
+			Size = UDim2.new(0, 0, 0, BUTTON_HEIGHT),
+			Position = UDim2.new(0.5, 0, 0.5, 0),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Parent = NavigationBar,
+		})
+
+		local ActivePill = Creator.NewRoundFrame(999, "Squircle", {
+			Name = "ActivePill",
+			Size = UDim2.new(0, CurrentButtonWidth, 0, BUTTON_HEIGHT),
+			Position = UDim2.new(0, 0, 0, 0),
+			ThemeTag = {
+				ImageColor3 = "Accent",
+			},
+			ImageTransparency = 0.04,
+			Visible = false,
+			Parent = ButtonsWrap,
+		}, {
+			Creator.NewRoundFrame(999, "Glass-1", {
+				Size = UDim2.new(1, 0, 1, 0),
+				Name = "Outline",
+				ImageColor3 = Color3.new(1, 1, 1),
+				ImageTransparency = 0.82,
+			}),
+			New("Frame", {
+				Name = "TopLine",
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				BackgroundTransparency = 0.94,
+				Size = UDim2.new(1, -18, 0, 1),
+				Position = UDim2.new(0.5, 0, 0, 1),
+				AnchorPoint = Vector2.new(0.5, 0),
+			}, {
+				New("UICorner", {
+					CornerRadius = UDim.new(0, 999),
+				}),
+			}),
+		})
+
+		local ItemsFrame = New("Frame", {
+			Name = "ItemsFrame",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(0, 0, 0, BUTTON_HEIGHT),
+			Parent = ButtonsWrap,
+		}, {
+			New("UIListLayout", {
+				Padding = UDim.new(0, BUTTON_GAP),
+				FillDirection = "Horizontal",
+				HorizontalAlignment = "Left",
+				VerticalAlignment = "Center",
+				SortOrder = "LayoutOrder",
+			}),
+		})
+
+		local ContentContainer = New("Frame", {
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = "Y",
+			BackgroundTransparency = 1,
+			Parent = MainSubGroupContainer,
+		}, {
+			New("UIListLayout", {
+				Padding = UDim.new(0, 6),
+				SortOrder = "LayoutOrder",
+			}),
+		})
+
+		local function UpdateBarSize()
+			local count = #SubTabs
+			if count <= 0 then
+				NavigationBar.Size = UDim2.new(0, 0, 0, BAR_HEIGHT)
+				ButtonsWrap.Size = UDim2.new(0, 0, 0, BUTTON_HEIGHT)
+				ItemsFrame.Size = UDim2.new(0, 0, 0, BUTTON_HEIGHT)
+				ActivePill.Visible = false
+				return
+			end
+
+			CurrentButtonWidth = GetButtonWidth(count)
+
+			local buttonsWidth = (count * CurrentButtonWidth) + (math.max(count - 1, 0) * BUTTON_GAP)
+
+			for _, item in ipairs(SubTabs) do
+				item.Button.Size = UDim2.new(0, CurrentButtonWidth, 0, BUTTON_HEIGHT)
+			end
+
+			ActivePill.Size = UDim2.new(0, CurrentButtonWidth, 0, BUTTON_HEIGHT)
+			NavigationBar.Size = UDim2.new(0, buttonsWidth + (BAR_PADDING_X * 2), 0, BAR_HEIGHT)
+			ButtonsWrap.Size = UDim2.new(0, buttonsWidth, 0, BUTTON_HEIGHT)
+			ItemsFrame.Size = UDim2.new(0, buttonsWidth, 0, BUTTON_HEIGHT)
+			ActivePill.Visible = true
+		end
+
+		local function MoveActivePill(index, instant)
+			local x = (index - 1) * (CurrentButtonWidth + BUTTON_GAP)
+
+			if instant then
+				ActivePill.Position = UDim2.new(0, x, 0, 0)
+			else
+				Tween(
+					ActivePill,
+					0.22,
+					{ Position = UDim2.new(0, x, 0, 0) },
+					Enum.EasingStyle.Quint,
+					Enum.EasingDirection.Out
+				):Play()
+			end
+		end
+
+		local function SetSubTab(index, instant)
+			SelectedSubTab = index
+			MoveActivePill(index, instant)
+
+			for i, other in ipairs(SubTabs) do
+				local isSelected = (i == index)
+				other.Page.Visible = isSelected
+
+				if instant then
+					other.Label.TextTransparency = isSelected and 0 or 0.22
+					if other.Icon then
+						other.Icon.ImageTransparency = isSelected and 0 or 0.22
+					end
+				else
+					Tween(
+						other.Label,
+						0.18,
+						{ TextTransparency = isSelected and 0 or 0.22 },
+						Enum.EasingStyle.Quint,
+						Enum.EasingDirection.Out
+					):Play()
+
+					if other.Icon then
+						Tween(
+							other.Icon,
+							0.18,
+							{ ImageTransparency = isSelected and 0 or 0.22 },
+							Enum.EasingStyle.Quint,
+							Enum.EasingDirection.Out
+						):Play()
+					end
+				end
+			end
+		end
+
+		function SubGroupModule:AddSubTab(SubTabTitle, IconName)
+			local SubTabObject = setmetatable({
+				Title = SubTabTitle,
+				Name = SubTabTitle,
+				__type = "Tab",
+				Elements = {},
+				UIElements = {},
+			}, { __index = Tab })
+
+			local isFirstTab = (#SubTabs == 0)
+
+			local PageFrame = New("Frame", {
+				Size = UDim2.new(1, 0, 0, 0),
+				AutomaticSize = "Y",
+				BackgroundTransparency = 1,
+				Visible = isFirstTab,
+				Parent = ContentContainer,
+			}, {
+				New("UIListLayout", {
+					Padding = UDim.new(0, 6),
+					SortOrder = "LayoutOrder",
+				}),
+				New("UIPadding", {
+					PaddingTop = UDim.new(0, 2),
+					PaddingLeft = UDim.new(0, 2),
+					PaddingRight = UDim.new(0, 2),
+					PaddingBottom = UDim.new(0, 2),
+				}),
+			})
+
+			local IconData = IconName and Creator.Icon(IconName)
+
+			local IconImage = IconData and New("ImageLabel", {
+				Name = "Icon",
+				Image = IconData[1],
+				ImageRectOffset = IconData[2].ImageRectPosition,
+				ImageRectSize = IconData[2].ImageRectSize,
+				Size = UDim2.new(0, 20, 0, 20),
+				BackgroundTransparency = 1,
+				ImageColor3 = Color3.new(1, 1, 1),
+				ImageTransparency = isFirstTab and 0 or 0.22,
+				LayoutOrder = 1,
+			}) or nil
+
+			local LabelText = New("TextLabel", {
+				Name = "Label",
+				Text = SubTabTitle,
+				Size = UDim2.new(1, -8, 0, 18),
+				BackgroundTransparency = 1,
+				TextXAlignment = "Center",
+				TextYAlignment = "Center",
+				TextWrapped = false,
+				TextTruncate = "AtEnd",
+				TextSize = 12,
+				TextColor3 = Color3.new(1, 1, 1),
+				TextTransparency = isFirstTab and 0 or 0.22,
+				FontFace = Font.new(Creator.Font, Enum.FontWeight.SemiBold),
+				LayoutOrder = 2,
+			})
+
+			local NavButton = New("TextButton", {
+				Name = "NavButton",
+				Size = UDim2.new(0, CurrentButtonWidth, 0, BUTTON_HEIGHT),
+				BackgroundTransparency = 1,
+				AutoButtonColor = false,
+				Text = "",
+				Parent = ItemsFrame,
+			}, {
+				New("Frame", {
+					Name = "Content",
+					Size = UDim2.new(1, 0, 1, 0),
+					BackgroundTransparency = 1,
+				}, {
+					New("UIListLayout", {
+						FillDirection = "Vertical",
+						HorizontalAlignment = "Center",
+						VerticalAlignment = "Center",
+						Padding = UDim.new(0, 3),
+						SortOrder = "LayoutOrder",
+					}),
+					IconImage,
+					LabelText,
+				})
+			})
+
+			SubTabObject.UIElements.ContainerFrame = PageFrame
+			SubTabObject.UIElements.Main = NavButton
+
+			local CurrentIndex = #SubTabs + 1
+
+			Creator.AddSignal(NavButton.MouseButton1Click, function()
+				SetSubTab(CurrentIndex, false)
+			end)
+
+			Creator.AddSignal(NavButton.MouseEnter, function()
+				if SelectedSubTab ~= CurrentIndex then
+					Tween(
+						LabelText,
+						0.14,
+						{ TextTransparency = 0.1 },
+						Enum.EasingStyle.Quint,
+						Enum.EasingDirection.Out
+					):Play()
+
+					if IconImage then
+						Tween(
+							IconImage,
+							0.14,
+							{ ImageTransparency = 0.1 },
+							Enum.EasingStyle.Quint,
+							Enum.EasingDirection.Out
+						):Play()
+					end
+				end
+			end)
+
+			Creator.AddSignal(NavButton.MouseLeave, function()
+				if SelectedSubTab ~= CurrentIndex then
+					Tween(
+						LabelText,
+						0.14,
+						{ TextTransparency = 0.22 },
+						Enum.EasingStyle.Quint,
+						Enum.EasingDirection.Out
+					):Play()
+
+					if IconImage then
+						Tween(
+							IconImage,
+							0.14,
+							{ ImageTransparency = 0.22 },
+							Enum.EasingStyle.Quint,
+							Enum.EasingDirection.Out
+						):Play()
+					end
+				end
+			end)
+
+			table.insert(SubTabs, {
+				Page = PageFrame,
+				Button = NavButton,
+				Icon = IconImage,
+				Label = LabelText,
+			})
+
+			UpdateBarSize()
+
+			ElementsModule.Load(
+				SubTabObject,
+				PageFrame,
+				ElementsModule.Elements,
+				Window,
+				WindUI,
+				nil,
+				ElementsModule,
+				UIScale
+			)
+
+			if isFirstTab then
+				SetSubTab(1, true)
+			else
+				SetSubTab(SelectedSubTab, true)
+			end
+
+			return SubTabObject
+		end
+
+		return SubGroupModule
+	end
 
 	function Tab:LockAll()
 		for _, element in next, Window.AllElements do
