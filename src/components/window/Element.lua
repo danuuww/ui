@@ -253,7 +253,7 @@ return function(Config)
 
 	local TextContent = New("Frame", {
 		Name = "TextContent",
-		LayoutOrder = Element.IconAlign == "Right" and 2 or 1,
+		LayoutOrder = Element.IconAlign == "Right" and 1 or 2,
 		BackgroundTransparency = 1,
 		AutomaticSize = Element.Justify == "Between" and "Y" or "XY",
 		Size = UDim2.new(
@@ -276,7 +276,7 @@ return function(Config)
 
 	local ImageWrap = New("Frame", {
 		Name = "ImageWrap",
-		LayoutOrder = Element.IconAlign == "Right" and 1 or 2,
+		LayoutOrder = Element.IconAlign == "Right" and 2 or 1,
 		BackgroundTransparency = 1,
 		Size = UDim2.new(0, ImageFrame and ImageSize or 0, 0, 24),
 		Visible = ImageFrame ~= nil,
@@ -326,7 +326,7 @@ return function(Config)
 
 	Element.UIElements.Container = New("Frame", {
 		Name = "Container",
-		Size = UDim2.new(1, 0, 1, 0),
+		Size = UDim2.new(1, 0, 0, 32),
 		AutomaticSize = "Y",
 		BackgroundTransparency = 1,
 	}, {
