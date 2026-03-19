@@ -5454,6 +5454,7 @@ Thumbnail=ae.Thumbnail,
 ThumbnailSize=ae.ThumbnailSize or 80,
 Image=ae.Image,
 IconThemed=ae.IconThemed or false,
+IconAlign=ae.IconAlign or"Left",
 ImageSize=ae.ImageSize or 30,
 Color=ae.Color,
 Scalable=ae.Scalable,
@@ -5587,6 +5588,7 @@ HorizontalAlignment="Left",
 
 local av=ab("Frame",{
 Name="TextContent",
+LayoutOrder=af.IconAlign=="Right"and 2 or 1,
 BackgroundTransparency=1,
 AutomaticSize=af.Justify=="Between"and"Y"or"XY",
 Size=UDim2.new(
@@ -5609,6 +5611,7 @@ at,
 
 local aw=ab("Frame",{
 Name="ImageWrap",
+LayoutOrder=af.IconAlign=="Right"and 1 or 2,
 BackgroundTransparency=1,
 Size=UDim2.new(0,ap and aj or 0,0,24),
 Visible=ap~=nil,
@@ -5847,8 +5850,8 @@ if ag then
 v=ab("Frame",{
 Name="RightSlot",
 BackgroundTransparency=1,
-AnchorPoint=Vector2.new(1,0),
-Position=UDim2.new(1,-af.UIPadding,0,af.UIPadding),
+AnchorPoint=Vector2.new(1,0.5),
+Position=UDim2.new(1,0,0.5,0),
 Size=UDim2.new(0,math.max(af.RightSlotWidth,af.ShowChevron and 24 or 0),0,36),
 AutomaticSize="X",
 Parent=r,
@@ -5948,14 +5951,16 @@ else
 G=math.floor(math.max(aq.AbsolutePosition.X-C.X,18))
 end
 
-local H
-if af.DividerRightInset then
-H=af.DividerRightInset
-else
-H=0
+local H=F.X
+if v and v.AbsoluteSize.X>0 then
+H=(v.AbsolutePosition.X-C.X)+v.AbsoluteSize.X
 end
 
-local J=math.max(F.X-G-H,24)
+if af.DividerRightInset then
+H=F.X-af.DividerRightInset
+end
+
+local J=math.max(H-G,24)
 
 B.Position=UDim2.new(0,G,1,0)
 B.Size=UDim2.new(0,J,0,1)
@@ -6462,42 +6467,11 @@ ParentConfig=ae,
 Size=ae.Size,
 
 ListRow=ah,
-Image=ah and af.Icon or nil,
-ImageSize=ah and 20 or nil,
-IconThemed=ah and af.IconThemed or false,
+Image=af.Icon,
+ImageSize=20,
+IconThemed=af.IconThemed or false,
+IconAlign=af.IconAlign,
 }
-
-if not ah and af.Icon and af.Icon~=""then
-af.UIElements.ButtonIcon=aa.Image(
-af.Icon,
-af.Icon,
-0,
-ae.Window.Folder,
-"Button",
-not af.Color and true or nil,
-af.IconThemed
-)
-
-af.UIElements.ButtonIcon.Size=UDim2.new(0,20,0,20)
-af.UIElements.ButtonIcon.Parent=af.ButtonFrame.UIElements.Main
-af.UIElements.ButtonIcon.AnchorPoint=af.IconAlign=="Left"
-and Vector2.new(0,0.5)
-or Vector2.new(1,0.5)
-af.UIElements.ButtonIcon.Position=af.IconAlign=="Left"
-and UDim2.new(0,14,0.5,0)
-or UDim2.new(1,-14,0.5,0)
-
-af.ButtonFrame:Colorize(af.UIElements.ButtonIcon.ImageLabel,"ImageColor3")
-
-local ai=af.ButtonFrame.UIElements.TextContent:FindFirstChildOfClass"UIPadding"
-if ai then
-if af.IconAlign=="Left"then
-ai.PaddingLeft=UDim.new(0,ai.PaddingLeft.Offset+24)
-else
-ai.PaddingRight=UDim.new(0,ai.PaddingRight.Offset+24)
-end
-end
-end
 
 function af.Lock(ai)
 af.Locked=true
