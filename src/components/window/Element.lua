@@ -272,6 +272,26 @@ return function(Config)
 		DescHolder,
 	})
 
+	local ImageWrap = New("Frame", {
+		Name = "ImageWrap",
+		BackgroundTransparency = 1,
+		Size = UDim2.new(0, ImageFrame and ImageSize or 0, 0, 24),
+		Visible = ImageFrame ~= nil,
+	}, {
+		ImageFrame and New("Frame", {
+			Name = "IconCenter",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(1, 0, 1, 0),
+		}, {
+			ImageFrame,
+		}) or nil,
+	})
+
+	if ImageFrame then
+		ImageFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+		ImageFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	end
+
 	local RowFrame = New("Frame", {
 		Name = "TitleFrame",
 		BackgroundTransparency = 1,
@@ -284,13 +304,13 @@ return function(Config)
 		AutomaticSize = Element.Justify == "Between" and "Y" or "XY",
 	}, {
 		New("UIListLayout", {
-			Padding = UDim.new(0, Element.UIPadding),
+			Padding = UDim.new(0, ImageFrame and Element.UIPadding or 0),
 			FillDirection = "Horizontal",
-			VerticalAlignment = UseListRow and (HasDesc and "Top" or "Center")
-				or ((HasDesc or Element.ExpandableDesc) and "Top" or "Center"),
+			VerticalAlignment = (UseListRow and HasDesc) and "Top"
+				or ((not UseListRow and (HasDesc or Element.ExpandableDesc)) and "Top" or "Center"),
 			HorizontalAlignment = Element.Justify ~= "Between" and Element.Justify or "Left",
 		}),
-		ImageFrame,
+		ImageWrap,
 		TextContent,
 	})
 
@@ -299,6 +319,7 @@ return function(Config)
 	Element.UIElements.DescHolder = DescHolder
 	Element.UIElements.TextContent = TextContent
 	Element.UIElements.RowFrame = RowFrame
+	Element.UIElements.ImageWrap = ImageWrap
 
 	Element.UIElements.Container = New("Frame", {
 		Name = "Container",
@@ -493,7 +514,7 @@ return function(Config)
 			BackgroundTransparency = 1,
 			AnchorPoint = Vector2.new(1, 0),
 			Position = UDim2.new(1, -Element.UIPadding, 0, Element.UIPadding),
-			Size = UDim2.new(0, math.max(Element.RightSlotWidth, Element.ShowChevron and 18 or 0), 0, 36),
+			Size = UDim2.new(0, math.max(Element.RightSlotWidth, Element.ShowChevron and 24 or 0), 0, 36),
 			AutomaticSize = "X",
 			Parent = Main,
 		}, {
@@ -501,14 +522,14 @@ return function(Config)
 				FillDirection = "Horizontal",
 				HorizontalAlignment = "Right",
 				VerticalAlignment = "Center",
-				Padding = UDim.new(0, 8),
+				Padding = UDim.new(0, 10),
 			}),
 		})
 
 		if Element.ShowChevron then
 			ChevronWrap = New("Frame", {
 				Name = "ChevronWrap",
-				Size = UDim2.new(0, 16, 0, 16),
+				Size = UDim2.new(0, 24, 0, 24),
 				BackgroundTransparency = 1,
 				LayoutOrder = 999,
 				Parent = RightSlot,
@@ -546,11 +567,12 @@ return function(Config)
 			ThemeTag = {
 				BackgroundColor3 = "Text",
 			},
-			AnchorPoint = Vector2.new(0, 1),
+			AnchorPoint = Vector2.new(0, 0.5),
 			Position = UDim2.new(0, 0, 1, 0),
 			Size = UDim2.new(1, 0, 0, 1),
 			Visible = false,
 			Parent = Main,
+			ZIndex = 3,
 		}, {
 			New("UICorner", {
 				CornerRadius = UDim.new(0, 999),
@@ -855,7 +877,6 @@ return function(Config)
 		end
 
 		if NewImage then
-			local oldParent = RowFrame
 			if ImageFrame then
 				ImageFrame:Destroy()
 			end
@@ -875,24 +896,34 @@ return function(Config)
 				ImageFrame.ImageLabel.ImageColor3 = GetTextColorForHSB(Element.Color)
 			end
 
-			ImageFrame.Visible = true
-			ImageFrame.Parent = oldParent
-			ImageFrame.LayoutOrder = -99
 			ImageFrame.Size = UDim2.new(0, ImageSize, 0, ImageSize)
+			ImageFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+			ImageFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+			ImageFrame.Parent = ImageWrap
+
+			ImageWrap.Visible = true
+			ImageWrap.Size = UDim2.new(0, ImageSize, 0, 24)
 			IconOffset = ImageSize
 		else
 			if ImageFrame then
 				ImageFrame.Visible = false
 			end
+			ImageWrap.Visible = false
+			ImageWrap.Size = UDim2.new(0, 0, 0, 24)
 			IconOffset = 0
 		end
 
 		TextContent.Size = UDim2.new(
 			Element.Justify == "Between" and 1 or 0,
-			Element.Justify == "Between" and (ImageFrame and -IconOffset - Element.UIPadding or -IconOffset) or 0,
+			Element.Justify == "Between" and (ImageWrap.Visible and -IconOffset - Element.UIPadding or 0) or 0,
 			1,
 			0
 		)
+
+		local layout = RowFrame:FindFirstChildOfClass("UIListLayout")
+		if layout then
+			layout.Padding = UDim.new(0, ImageWrap.Visible and Element.UIPadding or 0)
+		end
 
 		task.defer(RefreshDivider)
 	end
