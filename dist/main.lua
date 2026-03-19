@@ -5338,10 +5338,6 @@ local ab=aa.New
 local ac=aa.NewRoundFrame
 local ad=aa.Tween
 
-
-
-
-
 local function Color3ToHSB(ae)
 local af,ag,ah=ae.R,ae.G,ae.B
 local ai=math.max(af,ag,ah)
@@ -5378,8 +5374,8 @@ return 0.299*af+0.587*ag+0.114*ah
 end
 
 local function GetTextColorForHSB(ae)
-local af=Color3ToHSB(ae)local
-ag, ah=af.h, af.b
+local af=Color3ToHSB(ae)
+local ag=af.h
 
 if GetPerceivedBrightness(ae)>0.5 then
 return Color3.fromHSV(ag/360,0,0.05)
@@ -5469,6 +5465,7 @@ Size=ae.Size or"Default",
 UIElements={},
 Index=ae.Index,
 
+ListRow=ae.ListRow==true,
 ExpandableDesc=ae.ExpandableDesc or false,
 DescExpanded=ae.DescExpanded or false,
 ShowChevron=ae.ShowChevron or false,
@@ -5477,20 +5474,21 @@ DividerLeftInset=ae.DividerLeftInset,
 DividerRightInset=ae.DividerRightInset,
 }
 
-local ag=af.Size=="Small"and-4 or af.Size=="Large"and 4 or 0
+local ag=af.ListRow
 local ah=af.Size=="Small"and-4 or af.Size=="Large"and 4 or 0
+local ai=af.Size=="Small"and-4 or af.Size=="Large"and 4 or 0
 
-local ai=af.ImageSize
-local aj=af.ThumbnailSize
-local ak=true
-local al=0
-local am=af.Desc~=nil and af.Desc~=""
+local aj=af.ImageSize
+local ak=af.ThumbnailSize
+local al=true
+local am=0
+local an=af.Desc~=nil and af.Desc~=""
 
-local an
 local ao
+local ap
 
 if af.Thumbnail then
-an=aa.Image(
+ao=aa.Image(
 af.Thumbnail,
 af.Title,
 ae.Window.NewElements and af.UICorner-11 or(af.UICorner-4),
@@ -5499,11 +5497,11 @@ ae.Window.Folder,
 false,
 af.IconThemed
 )
-an.Size=UDim2.new(1,0,0,aj)
+ao.Size=UDim2.new(1,0,0,ak)
 end
 
 if af.Image then
-ao=aa.Image(
+ap=aa.Image(
 af.Image,
 af.Title,
 ae.Window.NewElements and af.UICorner-11 or(af.UICorner-4),
@@ -5515,50 +5513,50 @@ not af.Color and true or false,
 )
 
 if typeof(af.Color)=="string"and not string.find(af.Image,"rbxthumb")then
-ao.ImageLabel.ImageColor3=GetTextColorForHSB(Color3.fromHex(aa.Colors[af.Color]))
+ap.ImageLabel.ImageColor3=GetTextColorForHSB(Color3.fromHex(aa.Colors[af.Color]))
 elseif typeof(af.Color)=="Color3"and not string.find(af.Image,"rbxthumb")then
-ao.ImageLabel.ImageColor3=GetTextColorForHSB(af.Color)
+ap.ImageLabel.ImageColor3=GetTextColorForHSB(af.Color)
 end
 
-ao.Size=UDim2.new(0,ai,0,ai)
-al=ai
+ap.Size=UDim2.new(0,aj,0,aj)
+am=aj
 end
 
-local function CreateText(ap,aq)
-local ar=typeof(af.Color)=="string"
+local function CreateText(aq,ar)
+local as=typeof(af.Color)=="string"
 and GetTextColorForHSB(Color3.fromHex(aa.Colors[af.Color]))
 or typeof(af.Color)=="Color3"and GetTextColorForHSB(af.Color)
 
 return ab("TextLabel",{
 BackgroundTransparency=1,
-Text=ap or"",
-TextSize=aq=="Desc"and 15 or 17,
+Text=aq or"",
+TextSize=ar=="Desc"and 15 or 17,
 TextXAlignment="Left",
 TextYAlignment="Top",
 ThemeTag={
-TextColor3=not af.Color and("Element"..aq)or nil,
+TextColor3=not af.Color and("Element"..ar)or nil,
 },
-TextColor3=af.Color and ar or nil,
-TextTransparency=aq=="Desc"and 0.3 or 0,
+TextColor3=af.Color and as or nil,
+TextTransparency=ar=="Desc"and 0.3 or 0,
 TextWrapped=true,
 Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
-FontFace=Font.new(aa.Font,aq=="Desc"and Enum.FontWeight.Medium or Enum.FontWeight.SemiBold),
+FontFace=Font.new(aa.Font,ar=="Desc"and Enum.FontWeight.Medium or Enum.FontWeight.SemiBold),
 })
 end
 
-local ap=CreateText(af.Title,"Title")
-local aq=CreateText(af.Desc,"Desc")
+local aq=CreateText(af.Title,"Title")
+local ar=CreateText(af.Desc,"Desc")
 
 if not af.Title or af.Title==""then
-ap.Visible=false
+aq.Visible=false
 end
 
-aq.Visible=am
-aq.AutomaticSize="Y"
-aq.Size=UDim2.new(1,0,0,0)
+ar.Visible=an
+ar.AutomaticSize="Y"
+ar.Size=UDim2.new(1,0,0,0)
 
-local ar=ab("Frame",{
+local as=ab("Frame",{
 Name="DescInner",
 BackgroundTransparency=1,
 AutomaticSize="Y",
@@ -5567,49 +5565,49 @@ Size=UDim2.new(1,0,0,0),
 ab("UIPadding",{
 PaddingTop=UDim.new(0,4),
 }),
-aq,
-})
-
-local as=ab("Frame",{
-Name="DescHolder",
-BackgroundTransparency=1,
-ClipsDescendants=true,
-Visible=am and af.DescExpanded or false,
-Size=UDim2.new(1,0,0,0),
-},{
 ar,
 })
 
-local at=ab("UIListLayout",{
+local at=ab("Frame",{
+Name="DescHolder",
+BackgroundTransparency=1,
+ClipsDescendants=true,
+Visible=false,
+Size=UDim2.new(1,0,0,0),
+},{
+as,
+})
+
+local au=ab("UIListLayout",{
 Padding=UDim.new(0,0),
 FillDirection="Vertical",
 VerticalAlignment="Top",
 HorizontalAlignment="Left",
 })
 
-local au=ab("Frame",{
+local av=ab("Frame",{
 Name="TextContent",
 BackgroundTransparency=1,
 AutomaticSize=af.Justify=="Between"and"Y"or"XY",
 Size=UDim2.new(
 af.Justify=="Between"and 1 or 0,
-af.Justify=="Between"and(ao and-al-af.UIPadding or-al)or 0,
+af.Justify=="Between"and(ap and-am-af.UIPadding or-am)or 0,
 1,
 0
 ),
 },{
 ab("UIPadding",{
-PaddingTop=UDim.new(0,(ae.Window.NewElements and af.UIPadding/2 or 0)+ah),
-PaddingLeft=UDim.new(0,(ae.Window.NewElements and af.UIPadding/2 or 0)+ag),
-PaddingRight=UDim.new(0,(ae.Window.NewElements and af.UIPadding/2 or 0)+ag),
-PaddingBottom=UDim.new(0,(ae.Window.NewElements and af.UIPadding/2 or 0)+ah),
+PaddingTop=UDim.new(0,(ae.Window.NewElements and af.UIPadding/2 or 0)+ai),
+PaddingLeft=UDim.new(0,(ae.Window.NewElements and af.UIPadding/2 or 0)+ah),
+PaddingRight=UDim.new(0,(ae.Window.NewElements and af.UIPadding/2 or 0)+ah),
+PaddingBottom=UDim.new(0,(ae.Window.NewElements and af.UIPadding/2 or 0)+ai),
 }),
+au,
+aq,
 at,
-ap,
-as,
 })
 
-local av=ab("Frame",{
+local aw=ab("Frame",{
 Name="TitleFrame",
 BackgroundTransparency=1,
 Size=UDim2.new(
@@ -5623,18 +5621,19 @@ AutomaticSize=af.Justify=="Between"and"Y"or"XY",
 ab("UIListLayout",{
 Padding=UDim.new(0,af.UIPadding),
 FillDirection="Horizontal",
-VerticalAlignment=(am or af.ExpandableDesc)and"Top"or"Center",
+VerticalAlignment=ag and(an and"Top"or"Center")
+or((an or af.ExpandableDesc)and"Top"or"Center"),
 HorizontalAlignment=af.Justify~="Between"and af.Justify or"Left",
 }),
-ao,
-au,
+ap,
+av,
 })
 
-af.UIElements.Title=ap
-af.UIElements.Desc=aq
-af.UIElements.DescHolder=as
-af.UIElements.TextContent=au
-af.UIElements.RowFrame=av
+af.UIElements.Title=aq
+af.UIElements.Desc=ar
+af.UIElements.DescHolder=at
+af.UIElements.TextContent=av
+af.UIElements.RowFrame=aw
 
 af.UIElements.Container=ab("Frame",{
 Name="Container",
@@ -5648,16 +5647,16 @@ FillDirection="Vertical",
 VerticalAlignment="Center",
 HorizontalAlignment=af.Justify=="Between"and"Left"or"Center",
 }),
-an,
-av,
+ao,
+aw,
 })
 
-local aw=aa.Image("lock","lock",0,ae.Window.Folder,"Lock",false)
-aw.Size=UDim2.new(0,20,0,20)
-aw.ImageLabel.ImageColor3=Color3.new(1,1,1)
-aw.ImageLabel.ImageTransparency=0.4
+local ax=aa.Image("lock","lock",0,ae.Window.Folder,"Lock",false)
+ax.Size=UDim2.new(0,20,0,20)
+ax.ImageLabel.ImageColor3=Color3.new(1,1,1)
+ax.ImageLabel.ImageTransparency=0.4
 
-local ax=ab("TextLabel",{
+local ay=ab("TextLabel",{
 Text="Locked",
 TextSize=18,
 FontFace=Font.new(aa.Font,Enum.FontWeight.Medium),
@@ -5667,7 +5666,7 @@ TextColor3=Color3.new(1,1,1),
 TextTransparency=0.05,
 })
 
-local ay=ab("Frame",{
+local az=ab("Frame",{
 Size=UDim2.new(1,af.UIPadding*2,1,af.UIPadding*2),
 BackgroundTransparency=1,
 AnchorPoint=Vector2.new(0.5,0.5),
@@ -5675,13 +5674,13 @@ Position=UDim2.new(0.5,0,0.5,0),
 ZIndex=9999999,
 })
 
-local az,aA=ac(af.UICorner,"Squircle",{
+local aA,aB=ac(af.UICorner,"Squircle",{
 Size=UDim2.new(1,0,1,0),
 ImageTransparency=0.25,
 ImageColor3=Color3.new(0,0,0),
 Visible=false,
 Active=false,
-Parent=ay,
+Parent=az,
 },{
 ab("UIListLayout",{
 FillDirection="Horizontal",
@@ -5689,18 +5688,18 @@ VerticalAlignment="Center",
 HorizontalAlignment="Center",
 Padding=UDim.new(0,8),
 }),
-aw,
 ax,
+ay,
 },nil,true)
 
-local aB,b=ac(af.UICorner,"Squircle-Outline",{
+local b,d=ac(af.UICorner,"Squircle-Outline",{
 Size=UDim2.new(1,0,1,0),
 ImageTransparency=1,
 Active=false,
 ThemeTag={
 ImageColor3="Text",
 },
-Parent=ay,
+Parent=az,
 },{
 ab("UIListLayout",{
 FillDirection="Horizontal",
@@ -5710,14 +5709,14 @@ Padding=UDim.new(0,8),
 }),
 },nil,true)
 
-local d,f=ac(af.UICorner,"Squircle",{
+local f,g=ac(af.UICorner,"Squircle",{
 Size=UDim2.new(1,0,1,0),
 ImageTransparency=1,
 Active=false,
 ThemeTag={
 ImageColor3="Text",
 },
-Parent=ay,
+Parent=az,
 },{
 ab("UIListLayout",{
 FillDirection="Horizontal",
@@ -5727,14 +5726,14 @@ Padding=UDim.new(0,8),
 }),
 },nil,true)
 
-local g,h=ac(af.UICorner,"Squircle-Outline",{
+local h,j=ac(af.UICorner,"Squircle-Outline",{
 Size=UDim2.new(1,0,1,0),
 ImageTransparency=1,
 Active=false,
 ThemeTag={
 ImageColor3="Text",
 },
-Parent=ay,
+Parent=az,
 },{
 ab("UIListLayout",{
 FillDirection="Horizontal",
@@ -5759,14 +5758,14 @@ NumberSequenceKeypoint.new(1,1),
 }),
 },nil,true)
 
-local j,l=ac(af.UICorner,"Squircle",{
+local l,m=ac(af.UICorner,"Squircle",{
 Size=UDim2.new(1,0,1,0),
 ImageTransparency=1,
 Active=false,
 ThemeTag={
 ImageColor3="Text",
 },
-Parent=ay,
+Parent=az,
 },{
 ab("UIGradient",{
 Name="HoverGradient",
@@ -5791,7 +5790,7 @@ Padding=UDim.new(0,8),
 }),
 },nil,true)
 
-local m,p=ac(af.UICorner,"Squircle",{
+local p,r=ac(af.UICorner,"Squircle",{
 Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
 ImageTransparency=af.Color and 0.05 or 0.93,
@@ -5805,7 +5804,7 @@ or typeof(af.Color)=="Color3"and af.Color
 )or nil,
 },{
 af.UIElements.Container,
-ay,
+az,
 ab("UIPadding",{
 PaddingTop=UDim.new(0,af.UIPadding),
 PaddingLeft=UDim.new(0,af.UIPadding),
@@ -5814,17 +5813,24 @@ PaddingBottom=UDim.new(0,af.UIPadding),
 }),
 },true,true)
 
-af.UIElements.Main=m
-af.UIElements.Locked=az
+af.UIElements.Main=p
+af.UIElements.Locked=aA
 
-local r=ab("Frame",{
+local u
+local v
+local x
+local z
+local A
+
+if ag then
+u=ab("Frame",{
 Name="RightSlot",
 BackgroundTransparency=1,
 AnchorPoint=Vector2.new(1,0),
 Position=UDim2.new(1,-af.UIPadding,0,af.UIPadding),
 Size=UDim2.new(0,math.max(af.RightSlotWidth,af.ShowChevron and 18 or 0),0,36),
 AutomaticSize="X",
-Parent=m,
+Parent=p,
 },{
 ab("UIListLayout",{
 FillDirection="Horizontal",
@@ -5834,31 +5840,25 @@ Padding=UDim.new(0,8),
 }),
 })
 
-af.UIElements.RightSlot=r
-
-local u
-local v
-local x
-
 if af.ShowChevron then
-u=ab("Frame",{
+v=ab("Frame",{
 Name="ChevronWrap",
 Size=UDim2.new(0,16,0,16),
 BackgroundTransparency=1,
 LayoutOrder=999,
-Parent=r,
+Parent=u,
 })
 
-v=ab("TextButton",{
+x=ab("TextButton",{
 Name="ChevronButton",
 Size=UDim2.new(1,0,1,0),
 BackgroundTransparency=1,
 Text="",
 AutoButtonColor=false,
-Parent=u,
+Parent=v,
 })
 
-x=ab("TextLabel",{
+z=ab("TextLabel",{
 Name="ChevronIcon",
 Size=UDim2.new(1,0,1,0),
 BackgroundTransparency=1,
@@ -5871,15 +5871,11 @@ TextYAlignment="Center",
 ThemeTag={
 TextColor3="Text",
 },
-Parent=v,
+Parent=x,
 })
 end
 
-af.UIElements.ChevronWrap=u
-af.UIElements.ChevronButton=v
-af.UIElements.ChevronIcon=x
-
-local z=ab("Frame",{
+A=ab("Frame",{
 Name="Divider",
 BackgroundTransparency=0.88,
 ThemeTag={
@@ -5889,106 +5885,124 @@ AnchorPoint=Vector2.new(0,1),
 Position=UDim2.new(0,0,1,0),
 Size=UDim2.new(1,0,0,1),
 Visible=false,
-Parent=m,
+Parent=p,
 },{
 ab("UICorner",{
 CornerRadius=UDim.new(0,999),
 }),
 })
+end
 
-af.UIElements.Divider=z
+af.UIElements.RightSlot=u
+af.UIElements.ChevronWrap=v
+af.UIElements.ChevronButton=x
+af.UIElements.ChevronIcon=z
+af.UIElements.Divider=A
+
+local function GetDescTargetHeight()
+local B=math.max(as.AbsoluteSize.Y,ar.TextBounds.Y+8)
+if B<=0 then
+B=18
+end
+return B
+end
 
 local function RefreshDivider()
-if not z or not m or not ap then
+if not ag or not A or not p or not aq then
 return
 end
 
-local A=m.AbsolutePosition
-local B=m.AbsoluteSize
+local B=p.AbsolutePosition
+local C=p.AbsoluteSize
 
-if B.X<=0 then
+if C.X<=0 then
 return
-end
-
-local C
-if af.DividerLeftInset then
-C=af.DividerLeftInset
-else
-C=math.floor(math.max(ap.AbsolutePosition.X-A.X,18))
 end
 
 local F
-if af.DividerRightInset then
-F=B.X-af.DividerRightInset
-elseif r and r.AbsoluteSize.X>0 then
-F=math.floor((r.AbsolutePosition.X-A.X)+r.AbsoluteSize.X)
+if af.DividerLeftInset then
+F=af.DividerLeftInset
 else
-F=B.X-18
+F=math.floor(math.max(aq.AbsolutePosition.X-B.X,18))
 end
 
-local G=math.max(F-C,24)
-
-z.Position=UDim2.new(0,C,1,0)
-z.Size=UDim2.new(0,G,0,1)
+local G
+if af.DividerRightInset then
+G=af.DividerRightInset
+elseif u and u.AbsoluteSize.X>0 then
+local H=(u.AbsolutePosition.X-B.X)+u.AbsoluteSize.X
+G=math.max(C.X-H,af.UIPadding)
+else
+G=af.UIPadding
 end
 
-local function GetDescTargetHeight()
-task.wait()
-local A=math.max(ar.AbsoluteSize.Y,aq.TextBounds.Y+6)
-if A<=0 then
-A=18
-end
-return A
+local H=math.max(C.X-F-G,24)
+
+A.Position=UDim2.new(0,F,1,0)
+A.Size=UDim2.new(0,H,0,1)
 end
 
-function af.SetExpanded(A,B,C)
-if not af.ExpandableDesc or not am then
+if an then
+if af.ExpandableDesc then
+at.Visible=af.DescExpanded
+at.Size=UDim2.new(1,0,0,af.DescExpanded and GetDescTargetHeight()or 0)
+else
+at.Visible=true
+at.Size=UDim2.new(1,0,0,GetDescTargetHeight())
+end
+else
+at.Visible=false
+at.Size=UDim2.new(1,0,0,0)
+end
+
+function af.SetExpanded(B,C,F)
+if not af.ExpandableDesc or not an then
 return
 end
 
-af.DescExpanded=B==true
+af.DescExpanded=C==true
 
 if af.DescExpanded then
-as.Visible=true
-local F=GetDescTargetHeight()
+at.Visible=true
+local G=GetDescTargetHeight()
 
-if C then
-as.Size=UDim2.new(1,0,0,F)
-if x then
-x.Rotation=90
+if F then
+at.Size=UDim2.new(1,0,0,G)
+if z then
+z.Rotation=90
 end
 else
-ad(as,0.20,{
-Size=UDim2.new(1,0,0,F),
+ad(at,0.20,{
+Size=UDim2.new(1,0,0,G),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
-if x then
-ad(x,0.20,{
+if z then
+ad(z,0.20,{
 Rotation=90,
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 end
 else
-if C then
-as.Size=UDim2.new(1,0,0,0)
-as.Visible=false
-if x then
-x.Rotation=0
+if F then
+at.Size=UDim2.new(1,0,0,0)
+at.Visible=false
+if z then
+z.Rotation=0
 end
 else
-ad(as,0.20,{
+ad(at,0.20,{
 Size=UDim2.new(1,0,0,0),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
-if x then
-ad(x,0.20,{
+if z then
+ad(z,0.20,{
 Rotation=0,
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 
 task.delay(0.20,function()
 if not af.DescExpanded then
-as.Visible=false
+at.Visible=false
 end
 end)
 end
@@ -5997,95 +6011,104 @@ end
 task.defer(RefreshDivider)
 end
 
-function af.ToggleExpanded(A)
+function af.ToggleExpanded(B)
 af:SetExpanded(not af.DescExpanded,false)
 end
 
-if am and af.ExpandableDesc then
+if an and af.ExpandableDesc then
 af:SetExpanded(af.DescExpanded,true)
 
-if v then
-aa.AddSignal(v.MouseButton1Click,function()
+if x then
+aa.AddSignal(x.MouseButton1Click,function()
 af:ToggleExpanded()
 end)
 end
-else
-as.Visible=false
-as.Size=UDim2.new(1,0,0,0)
 end
 
-aa.AddSignal(m:GetPropertyChangedSignal"AbsoluteSize",function()
+if ag and u then
+aa.AddSignal(p:GetPropertyChangedSignal"AbsoluteSize",function()
 task.defer(RefreshDivider)
 end)
 
-aa.AddSignal(r:GetPropertyChangedSignal"AbsoluteSize",function()
+aa.AddSignal(u:GetPropertyChangedSignal"AbsoluteSize",function()
 task.defer(RefreshDivider)
 end)
 
-aa.AddSignal(ap:GetPropertyChangedSignal"TextBounds",function()
+aa.AddSignal(aq:GetPropertyChangedSignal"TextBounds",function()
 task.defer(RefreshDivider)
 end)
 
 task.defer(RefreshDivider)
+end
 
 if af.Hover then
-aa.AddSignal(m.MouseEnter,function()
-if ak then
-ad(m,0.12,{ImageTransparency=af.Color and 0.15 or 0.9}):Play()
-ad(j,0.12,{ImageTransparency=0.9}):Play()
-ad(g,0.12,{ImageTransparency=0.8}):Play()
+aa.AddSignal(p.MouseEnter,function()
+if al then
+ad(p,0.12,{ImageTransparency=af.Color and 0.15 or 0.9}):Play()
+ad(l,0.12,{ImageTransparency=0.9}):Play()
+ad(h,0.12,{ImageTransparency=0.8}):Play()
 
-aa.AddSignal(m.MouseMoved,function(A)
-j.HoverGradient.Offset=
-Vector2.new(((A-m.AbsolutePosition.X)/m.AbsoluteSize.X)-0.5,0)
-g.HoverGradient.Offset=
-Vector2.new(((A-m.AbsolutePosition.X)/m.AbsoluteSize.X)-0.5,0)
+aa.AddSignal(p.MouseMoved,function(B)
+l.HoverGradient.Offset=
+Vector2.new(((B-p.AbsolutePosition.X)/p.AbsoluteSize.X)-0.5,0)
+h.HoverGradient.Offset=
+Vector2.new(((B-p.AbsolutePosition.X)/p.AbsoluteSize.X)-0.5,0)
 end)
 end
 end)
 
-aa.AddSignal(m.InputEnded,function()
-if ak then
-ad(m,0.12,{ImageTransparency=af.Color and 0.05 or 0.93}):Play()
-ad(j,0.12,{ImageTransparency=1}):Play()
-ad(g,0.12,{ImageTransparency=1}):Play()
+aa.AddSignal(p.InputEnded,function()
+if al then
+ad(p,0.12,{ImageTransparency=af.Color and 0.05 or 0.93}):Play()
+ad(l,0.12,{ImageTransparency=1}):Play()
+ad(h,0.12,{ImageTransparency=1}):Play()
 end
 end)
 end
 
-function af.SetTitle(A,B)
-af.Title=B
-ap.Text=B
+function af.SetTitle(B,C)
+af.Title=C
+aq.Text=C
 task.defer(RefreshDivider)
 end
 
-function af.SetDesc(A,B)
-af.Desc=B
-aq.Text=B or""
-am=B~=nil and B~=""
+function af.SetDesc(B,C)
+af.Desc=C
+ar.Text=C or""
+an=C~=nil and C~=""
 
-if not am then
-as.Visible=false
-as.Size=UDim2.new(1,0,0,0)
-if u then
-u.Visible=false
+if not an then
+ar.Visible=false
+at.Visible=false
+at.Size=UDim2.new(1,0,0,0)
+if v then
+v.Visible=false
 end
 else
-aq.Visible=true
-if u then
-u.Visible=true
+ar.Visible=true
+if v then
+v.Visible=true
 end
+
+if af.ExpandableDesc then
 if af.DescExpanded then
 af:SetExpanded(true,true)
+else
+at.Visible=false
+at.Size=UDim2.new(1,0,0,0)
+end
+else
+at.Visible=true
+at.Size=UDim2.new(1,0,0,GetDescTargetHeight())
 end
 end
 
 task.defer(RefreshDivider)
 end
 
-function af.Colorize(A,B,C)
+function af.Colorize(B,C,F)
 if af.Color then
-B[C]=typeof(af.Color)=="string"
+C[F]=typeof(af.Color)=="string"
 and GetTextColorForHSB(Color3.fromHex(aa.Colors[af.Color]))
 or typeof(af.Color)=="Color3"and GetTextColorForHSB(af.Color)
 or nil
@@ -6093,33 +6116,33 @@ end
 end
 
 if ae.ElementTable then
-aa.AddSignal(ap:GetPropertyChangedSignal"Text",function()
-if af.Title~=ap.Text then
-af:SetTitle(ap.Text)
-ae.ElementTable.Title=ap.Text
-end
-end)
-
 aa.AddSignal(aq:GetPropertyChangedSignal"Text",function()
-if af.Desc~=aq.Text then
-af:SetDesc(aq.Text)
-ae.ElementTable.Desc=aq.Text
+if af.Title~=aq.Text then
+af:SetTitle(aq.Text)
+ae.ElementTable.Title=aq.Text
+end
+end)
+
+aa.AddSignal(ar:GetPropertyChangedSignal"Text",function()
+if af.Desc~=ar.Text then
+af:SetDesc(ar.Text)
+ae.ElementTable.Desc=ar.Text
 end
 end)
 end
 
-function af.SetThumbnail(A,B,C)
-af.Thumbnail=B
-if C then
-af.ThumbnailSize=C
-aj=C
+function af.SetThumbnail(B,C,F)
+af.Thumbnail=C
+if F then
+af.ThumbnailSize=F
+ak=F
 end
 
-if an then
-if B then
-an:Destroy()
-an=aa.Image(
-B,
+if ao then
+if C then
+ao:Destroy()
+ao=aa.Image(
+C,
 af.Title,
 af.UICorner-3,
 ae.Window.Folder,
@@ -6127,19 +6150,19 @@ ae.Window.Folder,
 false,
 af.IconThemed
 )
-an.Size=UDim2.new(1,0,0,aj)
-an.Parent=af.UIElements.Container
-local F=af.UIElements.Container:FindFirstChild"UIListLayout"
-if F then
-an.LayoutOrder=-1
+ao.Size=UDim2.new(1,0,0,ak)
+ao.Parent=af.UIElements.Container
+local G=af.UIElements.Container:FindFirstChild"UIListLayout"
+if G then
+ao.LayoutOrder=-1
 end
 else
-an.Visible=false
+ao.Visible=false
 end
 else
-if B then
-an=aa.Image(
-B,
+if C then
+ao=aa.Image(
+C,
 af.Title,
 af.UICorner-3,
 ae.Window.Folder,
@@ -6147,11 +6170,11 @@ ae.Window.Folder,
 false,
 af.IconThemed
 )
-an.Size=UDim2.new(1,0,0,aj)
-an.Parent=af.UIElements.Container
-local F=af.UIElements.Container:FindFirstChild"UIListLayout"
-if F then
-an.LayoutOrder=-1
+ao.Size=UDim2.new(1,0,0,ak)
+ao.Parent=af.UIElements.Container
+local G=af.UIElements.Container:FindFirstChild"UIListLayout"
+if G then
+ao.LayoutOrder=-1
 end
 end
 end
@@ -6159,49 +6182,49 @@ end
 task.defer(RefreshDivider)
 end
 
-function af.SetImage(A,B,C)
-af.Image=B
+function af.SetImage(B,C,F)
+af.Image=C
+if F then
+af.ImageSize=F
+aj=F
+end
+
 if C then
-af.ImageSize=C
-ai=C
+local G=aw
+if ap then
+ap:Destroy()
 end
 
-if B then
-local F=av
-if ao then
-ao:Destroy()
-end
-
-ao=aa.Image(
-B,
-B,
+ap=aa.Image(
+C,
+C,
 af.UICorner-3,
 ae.Window.Folder,
 "Image",
 not af.Color and true or false
 )
 
-if typeof(af.Color)=="string"and not string.find(B,"rbxthumb")then
-ao.ImageLabel.ImageColor3=GetTextColorForHSB(Color3.fromHex(aa.Colors[af.Color]))
-elseif typeof(af.Color)=="Color3"and not string.find(B,"rbxthumb")then
-ao.ImageLabel.ImageColor3=GetTextColorForHSB(af.Color)
+if typeof(af.Color)=="string"and not string.find(C,"rbxthumb")then
+ap.ImageLabel.ImageColor3=GetTextColorForHSB(Color3.fromHex(aa.Colors[af.Color]))
+elseif typeof(af.Color)=="Color3"and not string.find(C,"rbxthumb")then
+ap.ImageLabel.ImageColor3=GetTextColorForHSB(af.Color)
 end
 
-ao.Visible=true
-ao.Parent=F
-ao.LayoutOrder=-99
-ao.Size=UDim2.new(0,ai,0,ai)
-al=ai
+ap.Visible=true
+ap.Parent=G
+ap.LayoutOrder=-99
+ap.Size=UDim2.new(0,aj,0,aj)
+am=aj
 else
-if ao then
-ao.Visible=false
+if ap then
+ap.Visible=false
 end
-al=0
+am=0
 end
 
-au.Size=UDim2.new(
+av.Size=UDim2.new(
 af.Justify=="Between"and 1 or 0,
-af.Justify=="Between"and(ao and-al-af.UIPadding or-al)or 0,
+af.Justify=="Between"and(ap and-am-af.UIPadding or-am)or 0,
 1,
 0
 )
@@ -6209,25 +6232,25 @@ af.Justify=="Between"and(ao and-al-af.UIPadding or-al)or 0,
 task.defer(RefreshDivider)
 end
 
-function af.Destroy(A)
-m:Destroy()
+function af.Destroy(B)
+p:Destroy()
 end
 
-function af.Lock(A,B)
-ak=false
-az.Active=true
-az.Visible=true
-ax.Text=B or"Locked"
+function af.Lock(B,C)
+al=false
+aA.Active=true
+aA.Visible=true
+ay.Text=C or"Locked"
 end
 
-function af.Unlock(A)
-ak=true
-az.Active=false
-az.Visible=false
+function af.Unlock(B)
+al=true
+aA.Active=false
+aA.Visible=false
 end
 
-function af.Highlight(A)
-local B=ab("UIGradient",{
+function af.Highlight(B)
+local C=ab("UIGradient",{
 Color=ColorSequence.new{
 ColorSequenceKeypoint.new(0,Color3.new(1,1,1)),
 ColorSequenceKeypoint.new(0.5,Color3.new(1,1,1)),
@@ -6242,10 +6265,10 @@ NumberSequenceKeypoint.new(1,1),
 },
 Rotation=0,
 Offset=Vector2.new(-1,0),
-Parent=aB,
+Parent=b,
 })
 
-local C=ab("UIGradient",{
+local F=ab("UIGradient",{
 Color=ColorSequence.new{
 ColorSequenceKeypoint.new(0,Color3.new(1,1,1)),
 ColorSequenceKeypoint.new(0.5,Color3.new(1,1,1)),
@@ -6260,48 +6283,48 @@ NumberSequenceKeypoint.new(1,1),
 },
 Rotation=0,
 Offset=Vector2.new(-1,0),
-Parent=d,
+Parent=f,
 })
 
-aB.ImageTransparency=0.65
-d.ImageTransparency=0.88
-
-ad(B,0.75,{
-Offset=Vector2.new(1,0),
-}):Play()
+b.ImageTransparency=0.65
+f.ImageTransparency=0.88
 
 ad(C,0.75,{
 Offset=Vector2.new(1,0),
 }):Play()
 
+ad(F,0.75,{
+Offset=Vector2.new(1,0),
+}):Play()
+
 task.spawn(function()
 task.wait(0.75)
-aB.ImageTransparency=1
-d.ImageTransparency=1
-B:Destroy()
+b.ImageTransparency=1
+f.ImageTransparency=1
 C:Destroy()
+F:Destroy()
 end)
 end
 
-function af.UpdateShape(A)
+function af.UpdateShape(B)
 if ae.Window.NewElements then
-local B
+local C
 if ae.ParentConfig.ParentType=="Group"then
-B="Squircle"
+C="Squircle"
 else
-B=getElementPosition(A.Elements,af.Index)
+C=getElementPosition(B.Elements,af.Index)
 end
 
-if B and m then
-p:SetType(B)
-aA:SetType(B)
-f:SetType(B)
-b:SetType(B.."-Outline")
-l:SetType(B)
-h:SetType(B.."-Outline")
+if C and p then
+r:SetType(C)
+aB:SetType(C)
+g:SetType(C)
+d:SetType(C.."-Outline")
+m:SetType(C)
+j:SetType(C.."-Outline")
 
-if z then
-z.Visible=(B=="Square"or B=="Squircle-TL-TR")
+if ag and A then
+A.Visible=(C=="Square"or C=="Squircle-TL-TR")
 task.defer(RefreshDivider)
 end
 end
@@ -6310,7 +6333,6 @@ end
 
 return af
 end end function a.C()
-
 
 local aa=a.load'c'
 local ab=aa.New
