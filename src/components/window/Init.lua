@@ -982,7 +982,7 @@ return function(Config)
 					Visible = Window.Topbar.ButtonsType == "Mac",
 				}, {
 					New("UIListLayout", {
-						Padding = UDim.new(0, 8),
+						Padding = UDim.new(0, 4),
 						FillDirection = "Horizontal",
 						SortOrder = "LayoutOrder",
 						VerticalAlignment = "Center",
@@ -1061,11 +1061,11 @@ return function(Config)
 				New("UIPadding", {
 					PaddingTop = UDim.new(0, Window.UIPadding),
 					PaddingLeft = UDim.new(
-						0,
-						Window.Topbar.ButtonsType == "Default" and Window.UIPadding or Window.UIPadding - 2
-					),
-					PaddingRight = UDim.new(0, 8),
-					PaddingBottom = UDim.new(0, Window.UIPadding),
+					0,
+					Window.Topbar.ButtonsType == "Default" and Window.UIPadding or Window.UIPadding - 2
+				),
+				PaddingRight = UDim.new(0, Window.Topbar.ButtonsType == "Mac" and 14 or 8),
+				PaddingBottom = UDim.new(0, Window.UIPadding),
 				}),
 			}),
 		}),
@@ -1172,13 +1172,10 @@ return function(Config)
 
 		if Window.Topbar.ButtonsType == "Mac" then
 			local MacWidth = Topbar.MacButtons.UIListLayout.AbsoluteContentSize.X / Scale
-			Topbar.Left.Position = UDim2.new(
-				0,
-				MacWidth + Window.UIPadding - 4,
-				0,
-				0
-			)
-			LeftWidth = LeftWidth + MacWidth + Window.UIPadding - 4
+			local MacInset = MacWidth + 8
+
+			Topbar.Left.Position = UDim2.new(0, MacInset, 0, 0)
+			LeftWidth = LeftWidth + MacInset
 		else
 			Topbar.Left.Position = UDim2.new(0, 0, 0, 0)
 		end
