@@ -7,6 +7,22 @@ local CreateCheckbox = require("../components/ui/Checkbox").New
 
 local Element = {}
 
+local function IsInside(GuiObject, Position, Padding)
+	if not GuiObject or not GuiObject.Visible then
+		return false
+	end
+
+	Padding = Padding or 0
+
+	local AbsolutePosition = GuiObject.AbsolutePosition
+	local AbsoluteSize = GuiObject.AbsoluteSize
+
+	return Position.X >= (AbsolutePosition.X - Padding)
+		and Position.X <= (AbsolutePosition.X + AbsoluteSize.X + Padding)
+		and Position.Y >= (AbsolutePosition.Y - Padding)
+		and Position.Y <= (AbsolutePosition.Y + AbsoluteSize.Y + Padding)
+end
+
 function Element:New(Config)
 	local Toggle = {
 		__type = "Toggle",
@@ -34,7 +50,7 @@ function Element:New(Config)
 
 		Window = Config.Window,
 		Parent = Config.Parent,
-		TextOffset = HasDesc and 128 or 108,
+		TextOffset = HasDesc and 140 or 108,
 		Hover = false,
 		Tab = Config.Tab,
 		Index = Config.Index,
@@ -45,7 +61,7 @@ function Element:New(Config)
 		ExpandableDesc = HasDesc,
 		DescExpanded = false,
 		ShowChevron = HasDesc,
-		RightSlotWidth = HasDesc and 104 or 84,
+		RightSlotWidth = HasDesc and 120 or 90,
 	})
 
 	local CanCallback = true
@@ -98,8 +114,7 @@ function Element:New(Config)
 
 	if Toggle.ToggleFrame.UIElements.RightSlot then
 		ToggleFrame.Parent = Toggle.ToggleFrame.UIElements.RightSlot
-		ToggleFrame.AnchorPoint = Vector2.new(1, 0.5)
-		ToggleFrame.Position = UDim2.new(1, 0, 0.5, 0)
+		ToggleFrame.LayoutOrder = 1
 	else
 		ToggleFrame.AnchorPoint = Vector2.new(1, Config.Window.NewElements and 0 or 0.5)
 		ToggleFrame.Position = UDim2.new(1, 0, Config.Window.NewElements and 0 or 0.5, 0)
@@ -115,8 +130,24 @@ function Element:New(Config)
 
 	Toggle:Set(Toggled, false, Config.Window.NewElements)
 
+	local function PressingChevron(input)
+		local ChevronButton = Toggle.ToggleFrame.UIElements.ChevronButton
+		if not ChevronButton or not input or not input.Position then
+			return false
+		end
+		return IsInside(ChevronButton, input.Position, 8)
+	end
+
 	if Config.Window.NewElements and ToggleFunc.Animate then
 		Creator.AddSignal(Toggle.ToggleFrame.UIElements.Main.InputBegan, function(input)
+			if Toggle.Locked then
+				return
+			end
+
+			if PressingChevron(input) then
+				return
+			end
+
 			if
 				not Config.Window.IsToggleDragging
 				and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch)
@@ -126,6 +157,15 @@ function Element:New(Config)
 		end)
 	else
 		Creator.AddSignal(Toggle.ToggleFrame.UIElements.Main.MouseButton1Click, function()
+			if Toggle.Locked then
+				return
+			end
+
+			local MousePos = game:GetService("UserInputService"):GetMouseLocation()
+			if IsInside(Toggle.ToggleFrame.UIElements.ChevronButton, MousePos, 8) then
+				return
+			end
+
 			Toggle:Set(not Toggle.Value, nil, Config.Window.NewElements)
 		end)
 	end
