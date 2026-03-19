@@ -4,7 +4,7 @@
     | |/ |/ / / _ \/ _  / /_/ // /  
     |__/|__/_/_//_/\_,_/\____/___/
     
-    v1.6.64  |  2026-03-18  |  Roblox UI Library for scripts
+    v1.6.64  |  2026-03-19  |  Roblox UI Library for scripts
     
     To view the source code, see the `src/` folder on the official GitHub repository.
     
@@ -12906,6 +12906,21 @@ b,
 
 
 am("Frame",{
+AutomaticSize="XY",
+BackgroundTransparency=1,
+Position=UDim2.new(0,0,0.5,0),
+AnchorPoint=Vector2.new(0,0.5),
+Name="MacButtons",
+Visible=au.Topbar.ButtonsType=="Mac",
+},{
+am("UIListLayout",{
+Padding=UDim.new(0,8),
+FillDirection="Horizontal",
+SortOrder="LayoutOrder",
+VerticalAlignment="Center",
+}),
+}),
+am("Frame",{
 AutomaticSize="X",
 Size=UDim2.new(0,0,1,0),
 BackgroundTransparency=1,
@@ -12960,14 +12975,15 @@ Padding=UDim.new(0,au.UIPadding/2),
 am("Frame",{
 AutomaticSize="XY",
 BackgroundTransparency=1,
-Position=UDim2.new(au.Topbar.ButtonsType=="Default"and 1 or 0,0,0.5,0),
-AnchorPoint=Vector2.new(au.Topbar.ButtonsType=="Default"and 1 or 0,0.5),
+Position=UDim2.new(1,0,0.5,0),
+AnchorPoint=Vector2.new(1,0.5),
 Name="Right",
 },{
 am("UIListLayout",{
-Padding=UDim.new(0,au.Topbar.ButtonsType=="Default"and 9 or 0),
+Padding=UDim.new(0,au.Topbar.ButtonsType=="Default"and 9 or 8),
 FillDirection="Horizontal",
 SortOrder="LayoutOrder",
+VerticalAlignment="Center",
 }),
 }),
 am("UIPadding",{
@@ -12983,41 +12999,61 @@ PaddingBottom=UDim.new(0,au.UIPadding),
 }),
 })
 
-al.AddSignal(au.UIElements.Main.Main.Topbar.Left:GetPropertyChangedSignal"AbsoluteSize",function()
-local x=0
-local z=au.UIElements.Main.Main.Topbar.Right.UIListLayout.AbsoluteContentSize.X
-/at.WindUI.UIScale
+local function UpdateTopbarLayout()
+local x=au.UIElements.Main.Main.Topbar
+local z=at.WindUI.UIScale
 
+local A=x.Right.UIListLayout.AbsoluteContentSize.X/z
+local B=0
 
-
-
-
-x=au.UIElements.Main.Main.Topbar.Left.AbsoluteSize.X/at.WindUI.UIScale
-if au.Topbar.ButtonsType~="Default"then
-x=x+z+au.UIPadding-4
+if au.Topbar.ButtonsType=="Mac"then
+B=x.MacButtons.UIListLayout.AbsoluteContentSize.X/z
+x.Left.Position=UDim2.new(0,B+au.UIPadding+6,0,0)
+else
+x.Left.Position=UDim2.new(0,0,0,0)
 end
 
+local C=(x.Left.AbsoluteSize.X/z)
+local F=au.Topbar.ButtonsType=="Mac"and(B+au.UIPadding+6)or 0
+local G=C+F
 
-
-au.UIElements.Main.Main.Topbar.Center.Position=
-UDim2.new(0,x+(au.UIPadding/at.WindUI.UIScale),0.5,0)
-au.UIElements.Main.Main.Topbar.Center.Size=
-UDim2.new(1,-x-z-((au.UIPadding*2)/at.WindUI.UIScale),1,0)
-end)
-
-if au.Topbar.ButtonsType~="Default"then
-al.AddSignal(au.UIElements.Main.Main.Topbar.Right:GetPropertyChangedSignal"AbsoluteSize",function()
-au.UIElements.Main.Main.Topbar.Left.Position=UDim2.new(
+x.Center.Position=UDim2.new(
 0,
-(au.UIElements.Main.Main.Topbar.Right.AbsoluteSize.X/at.WindUI.UIScale)+au.UIPadding-4,
-0,
+G+(au.UIPadding/z),
+0.5,
 0
 )
-end)
+
+x.Center.Size=UDim2.new(
+1,
+-G-A-((au.UIPadding*2)/z),
+1,
+0
+)
 end
 
-function au.CreateTopbarButton(x,z,A,B,C,F,G,H)
-local J=al.Image(
+al.AddSignal(
+au.UIElements.Main.Main.Topbar.Left:GetPropertyChangedSignal"AbsoluteSize",
+UpdateTopbarLayout
+)
+
+al.AddSignal(
+au.UIElements.Main.Main.Topbar.Right.UIListLayout:GetPropertyChangedSignal"AbsoluteContentSize",
+UpdateTopbarLayout
+)
+
+if au.Topbar.ButtonsType=="Mac"then
+al.AddSignal(
+au.UIElements.Main.Main.Topbar.MacButtons.UIListLayout:GetPropertyChangedSignal"AbsoluteContentSize",
+UpdateTopbarLayout
+)
+end
+
+task.defer(UpdateTopbarLayout)
+
+function au.CreateTopbarButton(x,z,A,B,C,F,G,H,J)
+local L=G or Color3.fromHex"#F4695F"
+local M=al.Image(
 A,
 A,
 0,
@@ -13027,18 +13063,18 @@ au.Topbar.ButtonsType=="Default"and true or false,
 F,
 "WindowTopbarButtonIcon"
 )
-J.Size=au.Topbar.ButtonsType=="Default"
+M.Size=au.Topbar.ButtonsType=="Default"
 and UDim2.new(0,H or au.TopBarButtonIconSize,0,H or au.TopBarButtonIconSize)
 or UDim2.new(0,0,0,0)
-J.AnchorPoint=Vector2.new(0.5,0.5)
-J.Position=UDim2.new(0.5,0,0.5,0)
-J.ImageLabel.ImageTransparency=au.Topbar.ButtonsType=="Default"and 0 or 1
+M.AnchorPoint=Vector2.new(0.5,0.5)
+M.Position=UDim2.new(0.5,0,0.5,0)
+M.ImageLabel.ImageTransparency=au.Topbar.ButtonsType=="Default"and 0 or 1
 
 if au.Topbar.ButtonsType~="Default"then
-J.ImageLabel.ImageColor3=al.GetTextColorForHSB(G)
+M.ImageLabel.ImageColor3=al.GetTextColorForHSB(L)
 end
 
-local L=al.NewRoundFrame(
+local N=al.NewRoundFrame(
 au.Topbar.ButtonsType=="Default"and au.UICorner-(au.UIPadding/2)or 999,
 "Squircle",
 {
@@ -13051,7 +13087,7 @@ LayoutOrder=C or 999,
 ZIndex=9999,
 AnchorPoint=Vector2.new(0.5,0.5),
 Position=UDim2.new(0.5,0,0.5,0),
-ImageColor3=au.Topbar.ButtonsType~="Default"and(G or Color3.fromHex"#ff3030")or nil,
+ImageColor3=au.Topbar.ButtonsType~="Default"and L or nil,
 ThemeTag=au.Topbar.ButtonsType=="Default"and{
 ImageColor3="Text",
 }or nil,
@@ -13070,7 +13106,7 @@ ImageTransparency=au.Topbar.ButtonsType=="Default"and 1 or 0.5,
 Name="Outline",
 }
 ),
-J,
+M,
 am("UIScale",{
 Scale=1,
 }),
@@ -13078,43 +13114,48 @@ Scale=1,
 true
 )
 
+local O=au.UIElements.Main.Main.Topbar.Right
+if au.Topbar.ButtonsType=="Mac"and J then
+O=au.UIElements.Main.Main.Topbar.MacButtons
+end
+
 am("Frame",{
 Size=au.Topbar.ButtonsType~="Default"and UDim2.new(0,24,0,24)
 or UDim2.new(0,au.Topbar.Height-16,0,au.Topbar.Height-16),
 BackgroundTransparency=1,
-Parent=au.UIElements.Main.Main.Topbar.Right,
+Parent=O,
 LayoutOrder=C or 999,
 },{
-L,
+N,
 })
 
 
 
 au.TopBarButtons[100-C]={
 Name=z,
-Object=L,
+Object=N,
 }
 
-al.AddSignal(L.MouseButton1Click,function()
+al.AddSignal(N.MouseButton1Click,function()
 if B then
 B()
 end
 end)
-al.AddSignal(L.MouseEnter,function()
+al.AddSignal(N.MouseEnter,function()
 if au.Topbar.ButtonsType=="Default"then
-an(L,0.15,{ImageTransparency=0.93}):Play()
-an(L.Outline,0.15,{ImageTransparency=0.75}):Play()
+an(N,0.15,{ImageTransparency=0.93}):Play()
+an(N.Outline,0.15,{ImageTransparency=0.75}):Play()
 
 else
 
 an(
-J.ImageLabel,
+M.ImageLabel,
 0.1,
 {ImageTransparency=0},
 Enum.EasingStyle.Quint,
 Enum.EasingDirection.Out
 ):Play()
-an(J,0.1,{
+an(M,0.1,{
 Size=UDim2.new(
 0,
 H or au.TopBarButtonIconSize,
@@ -13125,26 +13166,26 @@ H or au.TopBarButtonIconSize
 end
 end)
 
-al.AddSignal(L.MouseButton1Down,function()
-an(L.UIScale,0.2,{Scale=0.9},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+al.AddSignal(N.MouseButton1Down,function()
+an(N.UIScale,0.2,{Scale=0.9},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end)
 
-al.AddSignal(L.MouseLeave,function()
+al.AddSignal(N.MouseLeave,function()
 if au.Topbar.ButtonsType=="Default"then
-an(L,0.1,{ImageTransparency=1}):Play()
-an(L.Outline,0.1,{ImageTransparency=1}):Play()
+an(N,0.1,{ImageTransparency=1}):Play()
+an(N.Outline,0.1,{ImageTransparency=1}):Play()
 
 else
 
 an(
-J.ImageLabel,
+M.ImageLabel,
 0.1,
 {ImageTransparency=1},
 Enum.EasingStyle.Quint,
 Enum.EasingDirection.Out
 ):Play()
 an(
-J,
+M,
 0.1,
 {Size=UDim2.new(0,0,0,0)},
 Enum.EasingStyle.Quint,
@@ -13153,11 +13194,11 @@ Enum.EasingDirection.Out
 end
 end)
 
-al.AddSignal(L.InputEnded,function()
-an(L.UIScale,0.2,{Scale=1},Enum.EasingStyle.Quint,Enum.EasingDirection.InOut):Play()
+al.AddSignal(N.InputEnded,function()
+an(N.UIScale,0.2,{Scale=1},Enum.EasingStyle.Quint,Enum.EasingDirection.InOut):Play()
 end)
 
-return L
+return N
 end
 
 function au.Topbar.Button(x,z:{
@@ -13380,7 +13421,8 @@ end,
 (au.Topbar.ButtonsType=="Default"and 998 or 999),
 true,
 Color3.fromHex"#60C762",
-au.Topbar.ButtonsType=="Mac"and 9 or nil
+au.Topbar.ButtonsType=="Mac"and 9 or nil,
+au.Topbar.ButtonsType=="Mac"
 )
 
 function au.ToggleFullscreen(B)
@@ -13444,7 +13486,7 @@ au:Close()
 
 
 
-end,(au.Topbar.ButtonsType=="Default"and 997 or 998),nil,Color3.fromHex"#F4C948")
+end,(au.Topbar.ButtonsType=="Default"and 997 or 998),nil,Color3.fromHex"#F4C948",nil,au.Topbar.ButtonsType=="Mac")
 
 function au.OnOpen(B,C)
 au.OnOpenCallback=C
@@ -14113,7 +14155,7 @@ else
 au:Destroy()
 end
 end
-end,(au.Topbar.ButtonsType=="Default"and 999 or 997),nil,Color3.fromHex"#F4695F")
+end,(au.Topbar.ButtonsType=="Default"and 999 or 997),nil,Color3.fromHex"#F4695F",nil,au.Topbar.ButtonsType=="Mac")
 
 function au.Tag(H,J)
 if au.UIElements.Main.Main.Topbar.Center.Visible==false then
