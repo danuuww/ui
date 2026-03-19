@@ -6432,22 +6432,21 @@ IconAlign=ae.IconAlign or"Right",
 Locked=ae.Locked or false,
 LockedTitle=ae.LockedTitle,
 Callback=ae.Callback or function()end,
-UIElements={}
+UIElements={},
 }
 
 local ag=true
+local ah=ae.Window.NewElements==true
+and ae.ParentType~="Group"
+and ae.Size~="Small"
 
 af.ButtonFrame=a.load'B'{
 Title=af.Title,
 Desc=af.Desc,
 Parent=ae.Parent,
-
-
-
-
 Window=ae.Window,
 Color=af.Color,
-Justify=af.Justify,
+Justify=ah and"Between"or af.Justify,
 TextOffset=20,
 Hover=true,
 Scalable=true,
@@ -6456,21 +6455,14 @@ Index=ae.Index,
 ElementTable=af,
 ParentConfig=ae,
 Size=ae.Size,
+
+ListRow=ah,
+Image=ah and af.Icon or nil,
+ImageSize=ah and 20 or nil,
+IconThemed=ah and af.IconThemed or false,
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+if not ah and af.Icon and af.Icon~=""then
 af.UIElements.ButtonIcon=aa.Image(
 af.Icon,
 af.Icon,
@@ -6482,19 +6474,24 @@ af.IconThemed
 )
 
 af.UIElements.ButtonIcon.Size=UDim2.new(0,20,0,20)
-af.UIElements.ButtonIcon.Parent=af.Justify=="Between"and af.ButtonFrame.UIElements.Main or af.ButtonFrame.UIElements.Container.TitleFrame
-af.UIElements.ButtonIcon.LayoutOrder=af.IconAlign=="Left"and-99999 or 99999
-af.UIElements.ButtonIcon.AnchorPoint=Vector2.new(1,0.5)
-af.UIElements.ButtonIcon.Position=UDim2.new(1,0,0.5,0)
+af.UIElements.ButtonIcon.Parent=af.ButtonFrame.UIElements.Main
+af.UIElements.ButtonIcon.AnchorPoint=af.IconAlign=="Left"
+and Vector2.new(0,0.5)
+or Vector2.new(1,0.5)
+af.UIElements.ButtonIcon.Position=af.IconAlign=="Left"
+and UDim2.new(0,14,0.5,0)
+or UDim2.new(1,-14,0.5,0)
 
 af.ButtonFrame:Colorize(af.UIElements.ButtonIcon.ImageLabel,"ImageColor3")
+end
 
-function af.Lock(ah)
+function af.Lock(ai)
 af.Locked=true
 ag=false
 return af.ButtonFrame:Lock(af.LockedTitle)
 end
-function af.Unlock(ah)
+
+function af.Unlock(ai)
 af.Locked=false
 ag=true
 return af.ButtonFrame:Unlock()
@@ -6511,10 +6508,12 @@ aa.SafeCallback(af.Callback)
 end)
 end
 end)
+
 return af.__type,af
 end
 
 return ac end function a.E()
+
 local aa={}
 
 local ab=a.load'c'
