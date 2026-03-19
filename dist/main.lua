@@ -6484,16 +6484,15 @@ local ae={}
 local function CreateIosSwitch(af,ag,ah)
 local ai=ag==true
 
-local aj=ah.Window.NewElements and 72 or 68
-local ak=ah.Window.NewElements and 38 or 34
+local aj=ah.Window.NewElements and 62 or 58
+local ak=ah.Window.NewElements and 34 or 30
 local al=ak-4
-local am=al+10
-local an=10
+local am=8
 
-local ao=2+(al/2)
-local ap=aj-2-(al/2)
+local an=2+(al/2)
+local ao=aj-2-(al/2)
 
-local aq=ab("Frame",{
+local ap=ab("Frame",{
 Name="IosSwitch",
 Size=UDim2.new(0,aj,0,ak),
 BackgroundTransparency=1,
@@ -6501,20 +6500,20 @@ Parent=af,
 LayoutOrder=1,
 })
 
-local ar=aa.NewRoundFrame(999,"Squircle",{
+local aq=aa.NewRoundFrame(999,"Squircle",{
 Name="Track",
 Size=UDim2.new(1,0,1,0),
 ThemeTag={
 ImageColor3="Text",
 },
-ImageTransparency=0.76,
-Parent=aq,
+ImageTransparency=0.74,
+Parent=ap,
 },{
 aa.NewRoundFrame(999,"Glass-1",{
 Name="Stroke",
 Size=UDim2.new(1,0,1,0),
 ImageColor3=Color3.new(1,1,1),
-ImageTransparency=0.76,
+ImageTransparency=0.78,
 }),
 aa.NewRoundFrame(999,"Squircle",{
 Name="OnFill",
@@ -6522,19 +6521,12 @@ Size=UDim2.new(1,0,1,0),
 ThemeTag={
 ImageColor3="Accent",
 },
-ImageTransparency=ai and 0.22 or 1,
-},{
-aa.NewRoundFrame(999,"Glass-1",{
-Name="OnGlow",
-Size=UDim2.new(1,0,1,0),
-ImageColor3=Color3.new(1,1,1),
-ImageTransparency=0.87,
-}),
+ImageTransparency=ai and 0.20 or 1,
 }),
 aa.NewRoundFrame(999,"Squircle",{
 Name="OffDot",
-Size=UDim2.new(0,an,0,an),
-Position=UDim2.new(1,-14,0.5,0),
+Size=UDim2.new(0,am,0,am),
+Position=UDim2.new(1,-13,0.5,0),
 AnchorPoint=Vector2.new(0.5,0.5),
 ImageColor3=Color3.fromRGB(236,236,242),
 ImageTransparency=ai and 1 or 0.34,
@@ -6543,23 +6535,13 @@ aa.NewRoundFrame(999,"Squircle-Outline",{
 Name="OffDotStroke",
 Size=UDim2.new(1,0,1,0),
 ImageColor3=Color3.new(1,1,1),
-ImageTransparency=0.65,
+ImageTransparency=0.66,
 }),
-}),
-aa.NewRoundFrame(999,"Squircle",{
-Name="KnobGlow",
-Size=UDim2.new(0,am,0,am),
-Position=UDim2.new(0,ai and ap or ao,0.5,0),
-AnchorPoint=Vector2.new(0.5,0.5),
-ThemeTag={
-ImageColor3="Accent",
-},
-ImageTransparency=ai and 0.82 or 1,
 }),
 aa.NewRoundFrame(999,"Squircle",{
 Name="Knob",
 Size=UDim2.new(0,al,0,al),
-Position=UDim2.new(0,ai and ap or ao,0.5,0),
+Position=UDim2.new(0,ai and ao or an,0.5,0),
 AnchorPoint=Vector2.new(0.5,0.5),
 ImageColor3=Color3.fromRGB(247,247,249),
 ImageTransparency=0,
@@ -6581,57 +6563,49 @@ ZIndex=10,
 }),
 })
 
-local as={}
+local ar={}
 
-function as.Set(at,au,av,aw)
-ai=au==true
+function ar.Set(as,at,au,av)
+ai=at==true
 
-local ax=UDim2.new(0,ai and ap or ao,0.5,0)
-local ay=ai and 0.22 or 1
-local az=ai and 0.82 or 1
-local aA=ai and 1 or 0.34
+local aw=UDim2.new(0,ai and ao or an,0.5,0)
+local ax=ai and 0.20 or 1
+local ay=ai and 1 or 0.34
 
-if aw==false then
-ar.OnFill.ImageTransparency=ay
-ar.KnobGlow.ImageTransparency=az
-ar.OffDot.ImageTransparency=aA
-ar.Knob.Position=ax
-ar.KnobGlow.Position=ax
+if av==false then
+aq.OnFill.ImageTransparency=ax
+aq.OffDot.ImageTransparency=ay
+aq.Knob.Position=aw
 else
-ac(ar.OnFill,0.18,{
+ac(aq.OnFill,0.18,{
+ImageTransparency=ax,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+
+ac(aq.OffDot,0.16,{
 ImageTransparency=ay,
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
-ac(ar.KnobGlow,0.18,{
-ImageTransparency=az,
-Position=ax,
-},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-
-ac(ar.OffDot,0.16,{
-ImageTransparency=aA,
-},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-
-ac(ar.Knob,0.18,{
-Position=ax,
+ac(aq.Knob,0.18,{
+Position=aw,
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 end
 
-function as.Press(at)
-ac(ar.Knob,0.12,{
+function ar.Press(as)
+ac(aq.Knob,0.10,{
 Size=UDim2.new(0,al+2,0,al+2),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 
-function as.Release(at)
-ac(ar.Knob,0.12,{
+function ar.Release(as)
+ac(aq.Knob,0.10,{
 Size=UDim2.new(0,al,0,al),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 
-as:Set(ai,nil,false)
+ar:Set(ai,nil,false)
 
-return aq,as
+return ap,ar
 end
 
 function ae.New(af,ag)
@@ -6646,7 +6620,7 @@ Icon=ag.Icon or nil,
 IconSize=ag.IconSize or 20,
 Type=ag.Type or"Toggle",
 Callback=ag.Callback or function()end,
-UIElements={},
+UIElements={}
 }
 
 local ai=ah.Desc~=nil and ah.Desc~=""
@@ -6655,8 +6629,8 @@ if ah.Value==nil then
 ah.Value=false
 end
 
-local aj=ai and 112 or 84
-local ak=ai and 124 or 92
+local aj=ai and 94 or 74
+local ak=ai and 116 or 84
 
 ah.ToggleFrame=a.load'B'{
 Title=ah.Title,
@@ -6674,10 +6648,10 @@ Image=ah.Icon,
 ImageSize=ah.IconSize,
 
 RightSlotWidth=aj,
-DividerRightInset=aj+8,
 ExpandableDesc=ai,
 ShowChevron=ai,
 DescExpanded=false,
+UseInsetDivider=false,
 }
 
 local al=true
@@ -6700,14 +6674,12 @@ ah:Lock()
 end
 
 local an=ah.ToggleFrame.UIElements.RightSlot
-local ao
-local ap
+local ao,ap
 
 if ah.Type=="Toggle"then
 ao,ap=CreateIosSwitch(an,am,ag)
 elseif ah.Type=="Checkbox"then
-ao,ap=
-ad(am,nil,0,an,ah.Callback,ag)
+ao,ap=ad(am,nil,0,an,ah.Callback,ag)
 ao.LayoutOrder=1
 else
 error("Unknown Toggle Type: "..tostring(ah.Type))
@@ -6753,10 +6725,7 @@ end
 end)
 
 aa.AddSignal(ao.Track.Hitbox.InputEnded,function(aq)
-if
-aq.UserInputType==Enum.UserInputType.MouseButton1
-or aq.UserInputType==Enum.UserInputType.Touch
-then
+if aq.UserInputType==Enum.UserInputType.MouseButton1 or aq.UserInputType==Enum.UserInputType.Touch then
 if ap and ap.Release then
 ap:Release()
 end
