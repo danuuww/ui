@@ -89,7 +89,7 @@ function Element:New(Config)
 		Dropdown.UIElements.Dropdown.Frame.Frame.TextLabel.Size =
 			UDim2.new(1, Dropdown.UIElements.Dropdown.Frame.Frame.TextLabel.Size.X.Offset - 18 - 12 - 12, 0, 0)
 
-		Dropdown.UIElements.Dropdown.Size = UDim2.new(0, Dropdown.Width, 0, 28)
+		Dropdown.UIElements.Dropdown.Size = UDim2.new(0, Dropdown.Width, 0, 36)
 
 		if Dropdown.DropdownFrame.UIElements.RightSlot then
 			Dropdown.UIElements.Dropdown.Parent = Dropdown.DropdownFrame.UIElements.RightSlot
@@ -99,7 +99,7 @@ function Element:New(Config)
 			Dropdown.UIElements.Dropdown.AnchorPoint = Vector2.new(1, UseListRow and 0 or 0.5)
 			-- For Group styling we need the dropdown centered and filling appropriately
 			if Config.ParentType == "Group" then
-				Dropdown.UIElements.Dropdown.Size = UDim2.new(1, -Element.UIPadding * 2, 0, 28)
+				Dropdown.UIElements.Dropdown.Size = UDim2.new(1, -Element.UIPadding * 2, 0, 36)
 				Dropdown.UIElements.Dropdown.AnchorPoint = Vector2.new(0.5, 0.5)
 				Dropdown.UIElements.Dropdown.Position = UDim2.new(0.5, 0, 0.5, 0)
 			end

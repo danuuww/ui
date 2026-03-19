@@ -65,7 +65,7 @@ function Element:New(Config)
 	)
 
 	if IsSingleLine then
-		InputComponent.Size = UDim2.new(0, Input.Width, 0, 28)
+		InputComponent.Size = UDim2.new(0, Input.Width, 0, 36)
 
 		if Input.InputFrame.UIElements.RightSlot then
 			InputComponent.Parent = Input.InputFrame.UIElements.RightSlot

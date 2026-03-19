@@ -41,11 +41,25 @@ function Element:New(Config)
 		Size = Config.Size,
 
 		ListRow = UseListRow,
-		Image = Button.Icon,
-		ImageSize = 20,
-		IconThemed = Button.IconThemed or false,
-		IconAlign = Button.IconAlign,
 	})
+
+	Button.UIElements.ButtonIcon = Creator.Image(
+		Button.Icon,
+		Button.Icon,
+		0,
+		Config.Window.Folder,
+		"Button",
+		not Button.Color and true or nil,
+		Button.IconThemed
+	)
+	
+	Button.UIElements.ButtonIcon.Size = UDim2.new(0,20,0,20)
+	Button.UIElements.ButtonIcon.Parent = Button.Justify == "Between" and Button.ButtonFrame.UIElements.Main or Button.ButtonFrame.UIElements.Container.TitleFrame
+	Button.UIElements.ButtonIcon.LayoutOrder = Button.IconAlign == "Left" and -99999 or 99999
+	Button.UIElements.ButtonIcon.AnchorPoint = Vector2.new(1,0.5)
+	Button.UIElements.ButtonIcon.Position = UDim2.new(1, (Button.IconAlign == "Right" and Button.Justify == "Between") and -32 or 0, 0.5, 0)
+	
+	Button.ButtonFrame:Colorize(Button.UIElements.ButtonIcon.ImageLabel, "ImageColor3")
 
 	function Button:Lock()
 		Button.Locked = true

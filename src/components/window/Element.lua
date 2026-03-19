@@ -310,8 +310,7 @@ return function(Config)
 		New("UIListLayout", {
 			Padding = UDim.new(0, ImageFrame and Element.UIPadding or 0),
 			FillDirection = "Horizontal",
-			VerticalAlignment = (UseListRow and HasDesc) and "Top"
-				or ((not UseListRow and (HasDesc or Element.ExpandableDesc)) and "Top" or "Center"),
+			VerticalAlignment = "Center",
 			HorizontalAlignment = Element.Justify ~= "Between" and Element.Justify or "Left",
 		}),
 		ImageWrap,
