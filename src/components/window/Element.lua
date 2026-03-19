@@ -198,13 +198,14 @@ return function(Config)
 			Text = TextValue or "",
 			TextSize = Type == "Desc" and 15 or 17,
 			TextXAlignment = "Left",
-			TextYAlignment = "Top",
+			TextYAlignment = Type == "Desc" and "Top" or "Center",
 			ThemeTag = {
 				TextColor3 = not Element.Color and ("Element" .. Type) or nil,
 			},
 			TextColor3 = Element.Color and TextColor or nil,
 			TextTransparency = Type == "Desc" and 0.3 or 0,
-			TextWrapped = true,
+			TextWrapped = Type == "Desc",
+			TextTruncate = Type == "Desc" and Enum.TextTruncate.None or Enum.TextTruncate.AtEnd,
 			Size = UDim2.new(1, 0, 0, 0),
 			AutomaticSize = "Y",
 			FontFace = Font.new(Creator.Font, Type == "Desc" and Enum.FontWeight.Medium or Enum.FontWeight.SemiBold),
@@ -617,9 +618,6 @@ return function(Config)
 		end
 
 		local endX = mainSize.X
-		if RightSlot and RightSlot.AbsoluteSize.X > 0 then
-			endX = (RightSlot.AbsolutePosition.X - mainPos.X) + RightSlot.AbsoluteSize.X
-		end
 		
 		if Element.DividerRightInset then
 			endX = mainSize.X - Element.DividerRightInset
