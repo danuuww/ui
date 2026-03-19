@@ -5951,11 +5951,8 @@ end
 local H
 if af.DividerRightInset then
 H=af.DividerRightInset
-elseif v and v.AbsoluteSize.X>0 then
-local J=(v.AbsolutePosition.X-C.X)+v.AbsoluteSize.X
-H=math.max(F.X-J,af.UIPadding)
 else
-H=af.UIPadding
+H=0
 end
 
 local J=math.max(F.X-G-H,24)
@@ -6491,6 +6488,15 @@ and UDim2.new(0,14,0.5,0)
 or UDim2.new(1,-14,0.5,0)
 
 af.ButtonFrame:Colorize(af.UIElements.ButtonIcon.ImageLabel,"ImageColor3")
+
+local ai=af.ButtonFrame.UIElements.TextContent:FindFirstChildOfClass"UIPadding"
+if ai then
+if af.IconAlign=="Left"then
+ai.PaddingLeft=UDim.new(0,ai.PaddingLeft.Offset+24)
+else
+ai.PaddingRight=UDim.new(0,ai.PaddingRight.Offset+24)
+end
+end
 end
 
 function af.Lock(ai)
@@ -9209,12 +9215,13 @@ ao.Value=ao.Values[ao.Value]
 end
 
 local aq=true
+local ar=an.Window.NewElements==true and an.ParentType~="Group"
 
 ao.DropdownFrame=a.load'B'{
 Title=ao.Title,
 Desc=ao.Desc,
 Parent=an.Parent,
-TextOffset=an.Window.NewElements and(ao.Callback and(ao.Width+40)or 32)
+TextOffset=ar and(ao.Callback and(ao.Width+40)or 32)
 or(ao.Callback and ao.Width or 20),
 Hover=not ao.Callback and true or false,
 Tab=an.Tab,
@@ -9223,7 +9230,7 @@ Window=an.Window,
 ElementTable=ao,
 ParentConfig=an,
 
-ListRow=an.Window.NewElements==true,
+ListRow=ar,
 ExpandableDesc=ap,
 DescExpanded=false,
 ShowChevron=ap,
@@ -9244,8 +9251,14 @@ if ao.DropdownFrame.UIElements.RightSlot then
 ao.UIElements.Dropdown.Parent=ao.DropdownFrame.UIElements.RightSlot
 ao.UIElements.Dropdown.LayoutOrder=1
 else
-ao.UIElements.Dropdown.Position=UDim2.new(1,0,an.Window.NewElements and 0 or 0.5,0)
-ao.UIElements.Dropdown.AnchorPoint=Vector2.new(1,an.Window.NewElements and 0 or 0.5)
+ao.UIElements.Dropdown.Position=UDim2.new(1,0,ar and 0 or 0.5,0)
+ao.UIElements.Dropdown.AnchorPoint=Vector2.new(1,ar and 0 or 0.5)
+
+if an.ParentType=="Group"then
+ao.UIElements.Dropdown.Size=UDim2.new(1,-al.UIPadding*2,0,36)
+ao.UIElements.Dropdown.AnchorPoint=Vector2.new(0.5,0.5)
+ao.UIElements.Dropdown.Position=UDim2.new(0.5,0,0.5,12)
+end
 end
 end
 
@@ -9270,13 +9283,13 @@ AnchorPoint=Vector2.new(1,0.5),
 Parent=ao.UIElements.Dropdown and ao.UIElements.Dropdown.Frame or ao.DropdownFrame.UIElements.Main,
 })
 
-function ao.Lock(ar)
+function ao.Lock(as)
 ao.Locked=true
 aq=false
 return ao.DropdownFrame:Lock(ao.LockedTitle)
 end
 
-function ao.Unlock(ar)
+function ao.Unlock(as)
 ao.Locked=false
 aq=true
 return ao.DropdownFrame:Unlock()
@@ -10920,7 +10933,7 @@ aA=aA-1
 end
 
 if az.ElementFrame then
-az.ElementFrame.Size=UDim2.new(at,aA,1,0)
+az.ElementFrame.Size=UDim2.new(at,aA,0,0)
 end
 end
 end,
