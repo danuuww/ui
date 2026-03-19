@@ -529,25 +529,6 @@ return function(Config)
 	Element.UIElements.ChevronButton = ChevronButton
 	Element.UIElements.ChevronWrap = ChevronWrap
 
-	local Divider = New("Frame", {
-		Name = "Divider",
-		Size = UDim2.new(1, 0, 0, 1),
-		BackgroundTransparency = 0.88,
-		ThemeTag = {
-			BackgroundColor3 = "Text",
-		},
-		AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.new(0, 0, 1, 0),
-		Parent = Main,
-		Visible = false,
-	}, {
-		New("UICorner", {
-			CornerRadius = UDim.new(0, 999),
-		}),
-	})
-
-	Element.UIElements.Divider = Divider
-
 	local function GetDescTargetHeight()
 		local Y = math.max(Desc.TextBounds.Y, Desc.AbsoluteSize.Y)
 		if Y <= 0 then
@@ -633,16 +614,6 @@ return function(Config)
 		DescHolder.Size = UDim2.new(1, 0, 0, 0)
 		TextList.Padding = UDim.new(0, 0)
 	end
-
-	local function RefreshDivider()
-		local LeftInset = Element.DividerLeftInset or (ImageFrame and (ImageSize + 30) or 20)
-		local RightInset = Element.DividerRightInset or (Element.RightSlotWidth > 0 and (Element.RightSlotWidth + 6) or 18)
-
-		Divider.Position = UDim2.new(0, LeftInset, 1, 0)
-		Divider.Size = UDim2.new(1, -(LeftInset + RightInset), 0, 1)
-	end
-
-	RefreshDivider()
 
 	if Element.Hover then
 		Creator.AddSignal(Main.MouseEnter, function()
@@ -810,7 +781,6 @@ return function(Config)
 		end
 
 		Element.UIElements.Container.TitleFrame.TitleFrame.Size = UDim2.new(1, -IconOffset, 1, 0)
-		RefreshDivider()
 	end
 
 	function Element:Destroy()
@@ -903,9 +873,6 @@ return function(Config)
 				HighlightOutlineTable:SetType(NewShape .. "-Outline")
 				HoverTable:SetType(NewShape)
 				HoverOutlineTable:SetType(NewShape .. "-Outline")
-
-				Divider.Visible = (NewShape == "Square" or NewShape == "Squircle-TL-TR")
-				RefreshDivider()
 			end
 		end
 	end
