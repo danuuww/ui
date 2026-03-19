@@ -5864,24 +5864,6 @@ end
 ag.UIElements.ChevronButton=v
 ag.UIElements.ChevronWrap=u
 
-local x=ab("Frame",{
-Name="Divider",
-Size=UDim2.new(1,0,0,1),
-BackgroundTransparency=0.88,
-ThemeTag={
-BackgroundColor3="Text",
-},
-AnchorPoint=Vector2.new(0,1),
-Position=UDim2.new(0,0,1,0),
-Parent=m,
-Visible=false,
-},{
-ab("UICorner",{
-CornerRadius=UDim.new(0,999),
-}),
-})
-
-ag.UIElements.Divider=x
 
 
 
@@ -5890,13 +5872,12 @@ ag.UIElements.Divider=x
 
 
 
-
-function ag.SetExpanded(z,A,B)
+function ag.SetExpanded(x,z,A)
 if not ag.ExpandableDesc or not ar then
 return
 end
 
-ag.DescExpanded=A==true
+ag.DescExpanded=z==true
 
 local function GetTargetHeight()
 task.wait()
@@ -5906,16 +5887,16 @@ end
 if ag.DescExpanded then
 at.Visible=true
 
-local C=GetTargetHeight()
+local B=GetTargetHeight()
 
-if B then
-at.Size=UDim2.new(1,0,0,C)
+if A then
+at.Size=UDim2.new(1,0,0,B)
 if ag.UIElements.ChevronWrap then
 ag.UIElements.ChevronWrap.Rotation=90
 end
 else
 ad(at,0.20,{
-Size=UDim2.new(1,0,0,C),
+Size=UDim2.new(1,0,0,B),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
 if ag.UIElements.ChevronWrap then
@@ -5925,7 +5906,7 @@ Rotation=90,
 end
 end
 else
-if B then
+if A then
 at.Size=UDim2.new(1,0,0,0)
 at.Visible=false
 if ag.UIElements.ChevronWrap then
@@ -5951,7 +5932,7 @@ end
 end
 end
 
-function ag.ToggleExpanded(z)
+function ag.ToggleExpanded(x)
 ag:SetExpanded(not ag.DescExpanded,false)
 end
 
@@ -5969,27 +5950,17 @@ at.Size=UDim2.new(1,0,0,0)
 au.Padding=UDim.new(0,0)
 end
 
-local function RefreshDivider()
-local z=ag.DividerLeftInset or(ao and(aj+30)or 20)
-local A=ag.DividerRightInset or(ag.RightSlotWidth>0 and(ag.RightSlotWidth+6)or 18)
-
-x.Position=UDim2.new(0,z,1,0)
-x.Size=UDim2.new(1,-(z+A),0,1)
-end
-
-RefreshDivider()
-
 if ag.Hover then
 aa.AddSignal(m.MouseEnter,function()
 if al then
 ad(m,0.12,{ImageTransparency=ag.Color and 0.15 or 0.9}):Play()
 ad(j,0.12,{ImageTransparency=0.9}):Play()
 ad(g,0.12,{ImageTransparency=0.8}):Play()
-aa.AddSignal(m.MouseMoved,function(z,A)
+aa.AddSignal(m.MouseMoved,function(x,z)
 j.HoverGradient.Offset=
-Vector2.new(((z-m.AbsolutePosition.X)/m.AbsoluteSize.X)-0.5,0)
+Vector2.new(((x-m.AbsolutePosition.X)/m.AbsoluteSize.X)-0.5,0)
 g.HoverGradient.Offset=
-Vector2.new(((z-m.AbsolutePosition.X)/m.AbsoluteSize.X)-0.5,0)
+Vector2.new(((x-m.AbsolutePosition.X)/m.AbsoluteSize.X)-0.5,0)
 end)
 end
 end)
@@ -6003,16 +5974,16 @@ end
 end)
 end
 
-function ag.SetTitle(z,A)
-ag.Title=A
-ap.Text=A
+function ag.SetTitle(x,z)
+ag.Title=z
+ap.Text=z
 end
 
-function ag.SetDesc(z,A)
-ag.Desc=A
-aq.Text=A or""
+function ag.SetDesc(x,z)
+ag.Desc=z
+aq.Text=z or""
 
-ar=A~=nil and A~=""
+ar=z~=nil and z~=""
 
 if not ar then
 at.Visible=false
@@ -6030,9 +6001,9 @@ end
 end
 end
 
-function ag.Colorize(z,A,B)
+function ag.Colorize(x,z,A)
 if ag.Color then
-A[B]=typeof(ag.Color)=="string"
+z[A]=typeof(ag.Color)=="string"
 and GetTextColorForHSB(Color3.fromHex(aa.Colors[ag.Color]))
 or typeof(ag.Color)=="Color3"and GetTextColorForHSB(ag.Color)
 or nil
@@ -6055,18 +6026,18 @@ end
 end)
 end
 
-function ag.SetThumbnail(z,A,B)
-ag.Thumbnail=A
-if B then
-ag.ThumbnailSize=B
-ak=B
+function ag.SetThumbnail(x,z,A)
+ag.Thumbnail=z
+if A then
+ag.ThumbnailSize=A
+ak=A
 end
 
 if an then
-if A then
+if z then
 an:Destroy()
 an=aa.Image(
-A,
+z,
 ag.Title,
 ag.UICorner-3,
 af.Window.Folder,
@@ -6076,17 +6047,17 @@ ag.IconThemed
 )
 an.Size=UDim2.new(1,0,0,ak)
 an.Parent=ag.UIElements.Container
-local C=ag.UIElements.Container:FindFirstChild"UIListLayout"
-if C then
+local B=ag.UIElements.Container:FindFirstChild"UIListLayout"
+if B then
 an.LayoutOrder=-1
 end
 else
 an.Visible=false
 end
 else
-if A then
+if z then
 an=aa.Image(
-A,
+z,
 ag.Title,
 ag.UICorner-3,
 af.Window.Folder,
@@ -6096,44 +6067,44 @@ ag.IconThemed
 )
 an.Size=UDim2.new(1,0,0,ak)
 an.Parent=ag.UIElements.Container
-local C=ag.UIElements.Container:FindFirstChild"UIListLayout"
-if C then
+local B=ag.UIElements.Container:FindFirstChild"UIListLayout"
+if B then
 an.LayoutOrder=-1
 end
 end
 end
 end
 
-function ag.SetImage(z,A,B)
-ag.Image=A
-if B then
-ag.ImageSize=B
-aj=B
+function ag.SetImage(x,z,A)
+ag.Image=z
+if A then
+ag.ImageSize=A
+aj=A
 end
 
-if A then
-local C=ao and ao.Parent or ag.UIElements.Container.TitleFrame
+if z then
+local B=ao and ao.Parent or ag.UIElements.Container.TitleFrame
 if ao then
 ao:Destroy()
 end
 
 ao=aa.Image(
-A,
-A,
+z,
+z,
 ag.UICorner-3,
 af.Window.Folder,
 "Image",
 not ag.Color and true or false
 )
 
-if typeof(ag.Color)=="string"and not string.find(A,"rbxthumb")then
+if typeof(ag.Color)=="string"and not string.find(z,"rbxthumb")then
 ao.ImageLabel.ImageColor3=GetTextColorForHSB(Color3.fromHex(aa.Colors[ag.Color]))
-elseif typeof(ag.Color)=="Color3"and not string.find(A,"rbxthumb")then
+elseif typeof(ag.Color)=="Color3"and not string.find(z,"rbxthumb")then
 ao.ImageLabel.ImageColor3=GetTextColorForHSB(ag.Color)
 end
 
 ao.Visible=true
-ao.Parent=C
+ao.Parent=B
 ao.LayoutOrder=-99
 ao.Size=UDim2.new(0,aj,0,aj)
 am=ag.ImageSize+ag.UIPadding
@@ -6145,28 +6116,27 @@ am=0
 end
 
 ag.UIElements.Container.TitleFrame.TitleFrame.Size=UDim2.new(1,-am,1,0)
-RefreshDivider()
 end
 
-function ag.Destroy(z)
+function ag.Destroy(x)
 m:Destroy()
 end
 
-function ag.Lock(z,A)
+function ag.Lock(x,z)
 al=false
 az.Active=true
 az.Visible=true
-ax.Text=A or"Locked"
+ax.Text=z or"Locked"
 end
 
-function ag.Unlock(z)
+function ag.Unlock(x)
 al=true
 az.Active=false
 az.Visible=false
 end
 
-function ag.Highlight(z)
-local A=ab("UIGradient",{
+function ag.Highlight(x)
+local z=ab("UIGradient",{
 Color=ColorSequence.new{
 ColorSequenceKeypoint.new(0,Color3.new(1,1,1)),
 ColorSequenceKeypoint.new(0.5,Color3.new(1,1,1)),
@@ -6184,7 +6154,7 @@ Offset=Vector2.new(-1,0),
 Parent=aB,
 })
 
-local B=ab("UIGradient",{
+local A=ab("UIGradient",{
 Color=ColorSequence.new{
 ColorSequenceKeypoint.new(0,Color3.new(1,1,1)),
 ColorSequenceKeypoint.new(0.5,Color3.new(1,1,1)),
@@ -6205,11 +6175,11 @@ Parent=d,
 aB.ImageTransparency=0.65
 d.ImageTransparency=0.88
 
-ad(A,0.75,{
+ad(z,0.75,{
 Offset=Vector2.new(1,0),
 }):Play()
 
-ad(B,0.75,{
+ad(A,0.75,{
 Offset=Vector2.new(1,0),
 }):Play()
 
@@ -6217,30 +6187,27 @@ task.spawn(function()
 task.wait(0.75)
 aB.ImageTransparency=1
 d.ImageTransparency=1
+z:Destroy()
 A:Destroy()
-B:Destroy()
 end)
 end
 
-function ag.UpdateShape(z)
+function ag.UpdateShape(x)
 if af.Window.NewElements then
-local A
+local z
 if af.ParentConfig.ParentType=="Group"then
-A="Squircle"
+z="Squircle"
 else
-A=getElementPosition(z.Elements,ag.Index)
+z=getElementPosition(x.Elements,ag.Index)
 end
 
-if A and m then
-p:SetType(A)
-aA:SetType(A)
-f:SetType(A)
-b:SetType(A.."-Outline")
-l:SetType(A)
-h:SetType(A.."-Outline")
-
-x.Visible=(A=="Square"or A=="Squircle-TL-TR")
-RefreshDivider()
+if z and m then
+p:SetType(z)
+aA:SetType(z)
+f:SetType(z)
+b:SetType(z.."-Outline")
+l:SetType(z)
+h:SetType(z.."-Outline")
 end
 end
 end
