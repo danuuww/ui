@@ -6382,38 +6382,46 @@ local ag={
 __type="Paragraph",
 Title=af.Title or"Paragraph",
 Desc=af.Desc or nil,
-
 Locked=af.Locked or false,
 }
+
 local ah=a.load'B'(af)
 
 ag.ParagraphFrame=ah
+
 if af.Buttons and#af.Buttons>0 then
 local ai=ab("Frame",{
 Size=UDim2.new(1,0,0,38),
 BackgroundTransparency=1,
 AutomaticSize="Y",
-Parent=ah.UIElements.Container
+Parent=ah.UIElements.Container,
 },{
 ab("UIListLayout",{
-Padding=UDim.new(0,10),
+Padding=UDim.new(0,af.Window.NewElements and 8 or 10),
 FillDirection="Vertical",
+}),
 })
-})
-
 
 for aj,ak in next,af.Buttons do
-local al=ad(ak.Title,ak.Icon,ak.Callback,"White",ai,nil,nil,af.Window.NewElements and 999 or 10)
+local al=ad(
+ak.Title,
+ak.Icon,
+ak.Callback,
+"White",
+ai,
+nil,
+nil,
+af.Window.NewElements and 999 or 10
+)
 al.Size=UDim2.new(1,0,0,38)
-
 end
 end
 
 return ag.__type,ag
-
 end
 
 return ac end function a.D()
+
 local aa=a.load'c'local ab=
 aa.New
 
