@@ -3,10 +3,6 @@ local New = Creator.New
 local NewRoundFrame = Creator.NewRoundFrame
 local Tween = Creator.Tween
 
-local cloneref = (cloneref or clonereference or function(instance)
-	return instance
-end)
-
 local function Color3ToHSB(color)
 	local r, g, b = color.R, color.G, color.B
 	local max = math.max(r, g, b)
@@ -44,7 +40,7 @@ end
 
 local function GetTextColorForHSB(color)
 	local hsb = Color3ToHSB(color)
-	local h, b = hsb.h, hsb.b
+	local h = hsb.h
 
 	if GetPerceivedBrightness(color) > 0.5 then
 		return Color3.fromHSV(h / 360, 0, 0.05)
@@ -134,6 +130,7 @@ return function(Config)
 		UIElements = {},
 		Index = Config.Index,
 
+		ListRow = Config.ListRow == true,
 		ExpandableDesc = Config.ExpandableDesc or false,
 		DescExpanded = Config.DescExpanded or false,
 		ShowChevron = Config.ShowChevron or false,
@@ -142,6 +139,7 @@ return function(Config)
 		DividerRightInset = Config.DividerRightInset,
 	}
 
+	local UseListRow = Element.ListRow
 	local AddPaddingX = Element.Size == "Small" and -4 or Element.Size == "Large" and 4 or 0
 	local AddPaddingY = Element.Size == "Small" and -4 or Element.Size == "Large" and 4 or 0
 
@@ -239,7 +237,7 @@ return function(Config)
 		Name = "DescHolder",
 		BackgroundTransparency = 1,
 		ClipsDescendants = true,
-		Visible = HasDesc and Element.DescExpanded or false,
+		Visible = false,
 		Size = UDim2.new(1, 0, 0, 0),
 	}, {
 		DescInner,
@@ -288,7 +286,8 @@ return function(Config)
 		New("UIListLayout", {
 			Padding = UDim.new(0, Element.UIPadding),
 			FillDirection = "Horizontal",
-			VerticalAlignment = (HasDesc or Element.ExpandableDesc) and "Top" or "Center",
+			VerticalAlignment = UseListRow and (HasDesc and "Top" or "Center")
+				or ((HasDesc or Element.ExpandableDesc) and "Top" or "Center"),
 			HorizontalAlignment = Element.Justify ~= "Between" and Element.Justify or "Left",
 		}),
 		ImageFrame,
@@ -482,89 +481,99 @@ return function(Config)
 	Element.UIElements.Main = Main
 	Element.UIElements.Locked = Locked
 
-	local RightSlot = New("Frame", {
-		Name = "RightSlot",
-		BackgroundTransparency = 1,
-		AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -Element.UIPadding, 0, Element.UIPadding),
-		Size = UDim2.new(0, math.max(Element.RightSlotWidth, Element.ShowChevron and 18 or 0), 0, 36),
-		AutomaticSize = "X",
-		Parent = Main,
-	}, {
-		New("UIListLayout", {
-			FillDirection = "Horizontal",
-			HorizontalAlignment = "Right",
-			VerticalAlignment = "Center",
-			Padding = UDim.new(0, 8),
-		}),
-	})
-
-	Element.UIElements.RightSlot = RightSlot
-
+	local RightSlot
 	local ChevronWrap
 	local ChevronButton
 	local ChevronIcon
+	local Divider
 
-	if Element.ShowChevron then
-		ChevronWrap = New("Frame", {
-			Name = "ChevronWrap",
-			Size = UDim2.new(0, 16, 0, 16),
+	if UseListRow then
+		RightSlot = New("Frame", {
+			Name = "RightSlot",
 			BackgroundTransparency = 1,
-			LayoutOrder = 999,
-			Parent = RightSlot,
+			AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.new(1, -Element.UIPadding, 0, Element.UIPadding),
+			Size = UDim2.new(0, math.max(Element.RightSlotWidth, Element.ShowChevron and 18 or 0), 0, 36),
+			AutomaticSize = "X",
+			Parent = Main,
+		}, {
+			New("UIListLayout", {
+				FillDirection = "Horizontal",
+				HorizontalAlignment = "Right",
+				VerticalAlignment = "Center",
+				Padding = UDim.new(0, 8),
+			}),
 		})
 
-		ChevronButton = New("TextButton", {
-			Name = "ChevronButton",
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			Text = "",
-			AutoButtonColor = false,
-			Parent = ChevronWrap,
-		})
+		if Element.ShowChevron then
+			ChevronWrap = New("Frame", {
+				Name = "ChevronWrap",
+				Size = UDim2.new(0, 16, 0, 16),
+				BackgroundTransparency = 1,
+				LayoutOrder = 999,
+				Parent = RightSlot,
+			})
 
-		ChevronIcon = New("TextLabel", {
-			Name = "ChevronIcon",
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			Text = "›",
-			TextSize = 24,
-			TextTransparency = 0.25,
-			FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
-			TextXAlignment = "Center",
-			TextYAlignment = "Center",
+			ChevronButton = New("TextButton", {
+				Name = "ChevronButton",
+				Size = UDim2.new(1, 0, 1, 0),
+				BackgroundTransparency = 1,
+				Text = "",
+				AutoButtonColor = false,
+				Parent = ChevronWrap,
+			})
+
+			ChevronIcon = New("TextLabel", {
+				Name = "ChevronIcon",
+				Size = UDim2.new(1, 0, 1, 0),
+				BackgroundTransparency = 1,
+				Text = "›",
+				TextSize = 24,
+				TextTransparency = 0.25,
+				FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
+				TextXAlignment = "Center",
+				TextYAlignment = "Center",
+				ThemeTag = {
+					TextColor3 = "Text",
+				},
+				Parent = ChevronButton,
+			})
+		end
+
+		Divider = New("Frame", {
+			Name = "Divider",
+			BackgroundTransparency = 0.88,
 			ThemeTag = {
-				TextColor3 = "Text",
+				BackgroundColor3 = "Text",
 			},
-			Parent = ChevronButton,
+			AnchorPoint = Vector2.new(0, 1),
+			Position = UDim2.new(0, 0, 1, 0),
+			Size = UDim2.new(1, 0, 0, 1),
+			Visible = false,
+			Parent = Main,
+		}, {
+			New("UICorner", {
+				CornerRadius = UDim.new(0, 999),
+			}),
 		})
 	end
 
+	Element.UIElements.RightSlot = RightSlot
 	Element.UIElements.ChevronWrap = ChevronWrap
 	Element.UIElements.ChevronButton = ChevronButton
 	Element.UIElements.ChevronIcon = ChevronIcon
-
-	local Divider = New("Frame", {
-		Name = "Divider",
-		BackgroundTransparency = 0.88,
-		ThemeTag = {
-			BackgroundColor3 = "Text",
-		},
-		AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.new(0, 0, 1, 0),
-		Size = UDim2.new(1, 0, 0, 1),
-		Visible = false,
-		Parent = Main,
-	}, {
-		New("UICorner", {
-			CornerRadius = UDim.new(0, 999),
-		}),
-	})
-
 	Element.UIElements.Divider = Divider
 
+	local function GetDescTargetHeight()
+		local y = math.max(DescInner.AbsoluteSize.Y, Desc.TextBounds.Y + 8)
+		if y <= 0 then
+			y = 18
+		end
+		return y
+	end
+
 	local function RefreshDivider()
-		if not Divider or not Main or not Title then
+		if not UseListRow or not Divider or not Main or not Title then
 			return
 		end
 
@@ -582,28 +591,33 @@ return function(Config)
 			leftInset = math.floor(math.max(Title.AbsolutePosition.X - mainPos.X, 18))
 		end
 
-		local rightEdge
+		local rightInset
 		if Element.DividerRightInset then
-			rightEdge = mainSize.X - Element.DividerRightInset
+			rightInset = Element.DividerRightInset
 		elseif RightSlot and RightSlot.AbsoluteSize.X > 0 then
-			rightEdge = math.floor((RightSlot.AbsolutePosition.X - mainPos.X) + RightSlot.AbsoluteSize.X)
+			local rightEdge = (RightSlot.AbsolutePosition.X - mainPos.X) + RightSlot.AbsoluteSize.X
+			rightInset = math.max(mainSize.X - rightEdge, Element.UIPadding)
 		else
-			rightEdge = mainSize.X - 18
+			rightInset = Element.UIPadding
 		end
 
-		local width = math.max(rightEdge - leftInset, 24)
+		local width = math.max(mainSize.X - leftInset - rightInset, 24)
 
 		Divider.Position = UDim2.new(0, leftInset, 1, 0)
 		Divider.Size = UDim2.new(0, width, 0, 1)
 	end
 
-	local function GetDescTargetHeight()
-		task.wait()
-		local y = math.max(DescInner.AbsoluteSize.Y, Desc.TextBounds.Y + 6)
-		if y <= 0 then
-			y = 18
+	if HasDesc then
+		if Element.ExpandableDesc then
+			DescHolder.Visible = Element.DescExpanded
+			DescHolder.Size = UDim2.new(1, 0, 0, Element.DescExpanded and GetDescTargetHeight() or 0)
+		else
+			DescHolder.Visible = true
+			DescHolder.Size = UDim2.new(1, 0, 0, GetDescTargetHeight())
 		end
-		return y
+	else
+		DescHolder.Visible = false
+		DescHolder.Size = UDim2.new(1, 0, 0, 0)
 	end
 
 	function Element:SetExpanded(State, Instant)
@@ -674,24 +688,23 @@ return function(Config)
 				Element:ToggleExpanded()
 			end)
 		end
-	else
-		DescHolder.Visible = false
-		DescHolder.Size = UDim2.new(1, 0, 0, 0)
 	end
 
-	Creator.AddSignal(Main:GetPropertyChangedSignal("AbsoluteSize"), function()
-		task.defer(RefreshDivider)
-	end)
+	if UseListRow and RightSlot then
+		Creator.AddSignal(Main:GetPropertyChangedSignal("AbsoluteSize"), function()
+			task.defer(RefreshDivider)
+		end)
 
-	Creator.AddSignal(RightSlot:GetPropertyChangedSignal("AbsoluteSize"), function()
-		task.defer(RefreshDivider)
-	end)
+		Creator.AddSignal(RightSlot:GetPropertyChangedSignal("AbsoluteSize"), function()
+			task.defer(RefreshDivider)
+		end)
 
-	Creator.AddSignal(Title:GetPropertyChangedSignal("TextBounds"), function()
-		task.defer(RefreshDivider)
-	end)
+		Creator.AddSignal(Title:GetPropertyChangedSignal("TextBounds"), function()
+			task.defer(RefreshDivider)
+		end)
 
-	task.defer(RefreshDivider)
+		task.defer(RefreshDivider)
+	end
 
 	if Element.Hover then
 		Creator.AddSignal(Main.MouseEnter, function()
@@ -730,6 +743,7 @@ return function(Config)
 		HasDesc = Text ~= nil and Text ~= ""
 
 		if not HasDesc then
+			Desc.Visible = false
 			DescHolder.Visible = false
 			DescHolder.Size = UDim2.new(1, 0, 0, 0)
 			if ChevronWrap then
@@ -740,8 +754,17 @@ return function(Config)
 			if ChevronWrap then
 				ChevronWrap.Visible = true
 			end
-			if Element.DescExpanded then
-				Element:SetExpanded(true, true)
+
+			if Element.ExpandableDesc then
+				if Element.DescExpanded then
+					Element:SetExpanded(true, true)
+				else
+					DescHolder.Visible = false
+					DescHolder.Size = UDim2.new(1, 0, 0, 0)
+				end
+			else
+				DescHolder.Visible = true
+				DescHolder.Size = UDim2.new(1, 0, 0, GetDescTargetHeight())
 			end
 		end
 
@@ -965,7 +988,7 @@ return function(Config)
 				HoverTable:SetType(NewShape)
 				HoverOutlineTable:SetType(NewShape .. "-Outline")
 
-				if Divider then
+				if UseListRow and Divider then
 					Divider.Visible = (NewShape == "Square" or NewShape == "Squircle-TL-TR")
 					task.defer(RefreshDivider)
 				end
@@ -975,4 +998,3 @@ return function(Config)
 
 	return Element
 end
- 
