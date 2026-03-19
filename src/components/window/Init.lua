@@ -25,7 +25,6 @@ local Tag = require("../ui/Tag")
 local ConfigManager = require("../../config/Init")
 
 local Notified = false
-local SafeColor = Color or Color3.fromHex("#F4695F")
 
 return function(Config)
 	local Window = {
@@ -1165,6 +1164,7 @@ end-- batas
 			task.defer(UpdateTopbarLayout)
 
 	function Window:CreateTopbarButton(Name, Icon, Callback, LayoutOrder, IconThemed, Color, IconSize, UseMacSystemCluster)
+		local SafeColor = Color or Color3.fromHex("#F4695F")
 		local IconFrame = Creator.Image(
 			Icon,
 			Icon,
@@ -1533,7 +1533,7 @@ end
 		(Window.Topbar.ButtonsType == "Default" and 998 or 999),
 		true,
 		Color3.fromHex("#60C762"),
-		Window.Topbar.ButtonsType == "Mac" and 9 or nil
+		Window.Topbar.ButtonsType == "Mac" and 9 or nil,
 		Window.Topbar.ButtonsType == "Mac"
 	)
 
