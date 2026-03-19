@@ -40,7 +40,7 @@ local function CreateLegacySlider(Config)
 		UIElements = {},
 		IsFocusing = false,
 
-		TextBoxWidth = Config.Window.NewElements and 58 or 52,
+		TextBoxWidth = Config.Window.NewElements and 36 or 30,
 		TextBoxHeight = Config.Window.NewElements and 28 or 26,
 		ThumbSize = 13,
 		IconSize = Config.Window.NewElements and 16 or 14,
@@ -694,7 +694,7 @@ function Element:New(Config)
 	if Slider.InputBox and Slider.SliderFrame.UIElements.RightSlot then
 		Slider.UIElements.TextBox = New("TextBox", {
 			Size = UDim2.new(0, Slider.TextBoxWidth, 0, Slider.TextBoxHeight),
-			TextXAlignment = "Right",
+			TextXAlignment = "Center",
 			ClearTextOnFocus = false,
 			Text = FormatValue(CurrentValue),
 			TextSize = 14,

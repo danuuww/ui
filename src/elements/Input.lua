@@ -31,12 +31,13 @@ function Element:New(Config)
 	local CanCallback = true
 	local IsSingleLine = Input.Type == "Input"
 	local HasDesc = Input.Desc ~= nil and Input.Desc ~= ""
+	local UseListRow = Config.Window.NewElements == true and IsSingleLine and Config.ParentType ~= "Group"
 
 	Input.InputFrame = require("../components/window/Element")({
 		Title = Input.Title,
 		Desc = Input.Desc,
 		Parent = Config.Parent,
-		TextOffset = IsSingleLine and (Input.Width + 24) or Input.Width,
+		TextOffset = UseListRow and (Input.Width + 24) or Input.Width,
 		Hover = false,
 		Tab = Config.Tab,
 		Index = Config.Index,
@@ -44,11 +45,11 @@ function Element:New(Config)
 		ElementTable = Input,
 		ParentConfig = Config,
 
-		ListRow = Config.Window.NewElements == true and IsSingleLine,
+		ListRow = UseListRow,
 		ExpandableDesc = false,
 		DescExpanded = false,
 		ShowChevron = false,
-		RightSlotWidth = IsSingleLine and Input.Width or 0,
+		RightSlotWidth = UseListRow and Input.Width or 0,
 	})
 
 	local InputComponent = CreateInput(

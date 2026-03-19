@@ -54,10 +54,15 @@ function Element:New(Config)
 	)
 	
 	Button.UIElements.ButtonIcon.Size = UDim2.new(0,20,0,20)
-	Button.UIElements.ButtonIcon.Parent = Button.Justify == "Between" and Button.ButtonFrame.UIElements.Main or Button.ButtonFrame.UIElements.Container.TitleFrame
-	Button.UIElements.ButtonIcon.LayoutOrder = Button.IconAlign == "Left" and -99999 or 99999
-	Button.UIElements.ButtonIcon.AnchorPoint = Vector2.new(1,0.5)
-	Button.UIElements.ButtonIcon.Position = UDim2.new(1, (Button.IconAlign == "Right" and Button.Justify == "Between") and -32 or 0, 0.5, 0)
+	
+	if Button.Justify == "Between" then
+		Button.UIElements.ButtonIcon.Parent = Button.ButtonFrame.UIElements.Main
+		Button.UIElements.ButtonIcon.AnchorPoint = Vector2.new(1, 0.5)
+		Button.UIElements.ButtonIcon.Position = UDim2.new(1, Button.IconAlign == "Right" and -32 or -16, 0.5, 0)
+	else
+		Button.UIElements.ButtonIcon.Parent = Button.ButtonFrame.UIElements.Container.TitleFrame
+		Button.UIElements.ButtonIcon.LayoutOrder = Button.IconAlign == "Left" and -99999 or 99999
+	end
 	
 	Button.ButtonFrame:Colorize(Button.UIElements.ButtonIcon.ImageLabel, "ImageColor3")
 
