@@ -41,42 +41,11 @@ function Element:New(Config)
 		Size = Config.Size,
 
 		ListRow = UseListRow,
-		Image = UseListRow and Button.Icon or nil,
-		ImageSize = UseListRow and 20 or nil,
-		IconThemed = UseListRow and Button.IconThemed or false,
+		Image = Button.Icon,
+		ImageSize = 20,
+		IconThemed = Button.IconThemed or false,
+		IconAlign = Button.IconAlign,
 	})
-
-	if not UseListRow and Button.Icon and Button.Icon ~= "" then
-		Button.UIElements.ButtonIcon = Creator.Image(
-			Button.Icon,
-			Button.Icon,
-			0,
-			Config.Window.Folder,
-			"Button",
-			not Button.Color and true or nil,
-			Button.IconThemed
-		)
-
-		Button.UIElements.ButtonIcon.Size = UDim2.new(0, 20, 0, 20)
-		Button.UIElements.ButtonIcon.Parent = Button.ButtonFrame.UIElements.Main
-		Button.UIElements.ButtonIcon.AnchorPoint = Button.IconAlign == "Left"
-			and Vector2.new(0, 0.5)
-			or Vector2.new(1, 0.5)
-		Button.UIElements.ButtonIcon.Position = Button.IconAlign == "Left"
-			and UDim2.new(0, 14, 0.5, 0)
-			or UDim2.new(1, -14, 0.5, 0)
-
-		Button.ButtonFrame:Colorize(Button.UIElements.ButtonIcon.ImageLabel, "ImageColor3")
-		
-		local TextPadding = Button.ButtonFrame.UIElements.TextContent:FindFirstChildOfClass("UIPadding")
-		if TextPadding then
-			if Button.IconAlign == "Left" then
-				TextPadding.PaddingLeft = UDim.new(0, TextPadding.PaddingLeft.Offset + 24)
-			else
-				TextPadding.PaddingRight = UDim.new(0, TextPadding.PaddingRight.Offset + 24)
-			end
-		end
-	end
 
 	function Button:Lock()
 		Button.Locked = true

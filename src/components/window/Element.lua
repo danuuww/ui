@@ -119,6 +119,7 @@ return function(Config)
 		ThumbnailSize = Config.ThumbnailSize or 80,
 		Image = Config.Image,
 		IconThemed = Config.IconThemed or false,
+		IconAlign = Config.IconAlign or "Left",
 		ImageSize = Config.ImageSize or 30,
 		Color = Config.Color,
 		Scalable = Config.Scalable,
@@ -252,6 +253,7 @@ return function(Config)
 
 	local TextContent = New("Frame", {
 		Name = "TextContent",
+		LayoutOrder = Element.IconAlign == "Right" and 2 or 1,
 		BackgroundTransparency = 1,
 		AutomaticSize = Element.Justify == "Between" and "Y" or "XY",
 		Size = UDim2.new(
@@ -274,6 +276,7 @@ return function(Config)
 
 	local ImageWrap = New("Frame", {
 		Name = "ImageWrap",
+		LayoutOrder = Element.IconAlign == "Right" and 1 or 2,
 		BackgroundTransparency = 1,
 		Size = UDim2.new(0, ImageFrame and ImageSize or 0, 0, 24),
 		Visible = ImageFrame ~= nil,
@@ -512,8 +515,8 @@ return function(Config)
 		RightSlot = New("Frame", {
 			Name = "RightSlot",
 			BackgroundTransparency = 1,
-			AnchorPoint = Vector2.new(1, 0),
-			Position = UDim2.new(1, -Element.UIPadding, 0, Element.UIPadding),
+			AnchorPoint = Vector2.new(1, 0.5),
+			Position = UDim2.new(1, 0, 0.5, 0),
 			Size = UDim2.new(0, math.max(Element.RightSlotWidth, Element.ShowChevron and 24 or 0), 0, 36),
 			AutomaticSize = "X",
 			Parent = Main,
@@ -613,14 +616,16 @@ return function(Config)
 			leftInset = math.floor(math.max(Title.AbsolutePosition.X - mainPos.X, 18))
 		end
 
-		local rightInset
+		local endX = mainSize.X
+		if RightSlot and RightSlot.AbsoluteSize.X > 0 then
+			endX = (RightSlot.AbsolutePosition.X - mainPos.X) + RightSlot.AbsoluteSize.X
+		end
+		
 		if Element.DividerRightInset then
-			rightInset = Element.DividerRightInset
-		else
-			rightInset = 0
+			endX = mainSize.X - Element.DividerRightInset
 		end
 
-		local width = math.max(mainSize.X - leftInset - rightInset, 24)
+		local width = math.max(endX - leftInset, 24)
 
 		Divider.Position = UDim2.new(0, leftInset, 1, 0)
 		Divider.Size = UDim2.new(0, width, 0, 1)
