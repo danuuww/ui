@@ -12870,7 +12870,7 @@ Name="MacButtons",
 Visible=au.Topbar.ButtonsType=="Mac",
 },{
 am("UIListLayout",{
-Padding=UDim.new(0,8),
+Padding=UDim.new(0,4),
 FillDirection="Horizontal",
 SortOrder="LayoutOrder",
 VerticalAlignment="Center",
@@ -12952,7 +12952,7 @@ PaddingLeft=UDim.new(
 0,
 au.Topbar.ButtonsType=="Default"and au.UIPadding or au.UIPadding-2
 ),
-PaddingRight=UDim.new(0,8),
+PaddingRight=UDim.new(0,au.Topbar.ButtonsType=="Mac"and 14 or 8),
 PaddingBottom=UDim.new(0,au.UIPadding),
 }),
 }),
@@ -13060,13 +13060,10 @@ local G=z.Left.AbsoluteSize.X/C
 
 if au.Topbar.ButtonsType=="Mac"then
 local H=z.MacButtons.UIListLayout.AbsoluteContentSize.X/C
-z.Left.Position=UDim2.new(
-0,
-H+au.UIPadding-4,
-0,
-0
-)
-G=G+H+au.UIPadding-4
+local J=H+8
+
+z.Left.Position=UDim2.new(0,J,0,0)
+G=G+J
 else
 z.Left.Position=UDim2.new(0,0,0,0)
 end
