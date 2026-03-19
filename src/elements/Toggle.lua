@@ -2,136 +2,10 @@ local Creator = require("../modules/Creator")
 local New = Creator.New
 local Tween = Creator.Tween
 
+local CreateToggle = require("../components/ui/Toggle").New
 local CreateCheckbox = require("../components/ui/Checkbox").New
 
 local Element = {}
-
-local function CreateIosSwitch(Parent, DefaultValue, Config)
-	local State = DefaultValue == true
-
-	local Width = Config.Window.NewElements and 62 or 58
-	local Height = Config.Window.NewElements and 34 or 30
-	local KnobSize = Height - 4
-	local OffDotSize = 8
-
-	local OffX = 2 + (KnobSize / 2)
-	local OnX = Width - 2 - (KnobSize / 2)
-
-	local Root = New("Frame", {
-		Name = "IosSwitch",
-		Size = UDim2.new(0, Width, 0, Height),
-		BackgroundTransparency = 1,
-		Parent = Parent,
-		LayoutOrder = 1,
-	})
-
-	local Track = Creator.NewRoundFrame(999, "Squircle", {
-		Name = "Track",
-		Size = UDim2.new(1, 0, 1, 0),
-		ThemeTag = {
-			ImageColor3 = "Text",
-		},
-		ImageTransparency = 0.74,
-		Parent = Root,
-	}, {
-		Creator.NewRoundFrame(999, "Glass-1", {
-			Name = "Stroke",
-			Size = UDim2.new(1, 0, 1, 0),
-			ImageColor3 = Color3.new(1, 1, 1),
-			ImageTransparency = 0.78,
-		}),
-		Creator.NewRoundFrame(999, "Squircle", {
-			Name = "OnFill",
-			Size = UDim2.new(1, 0, 1, 0),
-			ThemeTag = {
-				ImageColor3 = "Accent",
-			},
-			ImageTransparency = State and 0.20 or 1,
-		}),
-		Creator.NewRoundFrame(999, "Squircle", {
-			Name = "OffDot",
-			Size = UDim2.new(0, OffDotSize, 0, OffDotSize),
-			Position = UDim2.new(1, -13, 0.5, 0),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			ImageColor3 = Color3.fromRGB(236, 236, 242),
-			ImageTransparency = State and 1 or 0.34,
-		}, {
-			Creator.NewRoundFrame(999, "Squircle-Outline", {
-				Name = "OffDotStroke",
-				Size = UDim2.new(1, 0, 1, 0),
-				ImageColor3 = Color3.new(1, 1, 1),
-				ImageTransparency = 0.66,
-			}),
-		}),
-		Creator.NewRoundFrame(999, "Squircle", {
-			Name = "Knob",
-			Size = UDim2.new(0, KnobSize, 0, KnobSize),
-			Position = UDim2.new(0, State and OnX or OffX, 0.5, 0),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			ImageColor3 = Color3.fromRGB(247, 247, 249),
-			ImageTransparency = 0,
-		}, {
-			Creator.NewRoundFrame(999, "Glass-1", {
-				Name = "Highlight",
-				Size = UDim2.new(1, 0, 1, 0),
-				ImageColor3 = Color3.new(1, 1, 1),
-				ImageTransparency = 0.42,
-			}),
-		}),
-		New("TextButton", {
-			Name = "Hitbox",
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			Text = "",
-			AutoButtonColor = false,
-			ZIndex = 10,
-		}),
-	})
-
-	local Controller = {}
-
-	function Controller:Set(Value, _, Animate)
-		State = Value == true
-
-		local KnobPos = UDim2.new(0, State and OnX or OffX, 0.5, 0)
-		local OnTransparency = State and 0.20 or 1
-		local OffDotTransparency = State and 1 or 0.34
-
-		if Animate == false then
-			Track.OnFill.ImageTransparency = OnTransparency
-			Track.OffDot.ImageTransparency = OffDotTransparency
-			Track.Knob.Position = KnobPos
-		else
-			Tween(Track.OnFill, 0.18, {
-				ImageTransparency = OnTransparency,
-			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-
-			Tween(Track.OffDot, 0.16, {
-				ImageTransparency = OffDotTransparency,
-			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-
-			Tween(Track.Knob, 0.18, {
-				Position = KnobPos,
-			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-		end
-	end
-
-	function Controller:Press()
-		Tween(Track.Knob, 0.10, {
-			Size = UDim2.new(0, KnobSize + 2, 0, KnobSize + 2),
-		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-	end
-
-	function Controller:Release()
-		Tween(Track.Knob, 0.10, {
-			Size = UDim2.new(0, KnobSize, 0, KnobSize),
-		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-	end
-
-	Controller:Set(State, nil, false)
-
-	return Root, Controller
-end
 
 function Element:New(Config)
 	local Toggle = {
@@ -142,45 +16,44 @@ function Element:New(Config)
 		LockedTitle = Config.LockedTitle,
 		Value = Config.Value,
 		Icon = Config.Icon or nil,
-		IconSize = Config.IconSize or 20,
+		IconSize = Config.IconSize or 23,
 		Type = Config.Type or "Toggle",
 		Callback = Config.Callback or function() end,
 		UIElements = {}
 	}
 
 	local HasDesc = Toggle.Desc ~= nil and Toggle.Desc ~= ""
-
-	if Toggle.Value == nil then
-		Toggle.Value = false
-	end
-
-	local RightSlotWidth = HasDesc and 94 or 74
-	local TextOffset = HasDesc and 116 or 84
+	local ToggleSlotWidth = Config.Window.NewElements and 108 or 92
+	local ChevronWidth = HasDesc and 18 or 0
+	local RightSlotWidth = ToggleSlotWidth + ChevronWidth + (HasDesc and 8 or 0)
 
 	Toggle.ToggleFrame = require("../components/window/Element")({
 		Title = Toggle.Title,
 		Desc = Toggle.Desc,
+		Image = Toggle.Icon,
+		ImageSize = Toggle.Icon and Toggle.IconSize or 0,
 		Window = Config.Window,
 		Parent = Config.Parent,
-		TextOffset = TextOffset,
+		TextOffset = RightSlotWidth + 8,
 		Hover = false,
 		Tab = Config.Tab,
 		Index = Config.Index,
 		ElementTable = Toggle,
 		ParentConfig = Config,
 
-		Image = Toggle.Icon,
-		ImageSize = Toggle.IconSize,
-
-		RightSlotWidth = RightSlotWidth,
 		ExpandableDesc = HasDesc,
-		ShowChevron = HasDesc,
 		DescExpanded = false,
-		UseInsetDivider = false,
+		ShowChevron = HasDesc,
+		RightSlotWidth = RightSlotWidth,
+		DividerLeftInset = Toggle.Icon and (Toggle.IconSize + 42) or 22,
+		DividerRightInset = RightSlotWidth + 14,
 	})
 
 	local CanCallback = true
-	local Toggled = Toggle.Value
+
+	if Toggle.Value == nil then
+		Toggle.Value = false
+	end
 
 	function Toggle:Lock()
 		Toggle.Locked = true
@@ -198,79 +71,71 @@ function Element:New(Config)
 		Toggle:Lock()
 	end
 
-	local RightSlot = Toggle.ToggleFrame.UIElements.RightSlot
-	local ToggleFrame, ToggleFunc
+	local Toggled = Toggle.Value
 
+	local ToggleFrame, ToggleFunc
 	if Toggle.Type == "Toggle" then
-		ToggleFrame, ToggleFunc = CreateIosSwitch(RightSlot, Toggled, Config)
+		ToggleFrame, ToggleFunc = CreateToggle(
+			Toggled,
+			nil,
+			0,
+			Toggle.ToggleFrame.UIElements.RightSlot,
+			Toggle.Callback,
+			Config.Window.NewElements,
+			Config
+		)
 	elseif Toggle.Type == "Checkbox" then
-		ToggleFrame, ToggleFunc = CreateCheckbox(Toggled, nil, 0, RightSlot, Toggle.Callback, Config)
-		ToggleFrame.LayoutOrder = 1
+		ToggleFrame, ToggleFunc = CreateCheckbox(
+			Toggled,
+			nil,
+			0,
+			Toggle.ToggleFrame.UIElements.RightSlot,
+			Toggle.Callback,
+			Config
+		)
 	else
 		error("Unknown Toggle Type: " .. tostring(Toggle.Type))
 	end
 
-	Toggle.UIElements.Switch = ToggleFrame
+	Toggle.UIElements.Control = ToggleFrame
 
-	function Toggle:Set(Value, IsCallback, IsAnim)
-		if not CanCallback then
-			return
-		end
+	ToggleFrame.AnchorPoint = Vector2.new(1, 0.5)
+	ToggleFrame.Position = UDim2.new(1, HasDesc and -(ChevronWidth + 8) or 0, 0.5, 0)
 
-		local NewValue = Value == true
-		Toggled = NewValue
-		Toggle.Value = NewValue
-
-		if ToggleFunc and ToggleFunc.Set then
-			ToggleFunc:Set(NewValue, false, IsAnim)
-		end
-
-		if IsCallback ~= false then
-			Creator.SafeCallback(Toggle.Callback, NewValue)
+	function Toggle:Set(v, isCallback, isAnim)
+		if CanCallback then
+			ToggleFunc:Set(v, isCallback, isAnim or false)
+			Toggled = v
+			Toggle.Value = v
 		end
 	end
 
-	Toggle:Set(Toggled, false, false)
+	Toggle:Set(Toggled, false, Config.Window.NewElements)
 
-	if Toggle.Type == "Toggle" then
-		Creator.AddSignal(ToggleFrame.Track.Hitbox.MouseButton1Click, function()
+	if Config.Window.NewElements and ToggleFunc.Animate then
+		Creator.AddSignal(Toggle.ToggleFrame.UIElements.Main.InputBegan, function(input)
 			if Toggle.Locked then
 				return
 			end
-			Toggle:Set(not Toggle.Value, true, true)
-		end)
 
-		Creator.AddSignal(ToggleFrame.Track.Hitbox.MouseButton1Down, function()
-			if Toggle.Locked then
-				return
-			end
-			if ToggleFunc and ToggleFunc.Press then
-				ToggleFunc:Press()
-			end
-		end)
+			if Toggle.ToggleFrame.UIElements.ChevronButton then
+				local chevronAbsPos = Toggle.ToggleFrame.UIElements.ChevronButton.AbsolutePosition
+				local chevronAbsSize = Toggle.ToggleFrame.UIElements.ChevronButton.AbsoluteSize
 
-		Creator.AddSignal(ToggleFrame.Track.Hitbox.InputEnded, function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-				if ToggleFunc and ToggleFunc.Release then
-					ToggleFunc:Release()
+				if input.Position.X >= chevronAbsPos.X and input.Position.X <= chevronAbsPos.X + chevronAbsSize.X
+					and input.Position.Y >= chevronAbsPos.Y and input.Position.Y <= chevronAbsPos.Y + chevronAbsSize.Y then
+					return
 				end
+			end
+
+			if (not Config.Window.IsToggleDragging)
+				and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+				ToggleFunc:Animate(input, Toggle)
 			end
 		end)
 	else
 		Creator.AddSignal(Toggle.ToggleFrame.UIElements.Main.MouseButton1Click, function()
-			if Toggle.Locked then
-				return
-			end
-			Toggle:Set(not Toggle.Value, true, Config.Window.NewElements)
-		end)
-	end
-
-	if not HasDesc and Toggle.Type == "Toggle" then
-		Creator.AddSignal(Toggle.ToggleFrame.UIElements.Main.MouseButton1Click, function()
-			if Toggle.Locked then
-				return
-			end
-			Toggle:Set(not Toggle.Value, true, true)
+			Toggle:Set(not Toggle.Value, nil, Config.Window.NewElements)
 		end)
 	end
 
