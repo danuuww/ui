@@ -9,11 +9,10 @@ local Element = {}
 local function CreateIosSwitch(Parent, DefaultValue, Config)
 	local State = DefaultValue == true
 
-	local Width = Config.Window.NewElements and 72 or 68
-	local Height = Config.Window.NewElements and 38 or 34
+	local Width = Config.Window.NewElements and 62 or 58
+	local Height = Config.Window.NewElements and 34 or 30
 	local KnobSize = Height - 4
-	local KnobGlowSize = KnobSize + 10
-	local OffDotSize = 10
+	local OffDotSize = 8
 
 	local OffX = 2 + (KnobSize / 2)
 	local OnX = Width - 2 - (KnobSize / 2)
@@ -32,14 +31,14 @@ local function CreateIosSwitch(Parent, DefaultValue, Config)
 		ThemeTag = {
 			ImageColor3 = "Text",
 		},
-		ImageTransparency = 0.76,
+		ImageTransparency = 0.74,
 		Parent = Root,
 	}, {
 		Creator.NewRoundFrame(999, "Glass-1", {
 			Name = "Stroke",
 			Size = UDim2.new(1, 0, 1, 0),
 			ImageColor3 = Color3.new(1, 1, 1),
-			ImageTransparency = 0.76,
+			ImageTransparency = 0.78,
 		}),
 		Creator.NewRoundFrame(999, "Squircle", {
 			Name = "OnFill",
@@ -47,19 +46,12 @@ local function CreateIosSwitch(Parent, DefaultValue, Config)
 			ThemeTag = {
 				ImageColor3 = "Accent",
 			},
-			ImageTransparency = State and 0.22 or 1,
-		}, {
-			Creator.NewRoundFrame(999, "Glass-1", {
-				Name = "OnGlow",
-				Size = UDim2.new(1, 0, 1, 0),
-				ImageColor3 = Color3.new(1, 1, 1),
-				ImageTransparency = 0.87,
-			}),
+			ImageTransparency = State and 0.20 or 1,
 		}),
 		Creator.NewRoundFrame(999, "Squircle", {
 			Name = "OffDot",
 			Size = UDim2.new(0, OffDotSize, 0, OffDotSize),
-			Position = UDim2.new(1, -14, 0.5, 0),
+			Position = UDim2.new(1, -13, 0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			ImageColor3 = Color3.fromRGB(236, 236, 242),
 			ImageTransparency = State and 1 or 0.34,
@@ -68,18 +60,8 @@ local function CreateIosSwitch(Parent, DefaultValue, Config)
 				Name = "OffDotStroke",
 				Size = UDim2.new(1, 0, 1, 0),
 				ImageColor3 = Color3.new(1, 1, 1),
-				ImageTransparency = 0.65,
+				ImageTransparency = 0.66,
 			}),
-		}),
-		Creator.NewRoundFrame(999, "Squircle", {
-			Name = "KnobGlow",
-			Size = UDim2.new(0, KnobGlowSize, 0, KnobGlowSize),
-			Position = UDim2.new(0, State and OnX or OffX, 0.5, 0),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			ThemeTag = {
-				ImageColor3 = "Accent",
-			},
-			ImageTransparency = State and 0.82 or 1,
 		}),
 		Creator.NewRoundFrame(999, "Squircle", {
 			Name = "Knob",
@@ -112,24 +94,16 @@ local function CreateIosSwitch(Parent, DefaultValue, Config)
 		State = Value == true
 
 		local KnobPos = UDim2.new(0, State and OnX or OffX, 0.5, 0)
-		local OnTransparency = State and 0.22 or 1
-		local GlowTransparency = State and 0.82 or 1
+		local OnTransparency = State and 0.20 or 1
 		local OffDotTransparency = State and 1 or 0.34
 
 		if Animate == false then
 			Track.OnFill.ImageTransparency = OnTransparency
-			Track.KnobGlow.ImageTransparency = GlowTransparency
 			Track.OffDot.ImageTransparency = OffDotTransparency
 			Track.Knob.Position = KnobPos
-			Track.KnobGlow.Position = KnobPos
 		else
 			Tween(Track.OnFill, 0.18, {
 				ImageTransparency = OnTransparency,
-			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
-
-			Tween(Track.KnobGlow, 0.18, {
-				ImageTransparency = GlowTransparency,
-				Position = KnobPos,
 			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
 			Tween(Track.OffDot, 0.16, {
@@ -143,13 +117,13 @@ local function CreateIosSwitch(Parent, DefaultValue, Config)
 	end
 
 	function Controller:Press()
-		Tween(Track.Knob, 0.12, {
+		Tween(Track.Knob, 0.10, {
 			Size = UDim2.new(0, KnobSize + 2, 0, KnobSize + 2),
 		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 	end
 
 	function Controller:Release()
-		Tween(Track.Knob, 0.12, {
+		Tween(Track.Knob, 0.10, {
 			Size = UDim2.new(0, KnobSize, 0, KnobSize),
 		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 	end
@@ -171,7 +145,7 @@ function Element:New(Config)
 		IconSize = Config.IconSize or 20,
 		Type = Config.Type or "Toggle",
 		Callback = Config.Callback or function() end,
-		UIElements = {},
+		UIElements = {}
 	}
 
 	local HasDesc = Toggle.Desc ~= nil and Toggle.Desc ~= ""
@@ -180,8 +154,8 @@ function Element:New(Config)
 		Toggle.Value = false
 	end
 
-	local RightSlotWidth = HasDesc and 112 or 84
-	local TextOffset = HasDesc and 124 or 92
+	local RightSlotWidth = HasDesc and 94 or 74
+	local TextOffset = HasDesc and 116 or 84
 
 	Toggle.ToggleFrame = require("../components/window/Element")({
 		Title = Toggle.Title,
@@ -199,10 +173,10 @@ function Element:New(Config)
 		ImageSize = Toggle.IconSize,
 
 		RightSlotWidth = RightSlotWidth,
-		DividerRightInset = RightSlotWidth + 8,
 		ExpandableDesc = HasDesc,
 		ShowChevron = HasDesc,
 		DescExpanded = false,
+		UseInsetDivider = false,
 	})
 
 	local CanCallback = true
@@ -225,14 +199,12 @@ function Element:New(Config)
 	end
 
 	local RightSlot = Toggle.ToggleFrame.UIElements.RightSlot
-	local ToggleFrame
-	local ToggleFunc
+	local ToggleFrame, ToggleFunc
 
 	if Toggle.Type == "Toggle" then
 		ToggleFrame, ToggleFunc = CreateIosSwitch(RightSlot, Toggled, Config)
 	elseif Toggle.Type == "Checkbox" then
-		ToggleFrame, ToggleFunc =
-			CreateCheckbox(Toggled, nil, 0, RightSlot, Toggle.Callback, Config)
+		ToggleFrame, ToggleFunc = CreateCheckbox(Toggled, nil, 0, RightSlot, Toggle.Callback, Config)
 		ToggleFrame.LayoutOrder = 1
 	else
 		error("Unknown Toggle Type: " .. tostring(Toggle.Type))
@@ -278,10 +250,7 @@ function Element:New(Config)
 		end)
 
 		Creator.AddSignal(ToggleFrame.Track.Hitbox.InputEnded, function(Input)
-			if
-				Input.UserInputType == Enum.UserInputType.MouseButton1
-				or Input.UserInputType == Enum.UserInputType.Touch
-			then
+			if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
 				if ToggleFunc and ToggleFunc.Release then
 					ToggleFunc:Release()
 				end
