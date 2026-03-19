@@ -6978,6 +6978,22 @@ local ae=a.load'F'.New
 
 local af={}
 
+local function IsInside(ag,ah,ai)
+if not ag or not ag.Visible then
+return false
+end
+
+ai=ai or 0
+
+local aj=ag.AbsolutePosition
+local ak=ag.AbsoluteSize
+
+return ah.X>=(aj.X-ai)
+and ah.X<=(aj.X+ak.X+ai)
+and ah.Y>=(aj.Y-ai)
+and ah.Y<=(aj.Y+ak.Y+ai)
+end
+
 function af.New(ag,ah)
 local ai={
 __type="Toggle",
@@ -7005,7 +7021,7 @@ IconThemed=ai.IconThemed,
 
 Window=ah.Window,
 Parent=ah.Parent,
-TextOffset=aj and 128 or 108,
+TextOffset=aj and 140 or 108,
 Hover=false,
 Tab=ah.Tab,
 Index=ah.Index,
@@ -7016,7 +7032,7 @@ ListRow=ah.Window.NewElements==true,
 ExpandableDesc=aj,
 DescExpanded=false,
 ShowChevron=aj,
-RightSlotWidth=aj and 104 or 84,
+RightSlotWidth=aj and 120 or 90,
 }
 
 local ak=true
@@ -7069,8 +7085,7 @@ end
 
 if ai.ToggleFrame.UIElements.RightSlot then
 am.Parent=ai.ToggleFrame.UIElements.RightSlot
-am.AnchorPoint=Vector2.new(1,0.5)
-am.Position=UDim2.new(1,0,0.5,0)
+am.LayoutOrder=1
 else
 am.AnchorPoint=Vector2.new(1,ah.Window.NewElements and 0 or 0.5)
 am.Position=UDim2.new(1,0,ah.Window.NewElements and 0 or 0.5,0)
@@ -7086,8 +7101,24 @@ end
 
 ai:Set(al,false,ah.Window.NewElements)
 
+local function PressingChevron(ao)
+local ap=ai.ToggleFrame.UIElements.ChevronButton
+if not ap or not ao or not ao.Position then
+return false
+end
+return IsInside(ap,ao.Position,8)
+end
+
 if ah.Window.NewElements and an.Animate then
 aa.AddSignal(ai.ToggleFrame.UIElements.Main.InputBegan,function(ao)
+if ai.Locked then
+return
+end
+
+if PressingChevron(ao)then
+return
+end
+
 if
 not ah.Window.IsToggleDragging
 and(ao.UserInputType==Enum.UserInputType.MouseButton1 or ao.UserInputType==Enum.UserInputType.Touch)
@@ -7097,6 +7128,15 @@ end
 end)
 else
 aa.AddSignal(ai.ToggleFrame.UIElements.Main.MouseButton1Click,function()
+if ai.Locked then
+return
+end
+
+local ao=game:GetService"UserInputService":GetMouseLocation()
+if IsInside(ai.ToggleFrame.UIElements.ChevronButton,ao,8)then
+return
+end
+
 ai:Set(not ai.Value,nil,ah.Window.NewElements)
 end)
 end
