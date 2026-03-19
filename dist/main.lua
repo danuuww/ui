@@ -5962,7 +5962,7 @@ end
 
 local J=math.max(H-G,24)
 
-B.Position=UDim2.new(0,G,1,0)
+B.Position=UDim2.new(0,G-af.UIPadding,1,af.UIPadding)
 B.Size=UDim2.new(0,J,0,1)
 end
 
