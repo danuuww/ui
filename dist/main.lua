@@ -10496,10 +10496,11 @@ Expandable=false,
 
 local am
 
-
 function al.SetIcon(an,ao)
 al.Icon=ao or nil
-if am then am:Destroy()end
+if am then
+am:Destroy()
+end
 if ao then
 am=aa.Image(
 ao,
@@ -10518,7 +10519,7 @@ end
 local an=ae("Frame",{
 Size=UDim2.new(0,al.IconSize,0,al.IconSize),
 BackgroundTransparency=1,
-Visible=false
+Visible=false,
 },{
 ae("ImageLabel",{
 Size=UDim2.new(1,0,1,0),
@@ -10530,9 +10531,8 @@ ThemeTag={
 ImageTransparency="SectionExpandIconTransparency",
 ImageColor3="SectionExpandIcon",
 },
+}),
 })
-})
-
 
 if al.Icon then
 al:SetIcon(al.Icon)
@@ -10546,8 +10546,8 @@ ae("UIListLayout",{
 FillDirection="Vertical",
 HorizontalAlignment=al.TextXAlignment,
 VerticalAlignment="Center",
-Padding=UDim.new(0,4)
-})
+Padding=UDim.new(0,4),
+}),
 })
 
 local ap,aq
@@ -10563,15 +10563,8 @@ ThemeTag={
 TextColor3="Text",
 },
 FontFace=Font.new(aa.Font,as=="Title"and al.FontWeight or al.DescFontWeight),
-
-
 Text=ar,
-Size=UDim2.new(
-1,
-0,
-0,
-0
-),
+Size=UDim2.new(1,0,0,0),
 TextWrapped=true,
 Parent=ao,
 })
@@ -10593,7 +10586,6 @@ end
 ao.Size=UDim2.new(1,ar,0,0)
 end
 
-
 local ar=aa.NewRoundFrame(ak.Window.ElementConfig.UICorner,"Squircle",{
 Size=UDim2.new(1,0,0,0),
 BackgroundTransparency=1,
@@ -10608,7 +10600,6 @@ ImageTransparency=not al.Box and 1 or nil,
 },{
 aa.NewRoundFrame(ak.Window.ElementConfig.UICorner,ak.Window.NewElements and"Glass-1"or"SquircleOutline",{
 Size=UDim2.new(1,0,1,0),
-
 ThemeTag={
 ImageTransparency="SectionBoxBorderTransparency",
 ImageColor3="SectionBoxBorder",
@@ -10645,7 +10636,7 @@ Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
 Name="Content",
 Visible=false,
-Position=UDim2.new(0,0,0,al.HeaderSize)
+Position=UDim2.new(0,0,0,al.HeaderSize),
 },{
 al.Box and ae("UIPadding",{
 PaddingLeft=UDim.new(0,ak.Window.ElementConfig.UIPadding),
@@ -10654,15 +10645,11 @@ PaddingBottom=UDim.new(0,ak.Window.ElementConfig.UIPadding),
 })or nil,
 ae("UIListLayout",{
 FillDirection="Vertical",
-Padding=UDim.new(0,ak.Tab.Gap),
+Padding=UDim.new(0,ak.Window.NewElements and 0 or ak.Tab.Gap),
 VerticalAlignment="Top",
 }),
+}),
 })
-})
-
-
-
-
 
 al.ElementFrame=ar
 
@@ -10670,10 +10657,13 @@ if aq then
 ar.Top:GetPropertyChangedSignal"AbsoluteSize":Connect(function()
 ar.Content.Position=UDim2.new(0,0,0,ar.Top.AbsoluteSize.Y/ak.UIScale)
 
-if al.Opened then al:Open(true)else al.Close(true)end
+if al.Opened then
+al:Open(true)
+else
+al.Close(true)
+end
 end)
 end
-
 
 local as=ak.ElementsModule
 
@@ -10684,7 +10674,6 @@ an.Visible=true
 UpdateTitleSize()
 end
 end,as,ak.UIScale,ak.Tab)
-
 
 UpdateTitleSize()
 
@@ -10706,13 +10695,6 @@ for au,av in next,al.Elements do
 av:Destroy()
 end
 
-
-
-
-
-
-
-
 ar:Destroy()
 end
 
@@ -10724,13 +10706,16 @@ ar.Size=UDim2.new(ar.Size.X.Scale,ar.Size.X.Offset,0,(ar.Top.AbsoluteSize.Y)/ak.
 an.ImageLabel.Rotation=180
 else
 af(ar,0.33,{
-Size=UDim2.new(ar.Size.X.Scale,ar.Size.X.Offset,0,(ar.Top.AbsoluteSize.Y)/ak.UIScale+(ar.Content.AbsoluteSize.Y/ak.UIScale))
+Size=UDim2.new(ar.Size.X.Scale,ar.Size.X.Offset,0,(ar.Top.AbsoluteSize.Y)/ak.UIScale+(ar.Content.AbsoluteSize.Y/ak.UIScale)),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 
-af(an.ImageLabel,0.2,{Rotation=180},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+af(an.ImageLabel,0.2,{
+Rotation=180,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 end
 end
+
 function al.Close(at,au)
 if al.Expandable then
 al.Opened=false
@@ -10739,9 +10724,11 @@ ar.Size=UDim2.new(ar.Size.X.Scale,ar.Size.X.Offset,0,(ar.Top.AbsoluteSize.Y/ak.U
 an.ImageLabel.Rotation=0
 else
 af(ar,0.26,{
-Size=UDim2.new(ar.Size.X.Scale,ar.Size.X.Offset,0,(ar.Top.AbsoluteSize.Y/ak.UIScale))
+Size=UDim2.new(ar.Size.X.Scale,ar.Size.X.Offset,0,(ar.Top.AbsoluteSize.Y/ak.UIScale)),
 },Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-af(an.ImageLabel,0.2,{Rotation=0},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
+af(an.ImageLabel,0.2,{
+Rotation=0,
+},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
 end
 end
 end
@@ -10765,14 +10752,6 @@ end)
 task.spawn(function()
 task.wait(0.02)
 if al.Expandable then
-
-
-
-
-
-
-
-
 ar.Size=UDim2.new(ar.Size.X.Scale,ar.Size.X.Offset,0,ar.Top.AbsoluteSize.Y/ak.UIScale)
 ar.AutomaticSize="None"
 ar.Top.Size=UDim2.new(1,0,0,(not aq and al.HeaderSize or 0))
@@ -10782,7 +10761,6 @@ end
 if al.Opened then
 al:Open()
 end
-
 end)
 
 return al.__type,al
