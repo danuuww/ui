@@ -616,11 +616,8 @@ return function(Config)
 		local rightInset
 		if Element.DividerRightInset then
 			rightInset = Element.DividerRightInset
-		elseif RightSlot and RightSlot.AbsoluteSize.X > 0 then
-			local rightEdge = (RightSlot.AbsolutePosition.X - mainPos.X) + RightSlot.AbsoluteSize.X
-			rightInset = math.max(mainSize.X - rightEdge, Element.UIPadding)
 		else
-			rightInset = Element.UIPadding
+			rightInset = 0
 		end
 
 		local width = math.max(mainSize.X - leftInset - rightInset, 24)

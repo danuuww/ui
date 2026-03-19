@@ -67,6 +67,15 @@ function Element:New(Config)
 			or UDim2.new(1, -14, 0.5, 0)
 
 		Button.ButtonFrame:Colorize(Button.UIElements.ButtonIcon.ImageLabel, "ImageColor3")
+		
+		local TextPadding = Button.ButtonFrame.UIElements.TextContent:FindFirstChildOfClass("UIPadding")
+		if TextPadding then
+			if Button.IconAlign == "Left" then
+				TextPadding.PaddingLeft = UDim.new(0, TextPadding.PaddingLeft.Offset + 24)
+			else
+				TextPadding.PaddingRight = UDim.new(0, TextPadding.PaddingRight.Offset + 24)
+			end
+		end
 	end
 
 	function Button:Lock()

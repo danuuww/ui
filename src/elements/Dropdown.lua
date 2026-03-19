@@ -59,12 +59,13 @@ function Element:New(Config)
 	end
 
 	local CanCallback = true
+	local UseListRow = Config.Window.NewElements == true and Config.ParentType ~= "Group"
 
 	Dropdown.DropdownFrame = require("../components/window/Element")({
 		Title = Dropdown.Title,
 		Desc = Dropdown.Desc,
 		Parent = Config.Parent,
-		TextOffset = Config.Window.NewElements and (Dropdown.Callback and (Dropdown.Width + 40) or 32)
+		TextOffset = UseListRow and (Dropdown.Callback and (Dropdown.Width + 40) or 32)
 			or (Dropdown.Callback and Dropdown.Width or 20),
 		Hover = not Dropdown.Callback and true or false,
 		Tab = Config.Tab,
@@ -73,7 +74,7 @@ function Element:New(Config)
 		ElementTable = Dropdown,
 		ParentConfig = Config,
 
-		ListRow = Config.Window.NewElements == true,
+		ListRow = UseListRow,
 		ExpandableDesc = HasDesc,
 		DescExpanded = false,
 		ShowChevron = HasDesc,
@@ -94,8 +95,14 @@ function Element:New(Config)
 			Dropdown.UIElements.Dropdown.Parent = Dropdown.DropdownFrame.UIElements.RightSlot
 			Dropdown.UIElements.Dropdown.LayoutOrder = 1
 		else
-			Dropdown.UIElements.Dropdown.Position = UDim2.new(1, 0, Config.Window.NewElements and 0 or 0.5, 0)
-			Dropdown.UIElements.Dropdown.AnchorPoint = Vector2.new(1, Config.Window.NewElements and 0 or 0.5)
+			Dropdown.UIElements.Dropdown.Position = UDim2.new(1, 0, UseListRow and 0 or 0.5, 0)
+			Dropdown.UIElements.Dropdown.AnchorPoint = Vector2.new(1, UseListRow and 0 or 0.5)
+			-- For Group styling we need the dropdown centered and filling appropriately
+			if Config.ParentType == "Group" then
+				Dropdown.UIElements.Dropdown.Size = UDim2.new(1, -Element.UIPadding * 2, 0, 36)
+				Dropdown.UIElements.Dropdown.AnchorPoint = Vector2.new(0.5, 0.5)
+				Dropdown.UIElements.Dropdown.Position = UDim2.new(0.5, 0, 0.5, 12)
+			end
 		end
 	end
 
