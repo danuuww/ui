@@ -6490,10 +6490,15 @@ af.IconThemed
 )
 
 af.UIElements.ButtonIcon.Size=UDim2.new(0,20,0,20)
-af.UIElements.ButtonIcon.Parent=af.Justify=="Between"and af.ButtonFrame.UIElements.Main or af.ButtonFrame.UIElements.Container.TitleFrame
-af.UIElements.ButtonIcon.LayoutOrder=af.IconAlign=="Left"and-99999 or 99999
+
+if af.Justify=="Between"then
+af.UIElements.ButtonIcon.Parent=af.ButtonFrame.UIElements.Main
 af.UIElements.ButtonIcon.AnchorPoint=Vector2.new(1,0.5)
-af.UIElements.ButtonIcon.Position=UDim2.new(1,(af.IconAlign=="Right"and af.Justify=="Between")and-32 or 0,0.5,0)
+af.UIElements.ButtonIcon.Position=UDim2.new(1,af.IconAlign=="Right"and-32 or-16,0.5,0)
+else
+af.UIElements.ButtonIcon.Parent=af.ButtonFrame.UIElements.Container.TitleFrame
+af.UIElements.ButtonIcon.LayoutOrder=af.IconAlign=="Left"and-99999 or 99999
+end
 
 af.ButtonFrame:Colorize(af.UIElements.ButtonIcon.ImageLabel,"ImageColor3")
 
@@ -7199,7 +7204,7 @@ Callback=aj.Callback or function()end,
 UIElements={},
 IsFocusing=false,
 
-TextBoxWidth=aj.Window.NewElements and 58 or 52,
+TextBoxWidth=aj.Window.NewElements and 36 or 30,
 TextBoxHeight=aj.Window.NewElements and 28 or 26,
 ThumbSize=13,
 IconSize=aj.Window.NewElements and 16 or 14,
@@ -7853,7 +7858,7 @@ local b=am.SliderFrame.UIElements.Container
 if am.InputBox and am.SliderFrame.UIElements.RightSlot then
 am.UIElements.TextBox=af("TextBox",{
 Size=UDim2.new(0,am.TextBoxWidth,0,am.TextBoxHeight),
-TextXAlignment="Right",
+TextXAlignment="Center",
 ClearTextOnFocus=false,
 Text=FormatValue(as),
 TextSize=14,
@@ -8380,12 +8385,13 @@ Width=150,
 local ak=true
 local al=aj.Type=="Input"local am=
 aj.Desc~=nil and aj.Desc~=""
+local an=ai.Window.NewElements==true and al and ai.ParentType~="Group"
 
 aj.InputFrame=a.load'B'{
 Title=aj.Title,
 Desc=aj.Desc,
 Parent=ai.Parent,
-TextOffset=al and(aj.Width+24)or aj.Width,
+TextOffset=an and(aj.Width+24)or aj.Width,
 Hover=false,
 Tab=ai.Tab,
 Index=ai.Index,
@@ -8393,20 +8399,20 @@ Window=ai.Window,
 ElementTable=aj,
 ParentConfig=ai,
 
-ListRow=ai.Window.NewElements==true and al,
+ListRow=an,
 ExpandableDesc=false,
 DescExpanded=false,
 ShowChevron=false,
-RightSlotWidth=al and aj.Width or 0,
+RightSlotWidth=an and aj.Width or 0,
 }
 
-local an=ag(
+local ao=ag(
 aj.Placeholder,
 aj.InputIcon,
 (al and aj.InputFrame.UIElements.Main or aj.InputFrame.UIElements.Container),
 aj.Type,
-function(an)
-aj:Set(an,true)
+function(ao)
+aj:Set(ao,true)
 end,
 nil,
 ai.Window.NewElements and 12 or 10,
@@ -8414,50 +8420,50 @@ aj.ClearTextOnFocus
 )
 
 if al then
-an.Size=UDim2.new(0,aj.Width,0,36)
+ao.Size=UDim2.new(0,aj.Width,0,36)
 
 if aj.InputFrame.UIElements.RightSlot then
-an.Parent=aj.InputFrame.UIElements.RightSlot
-an.LayoutOrder=1
+ao.Parent=aj.InputFrame.UIElements.RightSlot
+ao.LayoutOrder=1
 else
-an.Position=UDim2.new(1,0,ai.Window.NewElements and 0 or 0.5,0)
-an.AnchorPoint=Vector2.new(1,ai.Window.NewElements and 0 or 0.5)
+ao.Position=UDim2.new(1,0,ai.Window.NewElements and 0 or 0.5,0)
+ao.AnchorPoint=Vector2.new(1,ai.Window.NewElements and 0 or 0.5)
 end
 else
-an.Size=UDim2.new(1,0,0,148)
+ao.Size=UDim2.new(1,0,0,148)
 end
 
 ac("UIScale",{
-Parent=an,
+Parent=ao,
 Scale=1,
 })
 
-function aj.Lock(ao)
+function aj.Lock(ap)
 aj.Locked=true
 ak=false
 return aj.InputFrame:Lock(aj.LockedTitle)
 end
 
-function aj.Unlock(ao)
+function aj.Unlock(ap)
 aj.Locked=false
 ak=true
 return aj.InputFrame:Unlock()
 end
 
-function aj.Set(ao,ap,aq)
+function aj.Set(ap,aq,ar)
 if ak then
-aj.Value=ap
-aa.SafeCallback(aj.Callback,ap)
+aj.Value=aq
+aa.SafeCallback(aj.Callback,aq)
 
-if not aq then
-an.Frame.Frame.TextBox.Text=ap
+if not ar then
+ao.Frame.Frame.TextBox.Text=aq
 end
 end
 end
 
-function aj.SetPlaceholder(ao,ap)
-an.Frame.Frame.TextBox.PlaceholderText=ap
-aj.Placeholder=ap
+function aj.SetPlaceholder(ap,aq)
+ao.Frame.Frame.TextBox.PlaceholderText=aq
+aj.Placeholder=aq
 end
 
 aj:Set(aj.Value)
