@@ -5645,8 +5645,7 @@ AutomaticSize=af.Justify=="Between"and"Y"or"XY",
 ab("UIListLayout",{
 Padding=UDim.new(0,ap and af.UIPadding or 0),
 FillDirection="Horizontal",
-VerticalAlignment=(ag and an)and"Top"
-or((not ag and(an or af.ExpandableDesc))and"Top"or"Center"),
+VerticalAlignment="Center",
 HorizontalAlignment=af.Justify~="Between"and af.Justify or"Left",
 }),
 aw,
@@ -6465,11 +6464,25 @@ ParentConfig=ae,
 Size=ae.Size,
 
 ListRow=ah,
-Image=af.Icon,
-ImageSize=20,
-IconThemed=af.IconThemed or false,
-IconAlign=af.IconAlign,
 }
+
+af.UIElements.ButtonIcon=aa.Image(
+af.Icon,
+af.Icon,
+0,
+ae.Window.Folder,
+"Button",
+not af.Color and true or nil,
+af.IconThemed
+)
+
+af.UIElements.ButtonIcon.Size=UDim2.new(0,20,0,20)
+af.UIElements.ButtonIcon.Parent=af.Justify=="Between"and af.ButtonFrame.UIElements.Main or af.ButtonFrame.UIElements.Container.TitleFrame
+af.UIElements.ButtonIcon.LayoutOrder=af.IconAlign=="Left"and-99999 or 99999
+af.UIElements.ButtonIcon.AnchorPoint=Vector2.new(1,0.5)
+af.UIElements.ButtonIcon.Position=UDim2.new(1,(af.IconAlign=="Right"and af.Justify=="Between")and-32 or 0,0.5,0)
+
+af.ButtonFrame:Colorize(af.UIElements.ButtonIcon.ImageLabel,"ImageColor3")
 
 function af.Lock(ai)
 af.Locked=true
@@ -8388,7 +8401,7 @@ aj.ClearTextOnFocus
 )
 
 if al then
-an.Size=UDim2.new(0,aj.Width,0,28)
+an.Size=UDim2.new(0,aj.Width,0,36)
 
 if aj.InputFrame.UIElements.RightSlot then
 an.Parent=aj.InputFrame.UIElements.RightSlot
@@ -9217,7 +9230,7 @@ ao.UIElements.Dropdown.Frame.Frame.TextLabel.TextTruncate="AtEnd"
 ao.UIElements.Dropdown.Frame.Frame.TextLabel.Size=
 UDim2.new(1,ao.UIElements.Dropdown.Frame.Frame.TextLabel.Size.X.Offset-18-12-12,0,0)
 
-ao.UIElements.Dropdown.Size=UDim2.new(0,ao.Width,0,28)
+ao.UIElements.Dropdown.Size=UDim2.new(0,ao.Width,0,36)
 
 if ao.DropdownFrame.UIElements.RightSlot then
 ao.UIElements.Dropdown.Parent=ao.DropdownFrame.UIElements.RightSlot
@@ -9227,7 +9240,7 @@ ao.UIElements.Dropdown.Position=UDim2.new(1,0,ar and 0 or 0.5,0)
 ao.UIElements.Dropdown.AnchorPoint=Vector2.new(1,ar and 0 or 0.5)
 
 if an.ParentType=="Group"then
-ao.UIElements.Dropdown.Size=UDim2.new(1,-al.UIPadding*2,0,28)
+ao.UIElements.Dropdown.Size=UDim2.new(1,-al.UIPadding*2,0,36)
 ao.UIElements.Dropdown.AnchorPoint=Vector2.new(0.5,0.5)
 ao.UIElements.Dropdown.Position=UDim2.new(0.5,0,0.5,0)
 end
