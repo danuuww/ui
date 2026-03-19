@@ -49,6 +49,8 @@ function Element:New(Config)
 		Width = 150,
 	}
 
+	local HasDesc = Dropdown.Desc ~= nil and Dropdown.Desc ~= ""
+
 	if Dropdown.Multi and not Dropdown.Value then
 		Dropdown.Value = {}
 	end
@@ -62,13 +64,20 @@ function Element:New(Config)
 		Title = Dropdown.Title,
 		Desc = Dropdown.Desc,
 		Parent = Config.Parent,
-		TextOffset = Dropdown.Callback and Dropdown.Width or 20,
+		TextOffset = Config.Window.NewElements and (Dropdown.Callback and (Dropdown.Width + 40) or 32)
+			or (Dropdown.Callback and Dropdown.Width or 20),
 		Hover = not Dropdown.Callback and true or false,
 		Tab = Config.Tab,
 		Index = Config.Index,
 		Window = Config.Window,
 		ElementTable = Dropdown,
 		ParentConfig = Config,
+
+		ListRow = Config.Window.NewElements == true,
+		ExpandableDesc = HasDesc,
+		DescExpanded = false,
+		ShowChevron = HasDesc,
+		RightSlotWidth = Dropdown.Callback and (Dropdown.Width + (HasDesc and 34 or 0)) or (HasDesc and 30 or 0),
 	})
 
 	if Dropdown.Callback then
@@ -80,13 +89,14 @@ function Element:New(Config)
 			UDim2.new(1, Dropdown.UIElements.Dropdown.Frame.Frame.TextLabel.Size.X.Offset - 18 - 12 - 12, 0, 0)
 
 		Dropdown.UIElements.Dropdown.Size = UDim2.new(0, Dropdown.Width, 0, 36)
-		Dropdown.UIElements.Dropdown.Position = UDim2.new(1, 0, Config.Window.NewElements and 0 or 0.5, 0)
-		Dropdown.UIElements.Dropdown.AnchorPoint = Vector2.new(1, Config.Window.NewElements and 0 or 0.5)
 
-		-- New("UIScale", {
-		--     Parent = Dropdown.UIElements.Dropdown,
-		--     Scale = .85,
-		-- })
+		if Dropdown.DropdownFrame.UIElements.RightSlot then
+			Dropdown.UIElements.Dropdown.Parent = Dropdown.DropdownFrame.UIElements.RightSlot
+			Dropdown.UIElements.Dropdown.LayoutOrder = 1
+		else
+			Dropdown.UIElements.Dropdown.Position = UDim2.new(1, 0, Config.Window.NewElements and 0 or 0.5, 0)
+			Dropdown.UIElements.Dropdown.AnchorPoint = Vector2.new(1, Config.Window.NewElements and 0 or 0.5)
+		end
 	end
 
 	Dropdown.DropdownMenu = CreateDropdown(Config, Dropdown, Element, CanCallback, "Dropdown")
@@ -107,8 +117,7 @@ function Element:New(Config)
 			ImageColor3 = "Icon",
 		},
 		AnchorPoint = Vector2.new(1, 0.5),
-		Parent = Dropdown.UIElements.Dropdown and Dropdown.UIElements.Dropdown.Frame
-			or Dropdown.DropdownFrame.UIElements.Main,
+		Parent = Dropdown.UIElements.Dropdown and Dropdown.UIElements.Dropdown.Frame or Dropdown.DropdownFrame.UIElements.Main,
 	})
 
 	function Dropdown:Lock()
@@ -116,6 +125,7 @@ function Element:New(Config)
 		CanCallback = false
 		return Dropdown.DropdownFrame:Lock(Dropdown.LockedTitle)
 	end
+
 	function Dropdown:Unlock()
 		Dropdown.Locked = false
 		CanCallback = true
