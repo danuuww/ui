@@ -222,6 +222,21 @@ return function(Config)
 
 	local HasDesc = Element.Desc ~= nil and Element.Desc ~= ""
 
+	Desc.Size = UDim2.new(1, 0, 0, 0)
+	Desc.AutomaticSize = "Y"
+
+	local DescInner = New("Frame", {
+		Name = "DescInner",
+		BackgroundTransparency = 1,
+		AutomaticSize = "Y",
+		Size = UDim2.new(1, 0, 0, 0),
+	}, {
+		New("UIPadding", {
+			PaddingTop = UDim.new(0, 4),
+		}),
+		Desc,
+	})
+
 	local DescHolder = New("Frame", {
 		Name = "DescHolder",
 		Size = UDim2.new(1, 0, 0, 0),
@@ -229,11 +244,11 @@ return function(Config)
 		ClipsDescendants = true,
 		Visible = HasDesc and Element.DescExpanded or false,
 	}, {
-		Desc,
+		DescInner,
 	})
 
 	local TextList = New("UIListLayout", {
-		Padding = UDim.new(0, Element.DescExpanded and 6 or 0),
+		Padding = UDim.new(0, 0),
 		FillDirection = "Vertical",
 		VerticalAlignment = "Center",
 		HorizontalAlignment = "Left",
@@ -483,27 +498,36 @@ return function(Config)
 
 	Element.UIElements.RightSlot = RightSlot
 
+	local ChevronWrap
 	local ChevronButton
+
 	if Element.ShowChevron then
+		ChevronWrap = New("Frame", {
+			Name = "ChevronWrap",
+			Size = UDim2.new(0, 16, 0, 16),
+			BackgroundTransparency = 1,
+			LayoutOrder = 99,
+			Parent = RightSlot,
+		})
+
 		ChevronButton = New("TextButton", {
 			Name = "ChevronButton",
-			Size = UDim2.new(0, 16, 0, 16),
+			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundTransparency = 1,
 			Text = "›",
 			TextSize = 24,
 			TextTransparency = 0.25,
-			Rotation = Element.DescExpanded and 90 or 0,
 			FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
-			LayoutOrder = 99,
 			ThemeTag = {
 				TextColor3 = "Text",
 			},
-			Parent = RightSlot,
+			Parent = ChevronWrap,
 			AutoButtonColor = false,
 		})
 	end
 
 	Element.UIElements.ChevronButton = ChevronButton
+	Element.UIElements.ChevronWrap = ChevronWrap
 
 	local Divider = New("Frame", {
 		Name = "Divider",
@@ -539,24 +563,28 @@ return function(Config)
 
 		Element.DescExpanded = State == true
 
+		local function GetTargetHeight()
+			task.wait()
+			return math.max(DescInner.AbsoluteSize.Y, Desc.TextBounds.Y + 6)
+		end
+
 		if Element.DescExpanded then
 			DescHolder.Visible = true
-			TextList.Padding = UDim.new(0, 6)
 
-			local TargetHeight = GetDescTargetHeight()
+			local TargetHeight = GetTargetHeight()
 
 			if Instant then
 				DescHolder.Size = UDim2.new(1, 0, 0, TargetHeight)
-				if ChevronButton then
-					ChevronButton.Rotation = 90
+				if Element.UIElements.ChevronWrap then
+					Element.UIElements.ChevronWrap.Rotation = 90
 				end
 			else
-				Tween(DescHolder, 0.18, {
+				Tween(DescHolder, 0.20, {
 					Size = UDim2.new(1, 0, 0, TargetHeight),
 				}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
-				if ChevronButton then
-					Tween(ChevronButton, 0.18, {
+				if Element.UIElements.ChevronWrap then
+					Tween(Element.UIElements.ChevronWrap, 0.20, {
 						Rotation = 90,
 					}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 				end
@@ -565,25 +593,23 @@ return function(Config)
 			if Instant then
 				DescHolder.Size = UDim2.new(1, 0, 0, 0)
 				DescHolder.Visible = false
-				TextList.Padding = UDim.new(0, 0)
-				if ChevronButton then
-					ChevronButton.Rotation = 0
+				if Element.UIElements.ChevronWrap then
+					Element.UIElements.ChevronWrap.Rotation = 0
 				end
 			else
-				Tween(DescHolder, 0.18, {
+				Tween(DescHolder, 0.20, {
 					Size = UDim2.new(1, 0, 0, 0),
 				}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
-				if ChevronButton then
-					Tween(ChevronButton, 0.18, {
+				if Element.UIElements.ChevronWrap then
+					Tween(Element.UIElements.ChevronWrap, 0.20, {
 						Rotation = 0,
 					}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 				end
 
-				task.delay(0.18, function()
+				task.delay(0.20, function()
 					if not Element.DescExpanded then
 						DescHolder.Visible = false
-						TextList.Padding = UDim.new(0, 0)
 					end
 				end)
 			end
@@ -656,13 +682,12 @@ return function(Config)
 		if not HasDesc then
 			DescHolder.Visible = false
 			DescHolder.Size = UDim2.new(1, 0, 0, 0)
-			TextList.Padding = UDim.new(0, 0)
-			if ChevronButton then
-				ChevronButton.Visible = false
+			if Element.UIElements.ChevronWrap then
+				Element.UIElements.ChevronWrap.Visible = false
 			end
 		else
-			if ChevronButton then
-				ChevronButton.Visible = true
+			if Element.UIElements.ChevronWrap then
+				Element.UIElements.ChevronWrap.Visible = true
 			end
 			if Element.DescExpanded then
 				Element:SetExpanded(true, true)
