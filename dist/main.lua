@@ -5951,7 +5951,19 @@ else
 G=math.floor(math.max(aq.AbsolutePosition.X-C.X,18))
 end
 
-local H=F.X
+local H=0
+for J,L in next,r:GetDescendants()do
+if L:IsA"GuiObject"and L.Visible and L.AbsoluteSize.X>0 and L.Name~="DividerWrap"and L.Name~="HoverOutline"and L.Name~="Hover"then
+local M=(L.AbsolutePosition.X-C.X)+L.AbsoluteSize.X
+if M>H and M<=F.X then
+H=M
+end
+end
+end
+
+if H==0 or H>F.X then
+H=F.X-af.UIPadding
+end
 
 if af.DividerRightInset then
 H=F.X-af.DividerRightInset
@@ -6375,6 +6387,7 @@ function ac.New(ae,af)
 af.Hover=false
 af.TextOffset=0
 af.ParentConfig=af
+af.ListRow=true
 af.IsButtons=af.Buttons and#af.Buttons>0 and true or false
 
 local ag={
@@ -7840,7 +7853,7 @@ local b=am.SliderFrame.UIElements.Container
 if am.InputBox and am.SliderFrame.UIElements.RightSlot then
 am.UIElements.TextBox=af("TextBox",{
 Size=UDim2.new(0,am.TextBoxWidth,0,am.TextBoxHeight),
-TextXAlignment="Center",
+TextXAlignment="Right",
 ClearTextOnFocus=false,
 Text=FormatValue(as),
 TextSize=14,
@@ -8365,8 +8378,8 @@ Width=150,
 }
 
 local ak=true
-local al=aj.Type=="Input"
-local am=aj.Desc~=nil and aj.Desc~=""
+local al=aj.Type=="Input"local am=
+aj.Desc~=nil and aj.Desc~=""
 
 aj.InputFrame=a.load'B'{
 Title=aj.Title,
@@ -8381,10 +8394,10 @@ ElementTable=aj,
 ParentConfig=ai,
 
 ListRow=ai.Window.NewElements==true and al,
-ExpandableDesc=ai.Window.NewElements==true and al and am,
+ExpandableDesc=false,
 DescExpanded=false,
-ShowChevron=ai.Window.NewElements==true and al and am,
-RightSlotWidth=al and(aj.Width+(am and 34 or 0))or 0,
+ShowChevron=false,
+RightSlotWidth=al and aj.Width or 0,
 }
 
 local an=ag(
@@ -9188,9 +9201,9 @@ Opened=false,
 Tabs={},
 
 Width=150,
-}
+}local ap=
 
-local ap=ao.Desc~=nil and ao.Desc~=""
+ao.Desc~=nil and ao.Desc~=""
 
 if ao.Multi and not ao.Value then
 ao.Value={}
@@ -9206,7 +9219,7 @@ ao.DropdownFrame=a.load'B'{
 Title=ao.Title,
 Desc=ao.Desc,
 Parent=an.Parent,
-TextOffset=ar and(ao.Callback and(ao.Width+40)or 32)
+TextOffset=ar and(ao.Callback and(ao.Width+24)or 32)
 or(ao.Callback and ao.Width or 20),
 Hover=not ao.Callback and true or false,
 Tab=an.Tab,
@@ -9216,10 +9229,10 @@ ElementTable=ao,
 ParentConfig=an,
 
 ListRow=ar,
-ExpandableDesc=ap,
+ExpandableDesc=false,
 DescExpanded=false,
-ShowChevron=ap,
-RightSlotWidth=ao.Callback and(ao.Width+(ap and 34 or 0))or(ap and 30 or 0),
+ShowChevron=false,
+RightSlotWidth=ao.Callback and ao.Width or 0,
 }
 
 if ao.Callback then
