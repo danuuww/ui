@@ -694,7 +694,7 @@ function Element:New(Config)
 	if Slider.InputBox and Slider.SliderFrame.UIElements.RightSlot then
 		Slider.UIElements.TextBox = New("TextBox", {
 			Size = UDim2.new(0, Slider.TextBoxWidth, 0, Slider.TextBoxHeight),
-			TextXAlignment = "Center",
+			TextXAlignment = "Right",
 			ClearTextOnFocus = false,
 			Text = FormatValue(CurrentValue),
 			TextSize = 14,

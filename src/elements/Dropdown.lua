@@ -65,7 +65,7 @@ function Element:New(Config)
 		Title = Dropdown.Title,
 		Desc = Dropdown.Desc,
 		Parent = Config.Parent,
-		TextOffset = UseListRow and (Dropdown.Callback and (Dropdown.Width + 40) or 32)
+		TextOffset = UseListRow and (Dropdown.Callback and (Dropdown.Width + 24) or 32)
 			or (Dropdown.Callback and Dropdown.Width or 20),
 		Hover = not Dropdown.Callback and true or false,
 		Tab = Config.Tab,
@@ -75,10 +75,10 @@ function Element:New(Config)
 		ParentConfig = Config,
 
 		ListRow = UseListRow,
-		ExpandableDesc = HasDesc,
+		ExpandableDesc = false,
 		DescExpanded = false,
-		ShowChevron = HasDesc,
-		RightSlotWidth = Dropdown.Callback and (Dropdown.Width + (HasDesc and 34 or 0)) or (HasDesc and 30 or 0),
+		ShowChevron = false,
+		RightSlotWidth = Dropdown.Callback and Dropdown.Width or 0,
 	})
 
 	if Dropdown.Callback then

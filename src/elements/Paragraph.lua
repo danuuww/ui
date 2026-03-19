@@ -9,6 +9,7 @@ function Element:New(ElementConfig)
 	ElementConfig.Hover = false
 	ElementConfig.TextOffset = 0
 	ElementConfig.ParentConfig = ElementConfig
+	ElementConfig.ListRow = true
 	ElementConfig.IsButtons = ElementConfig.Buttons and #ElementConfig.Buttons > 0 and true or false
 
 	local ParagraphModule = {

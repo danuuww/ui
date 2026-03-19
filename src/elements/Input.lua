@@ -45,10 +45,10 @@ function Element:New(Config)
 		ParentConfig = Config,
 
 		ListRow = Config.Window.NewElements == true and IsSingleLine,
-		ExpandableDesc = Config.Window.NewElements == true and IsSingleLine and HasDesc,
+		ExpandableDesc = false,
 		DescExpanded = false,
-		ShowChevron = Config.Window.NewElements == true and IsSingleLine and HasDesc,
-		RightSlotWidth = IsSingleLine and (Input.Width + (HasDesc and 34 or 0)) or 0,
+		ShowChevron = false,
+		RightSlotWidth = IsSingleLine and Input.Width or 0,
 	})
 
 	local InputComponent = CreateInput(

@@ -616,8 +616,20 @@ return function(Config)
 			leftInset = math.floor(math.max(Title.AbsolutePosition.X - mainPos.X, 18))
 		end
 
-		local endX = mainSize.X
+		local endX = 0
+		for _, child in next, Main:GetDescendants() do
+			if child:IsA("GuiObject") and child.Visible and child.AbsoluteSize.X > 0 and child.Name ~= "DividerWrap" and child.Name ~= "HoverOutline" and child.Name ~= "Hover" then
+				local rightEdge = (child.AbsolutePosition.X - mainPos.X) + child.AbsoluteSize.X
+				if rightEdge > endX and rightEdge <= mainSize.X then
+					endX = rightEdge
+				end
+			end
+		end
 		
+		if endX == 0 or endX > mainSize.X then
+			endX = mainSize.X - Element.UIPadding
+		end
+
 		if Element.DividerRightInset then
 			endX = mainSize.X - Element.DividerRightInset
 		end
