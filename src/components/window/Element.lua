@@ -7,8 +7,6 @@ local cloneref = (cloneref or clonereference or function(instance)
 	return instance
 end)
 
-local UserInputService = cloneref(game:GetService("UserInputService"))
-
 local function Color3ToHSB(color)
 	local r, g, b = color.R, color.G, color.B
 	local max = math.max(r, g, b)
@@ -25,8 +23,6 @@ local function Color3ToHSB(color)
 			h = (r - g) / delta + 4
 		end
 		h = h * 60
-	else
-		h = 0
 	end
 
 	local s = (max == 0) and 0 or (delta / max)
@@ -48,7 +44,8 @@ end
 
 local function GetTextColorForHSB(color)
 	local hsb = Color3ToHSB(color)
-	local h, s, b = hsb.h, hsb.s, hsb.b
+	local h, b = hsb.h, hsb.b
+
 	if GetPerceivedBrightness(color) > 0.5 then
 		return Color3.fromHSV(h / 360, 0, 0.05)
 	else
@@ -62,7 +59,6 @@ local function getElementPosition(elements, targetIndex)
 	end
 
 	local maxIndex = #elements
-
 	if maxIndex == 0 or targetIndex < 1 or targetIndex > maxIndex then
 		return nil, 2
 	end
@@ -71,6 +67,7 @@ local function getElementPosition(elements, targetIndex)
 		if el == nil then
 			return true
 		end
+
 		local t = el.__type
 		return t == "Divider" or t == "Space" or t == "Section" or t == "Code"
 	end
@@ -135,7 +132,6 @@ return function(Config)
 		UICorner = Config.Window.ElementConfig.UICorner,
 		Size = Config.Size or "Default",
 		UIElements = {},
-
 		Index = Config.Index,
 
 		ExpandableDesc = Config.ExpandableDesc or false,
@@ -153,9 +149,11 @@ return function(Config)
 	local ThumbnailSize = Element.ThumbnailSize
 	local CanHover = true
 	local IconOffset = 0
+	local HasDesc = Element.Desc ~= nil and Element.Desc ~= ""
 
 	local ThumbnailFrame
 	local ImageFrame
+
 	if Element.Thumbnail then
 		ThumbnailFrame = Creator.Image(
 			Element.Thumbnail,
@@ -191,16 +189,17 @@ return function(Config)
 		IconOffset = ImageSize
 	end
 
-	local function CreateText(Title, Type)
+	local function CreateText(TextValue, Type)
 		local TextColor = typeof(Element.Color) == "string"
 				and GetTextColorForHSB(Color3.fromHex(Creator.Colors[Element.Color]))
 			or typeof(Element.Color) == "Color3" and GetTextColorForHSB(Element.Color)
 
 		return New("TextLabel", {
 			BackgroundTransparency = 1,
-			Text = Title or "",
+			Text = TextValue or "",
 			TextSize = Type == "Desc" and 15 or 17,
 			TextXAlignment = "Left",
+			TextYAlignment = "Top",
 			ThemeTag = {
 				TextColor3 = not Element.Color and ("Element" .. Type) or nil,
 			},
@@ -220,10 +219,9 @@ return function(Config)
 		Title.Visible = false
 	end
 
-	local HasDesc = Element.Desc ~= nil and Element.Desc ~= ""
-
-	Desc.Size = UDim2.new(1, 0, 0, 0)
+	Desc.Visible = HasDesc
 	Desc.AutomaticSize = "Y"
+	Desc.Size = UDim2.new(1, 0, 0, 0)
 
 	local DescInner = New("Frame", {
 		Name = "DescInner",
@@ -239,10 +237,10 @@ return function(Config)
 
 	local DescHolder = New("Frame", {
 		Name = "DescHolder",
-		Size = UDim2.new(1, 0, 0, 0),
 		BackgroundTransparency = 1,
 		ClipsDescendants = true,
 		Visible = HasDesc and Element.DescExpanded or false,
+		Size = UDim2.new(1, 0, 0, 0),
 	}, {
 		DescInner,
 	})
@@ -250,15 +248,12 @@ return function(Config)
 	local TextList = New("UIListLayout", {
 		Padding = UDim.new(0, 0),
 		FillDirection = "Vertical",
-		VerticalAlignment = "Center",
+		VerticalAlignment = "Top",
 		HorizontalAlignment = "Left",
 	})
 
-	Element.UIElements.Title = Title
-	Element.UIElements.Desc = Desc
-	Element.UIElements.DescHolder = DescHolder
-
 	local TextContent = New("Frame", {
+		Name = "TextContent",
 		BackgroundTransparency = 1,
 		AutomaticSize = Element.Justify == "Between" and "Y" or "XY",
 		Size = UDim2.new(
@@ -267,7 +262,6 @@ return function(Config)
 			1,
 			0
 		),
-		Name = "TitleFrame",
 	}, {
 		New("UIPadding", {
 			PaddingTop = UDim.new(0, (Config.Window.NewElements and Element.UIPadding / 2 or 0) + AddPaddingY),
@@ -280,7 +274,35 @@ return function(Config)
 		DescHolder,
 	})
 
+	local RowFrame = New("Frame", {
+		Name = "TitleFrame",
+		BackgroundTransparency = 1,
+		Size = UDim2.new(
+			Element.Justify == "Between" and 1 or 0,
+			Element.Justify == "Between" and -Config.TextOffset or 0,
+			0,
+			0
+		),
+		AutomaticSize = Element.Justify == "Between" and "Y" or "XY",
+	}, {
+		New("UIListLayout", {
+			Padding = UDim.new(0, Element.UIPadding),
+			FillDirection = "Horizontal",
+			VerticalAlignment = (HasDesc or Element.ExpandableDesc) and "Top" or "Center",
+			HorizontalAlignment = Element.Justify ~= "Between" and Element.Justify or "Left",
+		}),
+		ImageFrame,
+		TextContent,
+	})
+
+	Element.UIElements.Title = Title
+	Element.UIElements.Desc = Desc
+	Element.UIElements.DescHolder = DescHolder
+	Element.UIElements.TextContent = TextContent
+	Element.UIElements.RowFrame = RowFrame
+
 	Element.UIElements.Container = New("Frame", {
+		Name = "Container",
 		Size = UDim2.new(1, 0, 1, 0),
 		AutomaticSize = "Y",
 		BackgroundTransparency = 1,
@@ -292,27 +314,7 @@ return function(Config)
 			HorizontalAlignment = Element.Justify == "Between" and "Left" or "Center",
 		}),
 		ThumbnailFrame,
-		New("Frame", {
-			Size = UDim2.new(
-				Element.Justify == "Between" and 1 or 0,
-				Element.Justify == "Between" and -Config.TextOffset or 0,
-				0,
-				0
-			),
-			AutomaticSize = Element.Justify == "Between" and "Y" or "XY",
-			BackgroundTransparency = 1,
-			Name = "TitleFrame",
-		}, {
-			New("UIListLayout", {
-				Padding = UDim.new(0, Element.UIPadding),
-				FillDirection = "Horizontal",
-				VerticalAlignment = Config.Window.NewElements and (Element.Justify == "Between" and "Top" or "Center")
-					or "Center",
-				HorizontalAlignment = Element.Justify ~= "Between" and Element.Justify or "Center",
-			}),
-			ImageFrame,
-			TextContent,
-		}),
+		RowFrame,
 	})
 
 	local LockedIcon = Creator.Image("lock", "lock", 0, Config.Window.Folder, "Lock", false)
@@ -462,9 +464,10 @@ return function(Config)
 		ThemeTag = {
 			ImageColor3 = not Element.Color and "ElementBackground" or nil,
 		},
-		ImageColor3 = Element.Color and (typeof(Element.Color) == "string" and Color3.fromHex(
-			Creator.Colors[Element.Color]
-		) or typeof(Element.Color) == "Color3" and Element.Color) or nil,
+		ImageColor3 = Element.Color and (
+			typeof(Element.Color) == "string" and Color3.fromHex(Creator.Colors[Element.Color])
+			or typeof(Element.Color) == "Color3" and Element.Color
+		) or nil,
 	}, {
 		Element.UIElements.Container,
 		ElementFullFrame,
@@ -481,12 +484,12 @@ return function(Config)
 
 	local RightSlot = New("Frame", {
 		Name = "RightSlot",
-		Size = UDim2.new(0, math.max(Element.RightSlotWidth, Element.ShowChevron and 18 or 0), 0, 40),
 		BackgroundTransparency = 1,
 		AnchorPoint = Vector2.new(1, 0),
 		Position = UDim2.new(1, -Element.UIPadding, 0, Element.UIPadding),
-		Parent = Main,
+		Size = UDim2.new(0, math.max(Element.RightSlotWidth, Element.ShowChevron and 18 or 0), 0, 36),
 		AutomaticSize = "X",
+		Parent = Main,
 	}, {
 		New("UIListLayout", {
 			FillDirection = "Horizontal",
@@ -500,13 +503,14 @@ return function(Config)
 
 	local ChevronWrap
 	local ChevronButton
+	local ChevronIcon
 
 	if Element.ShowChevron then
 		ChevronWrap = New("Frame", {
 			Name = "ChevronWrap",
 			Size = UDim2.new(0, 16, 0, 16),
 			BackgroundTransparency = 1,
-			LayoutOrder = 99,
+			LayoutOrder = 999,
 			Parent = RightSlot,
 		})
 
@@ -514,27 +518,92 @@ return function(Config)
 			Name = "ChevronButton",
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundTransparency = 1,
+			Text = "",
+			AutoButtonColor = false,
+			Parent = ChevronWrap,
+		})
+
+		ChevronIcon = New("TextLabel", {
+			Name = "ChevronIcon",
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
 			Text = "›",
 			TextSize = 24,
 			TextTransparency = 0.25,
 			FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
+			TextXAlignment = "Center",
+			TextYAlignment = "Center",
 			ThemeTag = {
 				TextColor3 = "Text",
 			},
-			Parent = ChevronWrap,
-			AutoButtonColor = false,
+			Parent = ChevronButton,
 		})
 	end
 
-	Element.UIElements.ChevronButton = ChevronButton
 	Element.UIElements.ChevronWrap = ChevronWrap
+	Element.UIElements.ChevronButton = ChevronButton
+	Element.UIElements.ChevronIcon = ChevronIcon
+
+	local Divider = New("Frame", {
+		Name = "Divider",
+		BackgroundTransparency = 0.88,
+		ThemeTag = {
+			BackgroundColor3 = "Text",
+		},
+		AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.new(0, 0, 1, 0),
+		Size = UDim2.new(1, 0, 0, 1),
+		Visible = false,
+		Parent = Main,
+	}, {
+		New("UICorner", {
+			CornerRadius = UDim.new(0, 999),
+		}),
+	})
+
+	Element.UIElements.Divider = Divider
+
+	local function RefreshDivider()
+		if not Divider or not Main or not Title then
+			return
+		end
+
+		local mainPos = Main.AbsolutePosition
+		local mainSize = Main.AbsoluteSize
+
+		if mainSize.X <= 0 then
+			return
+		end
+
+		local leftInset
+		if Element.DividerLeftInset then
+			leftInset = Element.DividerLeftInset
+		else
+			leftInset = math.floor(math.max(Title.AbsolutePosition.X - mainPos.X, 18))
+		end
+
+		local rightEdge
+		if Element.DividerRightInset then
+			rightEdge = mainSize.X - Element.DividerRightInset
+		elseif RightSlot and RightSlot.AbsoluteSize.X > 0 then
+			rightEdge = math.floor((RightSlot.AbsolutePosition.X - mainPos.X) + RightSlot.AbsoluteSize.X)
+		else
+			rightEdge = mainSize.X - 18
+		end
+
+		local width = math.max(rightEdge - leftInset, 24)
+
+		Divider.Position = UDim2.new(0, leftInset, 1, 0)
+		Divider.Size = UDim2.new(0, width, 0, 1)
+	end
 
 	local function GetDescTargetHeight()
-		local Y = math.max(Desc.TextBounds.Y, Desc.AbsoluteSize.Y)
-		if Y <= 0 then
-			Y = 18
+		task.wait()
+		local y = math.max(DescInner.AbsoluteSize.Y, Desc.TextBounds.Y + 6)
+		if y <= 0 then
+			y = 18
 		end
-		return Y
+		return y
 	end
 
 	function Element:SetExpanded(State, Instant)
@@ -544,28 +613,22 @@ return function(Config)
 
 		Element.DescExpanded = State == true
 
-		local function GetTargetHeight()
-			task.wait()
-			return math.max(DescInner.AbsoluteSize.Y, Desc.TextBounds.Y + 6)
-		end
-
 		if Element.DescExpanded then
 			DescHolder.Visible = true
-
-			local TargetHeight = GetTargetHeight()
+			local targetHeight = GetDescTargetHeight()
 
 			if Instant then
-				DescHolder.Size = UDim2.new(1, 0, 0, TargetHeight)
-				if Element.UIElements.ChevronWrap then
-					Element.UIElements.ChevronWrap.Rotation = 90
+				DescHolder.Size = UDim2.new(1, 0, 0, targetHeight)
+				if ChevronIcon then
+					ChevronIcon.Rotation = 90
 				end
 			else
 				Tween(DescHolder, 0.20, {
-					Size = UDim2.new(1, 0, 0, TargetHeight),
+					Size = UDim2.new(1, 0, 0, targetHeight),
 				}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
-				if Element.UIElements.ChevronWrap then
-					Tween(Element.UIElements.ChevronWrap, 0.20, {
+				if ChevronIcon then
+					Tween(ChevronIcon, 0.20, {
 						Rotation = 90,
 					}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 				end
@@ -574,16 +637,16 @@ return function(Config)
 			if Instant then
 				DescHolder.Size = UDim2.new(1, 0, 0, 0)
 				DescHolder.Visible = false
-				if Element.UIElements.ChevronWrap then
-					Element.UIElements.ChevronWrap.Rotation = 0
+				if ChevronIcon then
+					ChevronIcon.Rotation = 0
 				end
 			else
 				Tween(DescHolder, 0.20, {
 					Size = UDim2.new(1, 0, 0, 0),
 				}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
-				if Element.UIElements.ChevronWrap then
-					Tween(Element.UIElements.ChevronWrap, 0.20, {
+				if ChevronIcon then
+					Tween(ChevronIcon, 0.20, {
 						Rotation = 0,
 					}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 				end
@@ -595,6 +658,8 @@ return function(Config)
 				end)
 			end
 		end
+
+		task.defer(RefreshDivider)
 	end
 
 	function Element:ToggleExpanded()
@@ -612,8 +677,21 @@ return function(Config)
 	else
 		DescHolder.Visible = false
 		DescHolder.Size = UDim2.new(1, 0, 0, 0)
-		TextList.Padding = UDim.new(0, 0)
 	end
+
+	Creator.AddSignal(Main:GetPropertyChangedSignal("AbsoluteSize"), function()
+		task.defer(RefreshDivider)
+	end)
+
+	Creator.AddSignal(RightSlot:GetPropertyChangedSignal("AbsoluteSize"), function()
+		task.defer(RefreshDivider)
+	end)
+
+	Creator.AddSignal(Title:GetPropertyChangedSignal("TextBounds"), function()
+		task.defer(RefreshDivider)
+	end)
+
+	task.defer(RefreshDivider)
 
 	if Element.Hover then
 		Creator.AddSignal(Main.MouseEnter, function()
@@ -621,7 +699,8 @@ return function(Config)
 				Tween(Main, 0.12, { ImageTransparency = Element.Color and 0.15 or 0.9 }):Play()
 				Tween(Hover, 0.12, { ImageTransparency = 0.9 }):Play()
 				Tween(HoverOutline, 0.12, { ImageTransparency = 0.8 }):Play()
-				Creator.AddSignal(Main.MouseMoved, function(x, y)
+
+				Creator.AddSignal(Main.MouseMoved, function(x)
 					Hover.HoverGradient.Offset =
 						Vector2.new(((x - Main.AbsolutePosition.X) / Main.AbsoluteSize.X) - 0.5, 0)
 					HoverOutline.HoverGradient.Offset =
@@ -642,28 +721,31 @@ return function(Config)
 	function Element:SetTitle(Text)
 		Element.Title = Text
 		Title.Text = Text
+		task.defer(RefreshDivider)
 	end
 
 	function Element:SetDesc(Text)
 		Element.Desc = Text
 		Desc.Text = Text or ""
-
 		HasDesc = Text ~= nil and Text ~= ""
 
 		if not HasDesc then
 			DescHolder.Visible = false
 			DescHolder.Size = UDim2.new(1, 0, 0, 0)
-			if Element.UIElements.ChevronWrap then
-				Element.UIElements.ChevronWrap.Visible = false
+			if ChevronWrap then
+				ChevronWrap.Visible = false
 			end
 		else
-			if Element.UIElements.ChevronWrap then
-				Element.UIElements.ChevronWrap.Visible = true
+			Desc.Visible = true
+			if ChevronWrap then
+				ChevronWrap.Visible = true
 			end
 			if Element.DescExpanded then
 				Element:SetExpanded(true, true)
 			end
 		end
+
+		task.defer(RefreshDivider)
 	end
 
 	function Element:Colorize(obj, prop)
@@ -712,8 +794,8 @@ return function(Config)
 				)
 				ThumbnailFrame.Size = UDim2.new(1, 0, 0, ThumbnailSize)
 				ThumbnailFrame.Parent = Element.UIElements.Container
-				local Layout = Element.UIElements.Container:FindFirstChild("UIListLayout")
-				if Layout then
+				local layout = Element.UIElements.Container:FindFirstChild("UIListLayout")
+				if layout then
 					ThumbnailFrame.LayoutOrder = -1
 				end
 			else
@@ -732,12 +814,14 @@ return function(Config)
 				)
 				ThumbnailFrame.Size = UDim2.new(1, 0, 0, ThumbnailSize)
 				ThumbnailFrame.Parent = Element.UIElements.Container
-				local Layout = Element.UIElements.Container:FindFirstChild("UIListLayout")
-				if Layout then
+				local layout = Element.UIElements.Container:FindFirstChild("UIListLayout")
+				if layout then
 					ThumbnailFrame.LayoutOrder = -1
 				end
 			end
 		end
+
+		task.defer(RefreshDivider)
 	end
 
 	function Element:SetImage(NewImage, NewSize)
@@ -748,7 +832,7 @@ return function(Config)
 		end
 
 		if NewImage then
-			local OldImageParent = ImageFrame and ImageFrame.Parent or Element.UIElements.Container.TitleFrame
+			local oldParent = RowFrame
 			if ImageFrame then
 				ImageFrame:Destroy()
 			end
@@ -769,10 +853,10 @@ return function(Config)
 			end
 
 			ImageFrame.Visible = true
-			ImageFrame.Parent = OldImageParent
+			ImageFrame.Parent = oldParent
 			ImageFrame.LayoutOrder = -99
 			ImageFrame.Size = UDim2.new(0, ImageSize, 0, ImageSize)
-			IconOffset = Element.ImageSize + Element.UIPadding
+			IconOffset = ImageSize
 		else
 			if ImageFrame then
 				ImageFrame.Visible = false
@@ -780,7 +864,14 @@ return function(Config)
 			IconOffset = 0
 		end
 
-		Element.UIElements.Container.TitleFrame.TitleFrame.Size = UDim2.new(1, -IconOffset, 1, 0)
+		TextContent.Size = UDim2.new(
+			Element.Justify == "Between" and 1 or 0,
+			Element.Justify == "Between" and (ImageFrame and -IconOffset - Element.UIPadding or -IconOffset) or 0,
+			1,
+			0
+		)
+
+		task.defer(RefreshDivider)
 	end
 
 	function Element:Destroy()
@@ -873,6 +964,11 @@ return function(Config)
 				HighlightOutlineTable:SetType(NewShape .. "-Outline")
 				HoverTable:SetType(NewShape)
 				HoverOutlineTable:SetType(NewShape .. "-Outline")
+
+				if Divider then
+					Divider.Visible = (NewShape == "Square" or NewShape == "Squircle-TL-TR")
+					task.defer(RefreshDivider)
+				end
 			end
 		end
 	end
