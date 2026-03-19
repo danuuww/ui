@@ -5533,13 +5533,14 @@ BackgroundTransparency=1,
 Text=aq or"",
 TextSize=ar=="Desc"and 15 or 17,
 TextXAlignment="Left",
-TextYAlignment="Top",
+TextYAlignment=ar=="Desc"and"Top"or"Center",
 ThemeTag={
 TextColor3=not af.Color and("Element"..ar)or nil,
 },
 TextColor3=af.Color and as or nil,
 TextTransparency=ar=="Desc"and 0.3 or 0,
-TextWrapped=true,
+TextWrapped=ar=="Desc",
+TextTruncate=ar=="Desc"and Enum.TextTruncate.None or Enum.TextTruncate.AtEnd,
 Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
 FontFace=Font.new(aa.Font,ar=="Desc"and Enum.FontWeight.Medium or Enum.FontWeight.SemiBold),
@@ -5952,9 +5953,6 @@ G=math.floor(math.max(aq.AbsolutePosition.X-C.X,18))
 end
 
 local H=F.X
-if v and v.AbsoluteSize.X>0 then
-H=(v.AbsolutePosition.X-C.X)+v.AbsoluteSize.X
-end
 
 if af.DividerRightInset then
 H=F.X-af.DividerRightInset
@@ -8390,7 +8388,7 @@ aj.ClearTextOnFocus
 )
 
 if al then
-an.Size=UDim2.new(0,aj.Width,0,36)
+an.Size=UDim2.new(0,aj.Width,0,28)
 
 if aj.InputFrame.UIElements.RightSlot then
 an.Parent=aj.InputFrame.UIElements.RightSlot
@@ -9219,7 +9217,7 @@ ao.UIElements.Dropdown.Frame.Frame.TextLabel.TextTruncate="AtEnd"
 ao.UIElements.Dropdown.Frame.Frame.TextLabel.Size=
 UDim2.new(1,ao.UIElements.Dropdown.Frame.Frame.TextLabel.Size.X.Offset-18-12-12,0,0)
 
-ao.UIElements.Dropdown.Size=UDim2.new(0,ao.Width,0,36)
+ao.UIElements.Dropdown.Size=UDim2.new(0,ao.Width,0,28)
 
 if ao.DropdownFrame.UIElements.RightSlot then
 ao.UIElements.Dropdown.Parent=ao.DropdownFrame.UIElements.RightSlot
@@ -9229,9 +9227,9 @@ ao.UIElements.Dropdown.Position=UDim2.new(1,0,ar and 0 or 0.5,0)
 ao.UIElements.Dropdown.AnchorPoint=Vector2.new(1,ar and 0 or 0.5)
 
 if an.ParentType=="Group"then
-ao.UIElements.Dropdown.Size=UDim2.new(1,-al.UIPadding*2,0,36)
+ao.UIElements.Dropdown.Size=UDim2.new(1,-al.UIPadding*2,0,28)
 ao.UIElements.Dropdown.AnchorPoint=Vector2.new(0.5,0.5)
-ao.UIElements.Dropdown.Position=UDim2.new(0.5,0,0.5,12)
+ao.UIElements.Dropdown.Position=UDim2.new(0.5,0,0.5,0)
 end
 end
 end
