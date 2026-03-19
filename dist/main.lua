@@ -7861,7 +7861,6 @@ UICorner=8,
 UIPadding=8,
 }local af=a.load'l'
 
-
 .New
 local ag=a.load'm'.New
 
@@ -7884,72 +7883,86 @@ Width=150,
 }
 
 local ak=true
+local al=aj.Type=="Input"
+local am=aj.Desc~=nil and aj.Desc~=""
 
 aj.InputFrame=a.load'B'{
 Title=aj.Title,
 Desc=aj.Desc,
 Parent=ai.Parent,
-TextOffset=aj.Width,
+TextOffset=al and(aj.Width+24)or aj.Width,
 Hover=false,
 Tab=ai.Tab,
 Index=ai.Index,
 Window=ai.Window,
 ElementTable=aj,
 ParentConfig=ai,
+
+ListRow=ai.Window.NewElements==true and al,
+ExpandableDesc=ai.Window.NewElements==true and al and am,
+DescExpanded=false,
+ShowChevron=ai.Window.NewElements==true and al and am,
+RightSlotWidth=al and(aj.Width+(am and 34 or 0))or 0,
 }
 
-local al=ag(
+local an=ag(
 aj.Placeholder,
 aj.InputIcon,
-aj.Type=="Textarea"and aj.InputFrame.UIElements.Container or aj.InputFrame.UIElements.Main,
+(al and aj.InputFrame.UIElements.Main or aj.InputFrame.UIElements.Container),
 aj.Type,
-function(al)
-aj:Set(al,true)
+function(an)
+aj:Set(an,true)
 end,
 nil,
 ai.Window.NewElements and 12 or 10,
 aj.ClearTextOnFocus
 )
 
-if aj.Type=="Input"then
-al.Size=UDim2.new(0,aj.Width,0,36)
-al.Position=UDim2.new(1,0,ai.Window.NewElements and 0 or 0.5,0)
-al.AnchorPoint=Vector2.new(1,ai.Window.NewElements and 0 or 0.5)
+if al then
+an.Size=UDim2.new(0,aj.Width,0,36)
+
+if aj.InputFrame.UIElements.RightSlot then
+an.Parent=aj.InputFrame.UIElements.RightSlot
+an.LayoutOrder=1
 else
-al.Size=UDim2.new(1,0,0,148)
+an.Position=UDim2.new(1,0,ai.Window.NewElements and 0 or 0.5,0)
+an.AnchorPoint=Vector2.new(1,ai.Window.NewElements and 0 or 0.5)
+end
+else
+an.Size=UDim2.new(1,0,0,148)
 end
 
 ac("UIScale",{
-Parent=al,
+Parent=an,
 Scale=1,
 })
 
-function aj.Lock(am)
+function aj.Lock(ao)
 aj.Locked=true
 ak=false
 return aj.InputFrame:Lock(aj.LockedTitle)
 end
-function aj.Unlock(am)
+
+function aj.Unlock(ao)
 aj.Locked=false
 ak=true
 return aj.InputFrame:Unlock()
 end
 
-
-function aj.Set(am,an,ao)
+function aj.Set(ao,ap,aq)
 if ak then
-aj.Value=an
-aa.SafeCallback(aj.Callback,an)
+aj.Value=ap
+aa.SafeCallback(aj.Callback,ap)
 
-if not ao then
-al.Frame.Frame.TextBox.Text=an
+if not aq then
+an.Frame.Frame.TextBox.Text=ap
 end
 end
 end
 
-function aj.SetPlaceholder(am,an)
-al.Frame.Frame.TextBox.PlaceholderText=an
-aj.Placeholder=an
+function aj.SetPlaceholder(ao,ap)
+an.Frame.Frame.TextBox.PlaceholderText=ap
+aj.Placeholder=ap
 end
 
 aj:Set(aj.Value)
@@ -7962,6 +7975,7 @@ return aj.__type,aj
 end
 
 return ae end function a.K()
+
 local aa=a.load'c'
 local ac=aa.New
 
@@ -8694,6 +8708,8 @@ Tabs={},
 Width=150,
 }
 
+local ap=ao.Desc~=nil and ao.Desc~=""
+
 if ao.Multi and not ao.Value then
 ao.Value={}
 end
@@ -8701,19 +8717,26 @@ if ao.Values and typeof(ao.Value)=="number"then
 ao.Value=ao.Values[ao.Value]
 end
 
-local ap=true
+local aq=true
 
 ao.DropdownFrame=a.load'B'{
 Title=ao.Title,
 Desc=ao.Desc,
 Parent=an.Parent,
-TextOffset=ao.Callback and ao.Width or 20,
+TextOffset=an.Window.NewElements and(ao.Callback and(ao.Width+40)or 32)
+or(ao.Callback and ao.Width or 20),
 Hover=not ao.Callback and true or false,
 Tab=an.Tab,
 Index=an.Index,
 Window=an.Window,
 ElementTable=ao,
 ParentConfig=an,
+
+ListRow=an.Window.NewElements==true,
+ExpandableDesc=ap,
+DescExpanded=false,
+ShowChevron=ap,
+RightSlotWidth=ao.Callback and(ao.Width+(ap and 34 or 0))or(ap and 30 or 0),
 }
 
 if ao.Callback then
@@ -8725,16 +8748,17 @@ ao.UIElements.Dropdown.Frame.Frame.TextLabel.Size=
 UDim2.new(1,ao.UIElements.Dropdown.Frame.Frame.TextLabel.Size.X.Offset-18-12-12,0,0)
 
 ao.UIElements.Dropdown.Size=UDim2.new(0,ao.Width,0,36)
+
+if ao.DropdownFrame.UIElements.RightSlot then
+ao.UIElements.Dropdown.Parent=ao.DropdownFrame.UIElements.RightSlot
+ao.UIElements.Dropdown.LayoutOrder=1
+else
 ao.UIElements.Dropdown.Position=UDim2.new(1,0,an.Window.NewElements and 0 or 0.5,0)
 ao.UIElements.Dropdown.AnchorPoint=Vector2.new(1,an.Window.NewElements and 0 or 0.5)
-
-
-
-
-
+end
 end
 
-ao.DropdownMenu=aj(an,ao,al,ap,"Dropdown")
+ao.DropdownMenu=aj(an,ao,al,aq,"Dropdown")
 
 ao.Display=ao.DropdownMenu.Display
 ao.Refresh=ao.DropdownMenu.Refresh
@@ -8752,18 +8776,18 @@ ThemeTag={
 ImageColor3="Icon",
 },
 AnchorPoint=Vector2.new(1,0.5),
-Parent=ao.UIElements.Dropdown and ao.UIElements.Dropdown.Frame
-or ao.DropdownFrame.UIElements.Main,
+Parent=ao.UIElements.Dropdown and ao.UIElements.Dropdown.Frame or ao.DropdownFrame.UIElements.Main,
 })
 
-function ao.Lock(aq)
+function ao.Lock(ar)
 ao.Locked=true
-ap=false
+aq=false
 return ao.DropdownFrame:Lock(ao.LockedTitle)
 end
-function ao.Unlock(aq)
+
+function ao.Unlock(ar)
 ao.Locked=false
-ap=true
+aq=true
 return ao.DropdownFrame:Unlock()
 end
 
