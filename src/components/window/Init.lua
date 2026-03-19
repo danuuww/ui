@@ -25,6 +25,7 @@ local Tag = require("../ui/Tag")
 local ConfigManager = require("../../config/Init")
 
 local Notified = false
+local SafeColor = Color or Color3.fromHex("#F4695F")
 
 return function(Config)
 	local Window = {
@@ -1017,6 +1018,21 @@ end-- batas
                     BackgroundTransparency = 0.9,
                     BackgroundColor3 = Color3.fromHex(Config.Theme.Outline),
                 }),]]
+				New("Frame", {
+							AutomaticSize = "XY",
+							BackgroundTransparency = 1,
+							Position = UDim2.new(0, 0, 0.5, 0),
+							AnchorPoint = Vector2.new(0, 0.5),
+							Name = "MacButtons",
+							Visible = Window.Topbar.ButtonsType == "Mac",
+				}, {
+						New("UIListLayout", {
+									Padding = UDim.new(0, 8),
+									FillDirection = "Horizontal",
+									SortOrder = "LayoutOrder",
+									VerticalAlignment = "Center",
+							}),
+				}),
 				New("Frame", { -- Topbar Left Side
 					AutomaticSize = "X",
 					Size = UDim2.new(0, 0, 1, 0),
@@ -1072,14 +1088,15 @@ end-- batas
 				New("Frame", { -- Topbar Right Side -- Window.UIElements.Main.Main.Topbar.Right
 					AutomaticSize = "XY",
 					BackgroundTransparency = 1,
-					Position = UDim2.new(Window.Topbar.ButtonsType == "Default" and 1 or 0, 0, 0.5, 0),
-					AnchorPoint = Vector2.new(Window.Topbar.ButtonsType == "Default" and 1 or 0, 0.5),
+					Position = UDim2.new(1, 0, 0.5, 0),
+					AnchorPoint = Vector2.new(1, 0.5),
 					Name = "Right",
 				}, {
 					New("UIListLayout", {
-						Padding = UDim.new(0, Window.Topbar.ButtonsType == "Default" and 9 or 0),
+						Padding = UDim.new(0, Window.Topbar.ButtonsType == "Default" and 9 or 8),
 						FillDirection = "Horizontal",
 						SortOrder = "LayoutOrder",
+						VerticalAlignment = "Center",
 					}),
 				}),
 				New("UIPadding", {
@@ -1095,40 +1112,59 @@ end-- batas
 		}),
 	})
 
-	Creator.AddSignal(Window.UIElements.Main.Main.Topbar.Left:GetPropertyChangedSignal("AbsoluteSize"), function()
-		local LeftWidth = 0
-		local RightWidth = Window.UIElements.Main.Main.Topbar.Right.UIListLayout.AbsoluteContentSize.X
-			/ Config.WindUI.UIScale
-		-- if WindowTitle and WindowAuthor then
-		--     LeftWidth = math.max(WindowTitle.TextBounds.X / Config.WindUI.UIScale, WindowAuthor.TextBounds.X / Config.WindUI.UIScale)
-		-- else
-		--     LeftWidth = WindowTitle.TextBounds.X / Config.WindUI.UIScale
-		-- end
-		LeftWidth = Window.UIElements.Main.Main.Topbar.Left.AbsoluteSize.X / Config.WindUI.UIScale
-		if Window.Topbar.ButtonsType ~= "Default" then
-			LeftWidth = LeftWidth + RightWidth + Window.UIPadding - 4
-		end
-		-- if WindowIcon then
-		--     LeftWidth = LeftWidth + (Window.IconSize / Config.WindUI.UIScale) + (Window.UIPadding / Config.WindUI.UIScale) + (4 / Config.WindUI.UIScale)
-		-- end
-		Window.UIElements.Main.Main.Topbar.Center.Position =
-			UDim2.new(0, LeftWidth + (Window.UIPadding / Config.WindUI.UIScale), 0.5, 0)
-		Window.UIElements.Main.Main.Topbar.Center.Size =
-			UDim2.new(1, -LeftWidth - RightWidth - ((Window.UIPadding * 2) / Config.WindUI.UIScale), 1, 0)
-	end)
+	local function UpdateTopbarLayout()
+				local Topbar = Window.UIElements.Main.Main.Topbar
+				local Scale = Config.WindUI.UIScale
 
-	if Window.Topbar.ButtonsType ~= "Default" then
-		Creator.AddSignal(Window.UIElements.Main.Main.Topbar.Right:GetPropertyChangedSignal("AbsoluteSize"), function()
-			Window.UIElements.Main.Main.Topbar.Left.Position = UDim2.new(
-				0,
-				(Window.UIElements.Main.Main.Topbar.Right.AbsoluteSize.X / Config.WindUI.UIScale) + Window.UIPadding - 4,
-				0,
-				0
+				local RightWidth = Topbar.Right.UIListLayout.AbsoluteContentSize.X / Scale
+				local MacWidth = 0
+
+				if Window.Topbar.ButtonsType == "Mac" then
+					MacWidth = Topbar.MacButtons.UIListLayout.AbsoluteContentSize.X / Scale
+					Topbar.Left.Position = UDim2.new(0, MacWidth + Window.UIPadding + 6, 0, 0)
+				else
+					Topbar.Left.Position = UDim2.new(0, 0, 0, 0)
+				end
+
+				local LeftWidth = (Topbar.Left.AbsoluteSize.X / Scale)
+				local LeftInset = Window.Topbar.ButtonsType == "Mac" and (MacWidth + Window.UIPadding + 6) or 0
+				local TotalLeft = LeftWidth + LeftInset
+
+				Topbar.Center.Position = UDim2.new(
+					0,
+					TotalLeft + (Window.UIPadding / Scale),
+					0.5,
+					0
+				)
+
+				Topbar.Center.Size = UDim2.new(
+					1,
+					-TotalLeft - RightWidth - ((Window.UIPadding * 2) / Scale),
+					1,
+					0
+				)
+			end
+
+			Creator.AddSignal(
+				Window.UIElements.Main.Main.Topbar.Left:GetPropertyChangedSignal("AbsoluteSize"),
+				UpdateTopbarLayout
 			)
-		end)
-	end
 
-	function Window:CreateTopbarButton(Name, Icon, Callback, LayoutOrder, IconThemed, Color, IconSize)
+			Creator.AddSignal(
+				Window.UIElements.Main.Main.Topbar.Right.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"),
+				UpdateTopbarLayout
+			)
+
+			if Window.Topbar.ButtonsType == "Mac" then
+				Creator.AddSignal(
+					Window.UIElements.Main.Main.Topbar.MacButtons.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"),
+					UpdateTopbarLayout
+				)
+			end
+
+			task.defer(UpdateTopbarLayout)
+
+	function Window:CreateTopbarButton(Name, Icon, Callback, LayoutOrder, IconThemed, Color, IconSize, UseMacSystemCluster)
 		local IconFrame = Creator.Image(
 			Icon,
 			Icon,
@@ -1147,7 +1183,7 @@ end-- batas
 		IconFrame.ImageLabel.ImageTransparency = Window.Topbar.ButtonsType == "Default" and 0 or 1
 
 		if Window.Topbar.ButtonsType ~= "Default" then
-			IconFrame.ImageLabel.ImageColor3 = Creator.GetTextColorForHSB(Color)
+			IconFrame.ImageLabel.ImageColor3 = Creator.GetTextColorForHSB(SafeColor)
 		end
 
 		local Button = Creator.NewRoundFrame(
@@ -1163,7 +1199,7 @@ end-- batas
 				ZIndex = 9999,
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.new(0.5, 0, 0.5, 0),
-				ImageColor3 = Window.Topbar.ButtonsType ~= "Default" and (Color or Color3.fromHex("#ff3030")) or nil,
+				ImageColor3 = Window.Topbar.ButtonsType ~= "Default" and SafeColor or nil,
 				ThemeTag = Window.Topbar.ButtonsType == "Default" and {
 					ImageColor3 = "Text",
 				} or nil,
@@ -1190,11 +1226,16 @@ end-- batas
 			true
 		)
 
+		local TargetParent = Window.UIElements.Main.Main.Topbar.Right
+		if Window.Topbar.ButtonsType == "Mac" and UseMacSystemCluster then
+			TargetParent = Window.UIElements.Main.Main.Topbar.MacButtons
+		end
+
 		local ButtonContainer = New("Frame", {
 			Size = Window.Topbar.ButtonsType ~= "Default" and UDim2.new(0, 24, 0, 24)
 				or UDim2.new(0, Window.Topbar.Height - 16, 0, Window.Topbar.Height - 16),
 			BackgroundTransparency = 1,
-			Parent = Window.UIElements.Main.Main.Topbar.Right,
+			Parent = TargetParent,
 			LayoutOrder = LayoutOrder or 999,
 		}, {
 			Button,
@@ -1493,6 +1534,7 @@ end
 		true,
 		Color3.fromHex("#60C762"),
 		Window.Topbar.ButtonsType == "Mac" and 9 or nil
+		Window.Topbar.ButtonsType == "Mac"
 	)
 
 	function Window:ToggleFullscreen()
@@ -1556,7 +1598,7 @@ end
 		--         Duration = 5,
 		--     })
 		-- end
-	end, (Window.Topbar.ButtonsType == "Default" and 997 or 998), nil, Color3.fromHex("#F4C948"))
+	end, (Window.Topbar.ButtonsType == "Default" and 997 or 998), nil, Color3.fromHex("#F4C948"), nil, Window.Topbar.ButtonsType == "Mac")
 
 	function Window:OnOpen(func)
 		Window.OnOpenCallback = func
@@ -2225,7 +2267,7 @@ end
 				Window:Destroy()
 			end
 		end
-	end, (Window.Topbar.ButtonsType == "Default" and 999 or 997), nil, Color3.fromHex("#F4695F"))
+	end, (Window.Topbar.ButtonsType == "Default" and 999 or 997), nil, Color3.fromHex("#F4695F"), nil, Window.Topbar.ButtonsType == "Mac")
 
 	function Window:Tag(TagConfig)
 		if Window.UIElements.Main.Main.Topbar.Center.Visible == false then
