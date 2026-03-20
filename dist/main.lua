@@ -5951,19 +5951,7 @@ else
 G=math.floor(math.max(aq.AbsolutePosition.X-C.X,18))
 end
 
-local H=0
-for J,L in next,r:GetDescendants()do
-if L:IsA"GuiObject"and L.Visible and L.AbsoluteSize.X>0 and L.Name~="DividerWrap"and L.Name~="HoverOutline"and L.Name~="Hover"then
-local M=(L.AbsolutePosition.X-C.X)+L.AbsoluteSize.X
-if M>H and M<=F.X then
-H=M
-end
-end
-end
-
-if H==0 or H>F.X then
-H=F.X-af.UIPadding
-end
+local H=F.X-af.UIPadding
 
 if af.DividerRightInset then
 H=F.X-af.DividerRightInset
@@ -8383,15 +8371,14 @@ Width=150,
 }
 
 local ak=true
-local al=aj.Type=="Input"local am=
-aj.Desc~=nil and aj.Desc~=""
-local an=ai.Window.NewElements==true and al and ai.ParentType~="Group"
+local al=aj.Type=="Input"
+local am=ai.Window.NewElements==true and al
 
 aj.InputFrame=a.load'B'{
 Title=aj.Title,
 Desc=aj.Desc,
 Parent=ai.Parent,
-TextOffset=an and(aj.Width+24)or 20,
+TextOffset=am and(aj.Width+24)or 20,
 Hover=false,
 Tab=ai.Tab,
 Index=ai.Index,
@@ -8399,20 +8386,20 @@ Window=ai.Window,
 ElementTable=aj,
 ParentConfig=ai,
 
-ListRow=an,
+ListRow=am,
 ExpandableDesc=false,
 DescExpanded=false,
 ShowChevron=false,
-RightSlotWidth=an and aj.Width or 0,
+RightSlotWidth=am and aj.Width or 0,
 }
 
-local ao=ag(
+local an=ag(
 aj.Placeholder,
 aj.InputIcon,
 aj.InputFrame.UIElements.Container,
 aj.Type,
-function(ao)
-aj:Set(ao,true)
+function(an)
+aj:Set(an,true)
 end,
 nil,
 ai.Window.NewElements and 12 or 10,
@@ -8420,57 +8407,59 @@ aj.ClearTextOnFocus
 )
 
 if al then
-ao.Size=UDim2.new(0,aj.Width,0,36)
+an.Size=UDim2.new(0,aj.Width,0,36)
 
 if aj.InputFrame.UIElements.RightSlot then
-ao.Parent=aj.InputFrame.UIElements.RightSlot
-ao.LayoutOrder=1
+an.AnchorPoint=Vector2.new(1,0.5)
+an.Position=UDim2.new(1,0,0.5,0)
+an.Parent=aj.InputFrame.UIElements.RightSlot
+an.LayoutOrder=1
 else
-ao.LayoutOrder=10
-ao.Position=UDim2.new(1,0,ai.Window.NewElements and 0 or 0.5,0)
-ao.AnchorPoint=Vector2.new(1,ai.Window.NewElements and 0 or 0.5)
+an.LayoutOrder=10
+an.Position=UDim2.new(1,0,ai.Window.NewElements and 0 or 0.5,0)
+an.AnchorPoint=Vector2.new(1,ai.Window.NewElements and 0 or 0.5)
 
 if ai.ParentType=="Group"then
-ao.Size=UDim2.new(1,-ae.UIPadding*2,0,36)
-ao.AnchorPoint=Vector2.new(0.5,0.5)
-ao.Position=UDim2.new(0.5,0,0.5,0)
+an.Size=UDim2.new(1,-ae.UIPadding*2,0,36)
+an.AnchorPoint=Vector2.new(0.5,0.5)
+an.Position=UDim2.new(0.5,0,0.5,0)
 end
 end
 else
-ao.Size=UDim2.new(1,0,0,148)
+an.Size=UDim2.new(1,0,0,148)
 end
 
 ac("UIScale",{
-Parent=ao,
+Parent=an,
 Scale=1,
 })
 
-function aj.Lock(ap)
+function aj.Lock(ao)
 aj.Locked=true
 ak=false
 return aj.InputFrame:Lock(aj.LockedTitle)
 end
 
-function aj.Unlock(ap)
+function aj.Unlock(ao)
 aj.Locked=false
 ak=true
 return aj.InputFrame:Unlock()
 end
 
-function aj.Set(ap,aq,ar)
+function aj.Set(ao,ap,aq)
 if ak then
-aj.Value=aq
-aa.SafeCallback(aj.Callback,aq)
+aj.Value=ap
+aa.SafeCallback(aj.Callback,ap)
 
-if not ar then
-ao.Frame.Frame.TextBox.Text=aq
+if not aq then
+an.Frame.Frame.TextBox.Text=ap
 end
 end
 end
 
-function aj.SetPlaceholder(ap,aq)
-ao.Frame.Frame.TextBox.PlaceholderText=aq
-aj.Placeholder=aq
+function aj.SetPlaceholder(ao,ap)
+an.Frame.Frame.TextBox.PlaceholderText=ap
+aj.Placeholder=ap
 end
 
 aj:Set(aj.Value)
