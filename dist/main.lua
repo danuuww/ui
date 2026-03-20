@@ -5595,7 +5595,7 @@ AutomaticSize=af.Justify=="Between"and"Y"or"XY",
 Size=UDim2.new(
 af.Justify=="Between"and 1 or 0,
 af.Justify=="Between"and(ap and-am-af.UIPadding or-am)or 0,
-1,
+0,
 0
 ),
 },{
@@ -5850,8 +5850,8 @@ if ag then
 v=ab("Frame",{
 Name="RightSlot",
 BackgroundTransparency=1,
-AnchorPoint=Vector2.new(1,0.5),
-Position=UDim2.new(1,0,0.5,0),
+AnchorPoint=Vector2.new(1,0),
+Position=UDim2.new(1,0,0,af.UIPadding-8),
 Size=UDim2.new(0,math.max(af.RightSlotWidth,af.ShowChevron and 24 or 0),0,36),
 AutomaticSize="X",
 Parent=r,
@@ -5959,7 +5959,7 @@ end
 
 local J=math.max(H-G,24)
 
-B.Position=UDim2.new(0,G-af.UIPadding,1,af.UIPadding)
+B.Position=UDim2.new(0,G,1,af.UIPadding)
 B.Size=UDim2.new(0,J,0,1)
 end
 
