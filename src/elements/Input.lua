@@ -68,8 +68,6 @@ function Element:New(Config)
 		InputComponent.Size = UDim2.new(0, Input.Width, 0, 36)
 
 		if Input.InputFrame.UIElements.RightSlot then
-			InputComponent.AnchorPoint = Vector2.new(1, 0.5)
-			InputComponent.Position = UDim2.new(1, 0, 0.5, 0)
 			InputComponent.Parent = Input.InputFrame.UIElements.RightSlot
 			InputComponent.LayoutOrder = 1
 		else

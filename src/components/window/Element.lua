@@ -517,8 +517,7 @@ return function(Config)
 			BackgroundTransparency = 1,
 			AnchorPoint = Vector2.new(1, 0),
 			Position = UDim2.new(1, 0, 0, Element.UIPadding - 8),
-			Size = UDim2.new(0, math.max(Element.RightSlotWidth, Element.ShowChevron and 24 or 0), 0, 36),
-			AutomaticSize = "X",
+			Size = UDim2.new(0, Element.RightSlotWidth + (Element.ShowChevron and 24 or 0), 0, 36),
 			Parent = Main,
 		}, {
 			New("UIListLayout", {
