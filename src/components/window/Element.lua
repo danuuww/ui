@@ -260,7 +260,7 @@ return function(Config)
 		Size = UDim2.new(
 			Element.Justify == "Between" and 1 or 0,
 			Element.Justify == "Between" and (ImageFrame and -IconOffset - Element.UIPadding or -IconOffset) or 0,
-			1,
+			0,
 			0
 		),
 	}, {
@@ -515,8 +515,8 @@ return function(Config)
 		RightSlot = New("Frame", {
 			Name = "RightSlot",
 			BackgroundTransparency = 1,
-			AnchorPoint = Vector2.new(1, 0.5),
-			Position = UDim2.new(1, 0, 0.5, 0),
+			AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.new(1, 0, 0, Element.UIPadding - 8),
 			Size = UDim2.new(0, math.max(Element.RightSlotWidth, Element.ShowChevron and 24 or 0), 0, 36),
 			AutomaticSize = "X",
 			Parent = Main,
