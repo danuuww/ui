@@ -5852,8 +5852,7 @@ Name="RightSlot",
 BackgroundTransparency=1,
 AnchorPoint=Vector2.new(1,0),
 Position=UDim2.new(1,0,0,af.UIPadding-8),
-Size=UDim2.new(0,math.max(af.RightSlotWidth,af.ShowChevron and 24 or 0),0,36),
-AutomaticSize="X",
+Size=UDim2.new(0,af.RightSlotWidth+(af.ShowChevron and 24 or 0),0,36),
 Parent=r,
 },{
 ab("UIListLayout",{
@@ -8410,8 +8409,6 @@ if al then
 an.Size=UDim2.new(0,aj.Width,0,36)
 
 if aj.InputFrame.UIElements.RightSlot then
-an.AnchorPoint=Vector2.new(1,0.5)
-an.Position=UDim2.new(1,0,0.5,0)
 an.Parent=aj.InputFrame.UIElements.RightSlot
 an.LayoutOrder=1
 else
