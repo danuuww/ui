@@ -4,7 +4,7 @@
     | |/ |/ / / _ \/ _  / /_/ // /  
     |__/|__/_/_//_/\_,_/\____/___/
     
-    v1.6.64  |  2026-03-19  |  Roblox UI Library for scripts
+    v1.6.64  |  2026-03-20  |  Roblox UI Library for scripts
     
     To view the source code, see the `src/` folder on the official GitHub repository.
     
@@ -5541,8 +5541,8 @@ TextColor3=af.Color and as or nil,
 TextTransparency=ar=="Desc"and 0.3 or 0,
 TextWrapped=ar=="Desc",
 TextTruncate=ar=="Desc"and Enum.TextTruncate.None or Enum.TextTruncate.AtEnd,
-Size=UDim2.new(1,0,0,0),
-AutomaticSize="Y",
+Size=af.Justify=="Between"and UDim2.new(1,0,0,0)or UDim2.new(0,0,0,0),
+AutomaticSize=af.Justify=="Between"and"Y"or"XY",
 FontFace=Font.new(aa.Font,ar=="Desc"and Enum.FontWeight.Medium or Enum.FontWeight.SemiBold),
 })
 end
@@ -8391,7 +8391,7 @@ aj.InputFrame=a.load'B'{
 Title=aj.Title,
 Desc=aj.Desc,
 Parent=ai.Parent,
-TextOffset=an and(aj.Width+24)or aj.Width,
+TextOffset=an and(aj.Width+24)or 20,
 Hover=false,
 Tab=ai.Tab,
 Index=ai.Index,
@@ -8409,7 +8409,7 @@ RightSlotWidth=an and aj.Width or 0,
 local ao=ag(
 aj.Placeholder,
 aj.InputIcon,
-(al and aj.InputFrame.UIElements.Main or aj.InputFrame.UIElements.Container),
+aj.InputFrame.UIElements.Container,
 aj.Type,
 function(ao)
 aj:Set(ao,true)
@@ -8426,8 +8426,15 @@ if aj.InputFrame.UIElements.RightSlot then
 ao.Parent=aj.InputFrame.UIElements.RightSlot
 ao.LayoutOrder=1
 else
+ao.LayoutOrder=10
 ao.Position=UDim2.new(1,0,ai.Window.NewElements and 0 or 0.5,0)
 ao.AnchorPoint=Vector2.new(1,ai.Window.NewElements and 0 or 0.5)
+
+if ai.ParentType=="Group"then
+ao.Size=UDim2.new(1,-ae.UIPadding*2,0,36)
+ao.AnchorPoint=Vector2.new(0.5,0.5)
+ao.Position=UDim2.new(0.5,0,0.5,0)
+end
 end
 else
 ao.Size=UDim2.new(1,0,0,148)
@@ -9243,8 +9250,9 @@ RightSlotWidth=ao.Callback and ao.Width or 0,
 
 if ao.Callback then
 ao.UIElements.Dropdown=
-ah("",nil,ao.DropdownFrame.UIElements.Main,nil,an.Window.NewElements and 12 or 10)
+ah("",nil,ao.DropdownFrame.UIElements.Container,nil,an.Window.NewElements and 12 or 10)
 
+ao.UIElements.Dropdown.LayoutOrder=10
 ao.UIElements.Dropdown.Frame.Frame.TextLabel.TextTruncate="AtEnd"
 ao.UIElements.Dropdown.Frame.Frame.TextLabel.Size=
 UDim2.new(1,ao.UIElements.Dropdown.Frame.Frame.TextLabel.Size.X.Offset-18-12-12,0,0)
