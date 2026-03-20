@@ -83,8 +83,9 @@ function Element:New(Config)
 
 	if Dropdown.Callback then
 		Dropdown.UIElements.Dropdown =
-			CreateLabel("", nil, Dropdown.DropdownFrame.UIElements.Main, nil, Config.Window.NewElements and 12 or 10)
+			CreateLabel("", nil, Dropdown.DropdownFrame.UIElements.Container, nil, Config.Window.NewElements and 12 or 10)
 
+		Dropdown.UIElements.Dropdown.LayoutOrder = 10
 		Dropdown.UIElements.Dropdown.Frame.Frame.TextLabel.TextTruncate = "AtEnd"
 		Dropdown.UIElements.Dropdown.Frame.Frame.TextLabel.Size =
 			UDim2.new(1, Dropdown.UIElements.Dropdown.Frame.Frame.TextLabel.Size.X.Offset - 18 - 12 - 12, 0, 0)

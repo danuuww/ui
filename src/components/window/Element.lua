@@ -206,8 +206,8 @@ return function(Config)
 			TextTransparency = Type == "Desc" and 0.3 or 0,
 			TextWrapped = Type == "Desc",
 			TextTruncate = Type == "Desc" and Enum.TextTruncate.None or Enum.TextTruncate.AtEnd,
-			Size = UDim2.new(1, 0, 0, 0),
-			AutomaticSize = "Y",
+			Size = Element.Justify == "Between" and UDim2.new(1, 0, 0, 0) or UDim2.new(0, 0, 0, 0),
+			AutomaticSize = Element.Justify == "Between" and "Y" or "XY",
 			FontFace = Font.new(Creator.Font, Type == "Desc" and Enum.FontWeight.Medium or Enum.FontWeight.SemiBold),
 		})
 	end

@@ -37,7 +37,7 @@ function Element:New(Config)
 		Title = Input.Title,
 		Desc = Input.Desc,
 		Parent = Config.Parent,
-		TextOffset = UseListRow and (Input.Width + 24) or Input.Width,
+		TextOffset = UseListRow and (Input.Width + 24) or 20,
 		Hover = false,
 		Tab = Config.Tab,
 		Index = Config.Index,
@@ -55,7 +55,7 @@ function Element:New(Config)
 	local InputComponent = CreateInput(
 		Input.Placeholder,
 		Input.InputIcon,
-		(IsSingleLine and Input.InputFrame.UIElements.Main or Input.InputFrame.UIElements.Container),
+		Input.InputFrame.UIElements.Container,
 		Input.Type,
 		function(v)
 			Input:Set(v, true)
@@ -72,8 +72,15 @@ function Element:New(Config)
 			InputComponent.Parent = Input.InputFrame.UIElements.RightSlot
 			InputComponent.LayoutOrder = 1
 		else
+			InputComponent.LayoutOrder = 10
 			InputComponent.Position = UDim2.new(1, 0, Config.Window.NewElements and 0 or 0.5, 0)
 			InputComponent.AnchorPoint = Vector2.new(1, Config.Window.NewElements and 0 or 0.5)
+
+			if Config.ParentType == "Group" then
+				InputComponent.Size = UDim2.new(1, -Element.UIPadding * 2, 0, 36)
+				InputComponent.AnchorPoint = Vector2.new(0.5, 0.5)
+				InputComponent.Position = UDim2.new(0.5, 0, 0.5, 0)
+			end
 		end
 	else
 		InputComponent.Size = UDim2.new(1, 0, 0, 42 + 56 + 50)
