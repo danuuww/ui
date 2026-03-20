@@ -624,7 +624,7 @@ return function(Config)
 
 		local width = math.max(endX - leftInset, 24)
 
-		Divider.Position = UDim2.new(0, leftInset - Element.UIPadding, 1, Element.UIPadding)
+		Divider.Position = UDim2.new(0, leftInset, 1, Element.UIPadding)
 		Divider.Size = UDim2.new(0, width, 0, 1)
 	end
 
