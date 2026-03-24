@@ -7,7 +7,7 @@ local Element = {}
 function Element:New(Config)
     local Section = {
         __type = "Section",
-        Title = Config.Title or "Section",
+        Title = Config.Title or nil,
         Desc = Config.Desc,
         Icon = Config.Icon,
         IconThemed = Config.IconThemed,
@@ -41,7 +41,7 @@ function Element:New(Config)
         if i then
             Icon = Creator.Image(
                 i,
-                i .. ":" .. Section.Title,
+                i .. ":" .. (Section.Title or "Section"),
                 0,
                 Config.Window.Folder,
                 Section.__type,
@@ -115,7 +115,9 @@ function Element:New(Config)
         })
     end
 
-    TitleFrame = createTitle(Section.Title, "Title")
+    if Section.Title then
+        TitleFrame = createTitle(Section.Title, "Title")
+    end
     if Section.Desc then
         DescFrame = createTitle(Section.Desc, "Desc")
     end
@@ -155,7 +157,7 @@ function Element:New(Config)
             Name = "Outline",
         }),
         New("TextButton", {
-            Size = UDim2.new(1,0,0,Section.Expandable and 0 or (not DescFrame and Section.HeaderSize or 0)),
+            Size = UDim2.new(1,0,0,Section.Expandable and 0 or (not DescFrame and not TitleFrame and 0 or (not DescFrame and Section.HeaderSize or 0))),
             BackgroundTransparency = 1,
             AutomaticSize = (not Section.Expandable or DescFrame) and "Y" or nil ,
             Text = "",

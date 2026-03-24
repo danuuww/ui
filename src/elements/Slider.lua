@@ -119,7 +119,7 @@ function Element:New(Config)
     
     Slider.UIElements.SliderIcon = Creator.NewRoundFrame(99, "Squircle", {
         ImageTransparency = .95,
-        Size = UDim2.new(1, not Slider.IsTextbox and -TotalSliderWidth or -38, 0, 4),
+        Size = UDim2.new(1, not Slider.IsTextbox and -TotalSliderWidth or -32, 0, 4),
         AnchorPoint = Vector2.new(0.5,0.5),
         Position = UDim2.new(0.5,0,0.5,0),
         Name = "Frame",
@@ -187,18 +187,18 @@ function Element:New(Config)
         IconTo,
         New("Frame", {
             Name = "TextBoxWrapper",
-            Size = UDim2.new(0, 36, 0, 20),
+            Size = UDim2.new(0, 42, 0, 24),
             BackgroundTransparency = 1,
             LayoutOrder = 2,
             Visible = Slider.IsTextbox,
         }, {
-            Creator.NewRoundFrame(999, "Squircle", {
+            Creator.NewRoundFrame(8, "Squircle", {
                 Size = UDim2.new(1, 0, 1, 0),
                 ThemeTag = { ImageColor3 = "Text" },
                 ImageTransparency = 0.88,
                 ZIndex = 0,
             }),
-            Creator.NewRoundFrame(999, "Glass-1", {
+            Creator.NewRoundFrame(8, "Glass-1", {
                 Size = UDim2.new(1, 0, 1, 0),
                 ImageColor3 = Color3.new(1, 1, 1),
                 ImageTransparency = 0.78,
@@ -216,13 +216,13 @@ function Element:New(Config)
                     TextColor3 = "Text"
                 },
                 TextTransparency = 0.08,
-                TextSize = 14,
+                TextSize = 13,
                 FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
                 BackgroundTransparency = 1,
             }),
             New("UIPadding", {
-                PaddingLeft = UDim.new(0, 6),
-                PaddingRight = UDim.new(0, 6),
+                PaddingLeft = UDim.new(0, 4),
+                PaddingRight = UDim.new(0, 4),
             }),
         })
     })
