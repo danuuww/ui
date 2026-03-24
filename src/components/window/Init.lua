@@ -36,6 +36,8 @@ return function(Config)
 		TitleTextSize = Config.TitleTextSize or 16,
 
 		Author = Config.Author,
+		AuthorMessages = Config.AuthorMessages,
+		AuthorAnim = Config.AuthorAnim,
 		Icon = Config.Icon,
 		IconSize = Config.IconSize or 22,
 		IconThemed = Config.IconThemed,
@@ -922,6 +924,119 @@ return function(Config)
 
 	local UIStroke
 
+	-- ========== AUTHOR ANIMATION SYSTEM ==========
+	local AuthorAnimToken = 0
+
+	local function GetAuthorMessages()
+		local messages = {}
+		if type(Window.AuthorMessages) == "table" and #Window.AuthorMessages > 0 then
+			for _, msg in ipairs(Window.AuthorMessages) do
+				if type(msg) == "string" and msg ~= "" then
+					table.insert(messages, msg)
+				end
+			end
+		else
+			if type(Window.Author) == "string" and Window.Author ~= "" then
+				table.insert(messages, Window.Author)
+			end
+		end
+		if #messages == 0 then
+			messages = { Window.Author or "" }
+		end
+		return messages
+	end
+
+	local function GetAuthorAnimConfig()
+		local anim = Window.AuthorAnim
+		if not anim or anim == false or anim == "None" then
+			return nil
+		end
+		if type(anim) == "string" then
+			local loopDefault = (anim == "FadeLoop" or anim == "Pulse" or anim == "TypingCursor" or anim == "TypingWrite")
+			return { Type = anim, Speed = 0.045, Delay = 3.5, Loop = loopDefault, CursorChar = "▏" }
+		end
+		if type(anim) == "table" then
+			local animType = anim.Type or anim.Name or "TypingWrite"
+			local loopDefault = (animType == "FadeLoop" or animType == "Pulse" or animType == "TypingCursor" or animType == "TypingWrite")
+			return { Type = animType, Speed = anim.Speed or 0.045, Delay = anim.Delay or 3.5, Loop = anim.Loop == nil and loopDefault or anim.Loop, CursorChar = anim.CursorChar or "▏" }
+		end
+		return nil
+	end
+
+	local function ResetAuthorVisual()
+		if WindowAuthor then
+			WindowAuthor.Text = Window.Author or ""
+			WindowAuthor.TextTransparency = 0.35
+		end
+	end
+
+	local function StopAuthorAnimation()
+		AuthorAnimToken += 1
+		ResetAuthorVisual()
+	end
+
+	local function RunAuthorAnimation()
+		StopAuthorAnimation()
+		local anim = GetAuthorAnimConfig()
+		if not anim or not WindowAuthor then return end
+		local token = AuthorAnimToken
+		local messages = GetAuthorMessages()
+		local animType = string.lower(tostring(anim.Type))
+		task.spawn(function()
+			local function alive() return token == AuthorAnimToken and not Window.Destroyed end
+			local index = 1
+			local function getCurrentMessage() return messages[index] or Window.Author or "" end
+			local function nextMessage() index += 1; if index > #messages then index = 1 end end
+
+			if animType == "typingwrite" or animType == "typingcursor" then
+				repeat
+					local base = getCurrentMessage()
+					WindowAuthor.Text = ""
+					WindowAuthor.TextTransparency = 0.35
+					for i = 1, #base do
+						if not alive() then return end
+						local partial = string.sub(base, 1, i)
+						WindowAuthor.Text = animType == "typingcursor" and (partial .. anim.CursorChar) or partial
+						task.wait(anim.Speed)
+					end
+					WindowAuthor.Text = base
+					if animType == "typingcursor" then
+						for _ = 1, 4 do
+							if not alive() then return end
+							WindowAuthor.Text = base .. anim.CursorChar; task.wait(0.3)
+							if not alive() then return end
+							WindowAuthor.Text = base; task.wait(0.3)
+						end
+					end
+					if #messages <= 1 and not anim.Loop then break end
+					task.wait(anim.Delay); nextMessage()
+				until not alive()
+				if alive() then ResetAuthorVisual() end
+			elseif animType == "fadeloop" then
+				while alive() do
+					WindowAuthor.Text = getCurrentMessage()
+					Tween(WindowAuthor, 0.8, { TextTransparency = 0.6 }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut):Play()
+					task.wait(0.8)
+					if not alive() then return end
+					Tween(WindowAuthor, 0.8, { TextTransparency = 0.35 }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut):Play()
+					task.wait(anim.Delay)
+					if #messages > 1 or anim.Loop then nextMessage() else break end
+				end
+			elseif animType == "pulse" then
+				while alive() do
+					WindowAuthor.Text = getCurrentMessage()
+					Tween(WindowAuthor, 0.18, { TextSize = 14 }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+					task.wait(0.18)
+					if not alive() then return end
+					Tween(WindowAuthor, 0.22, { TextSize = 13 }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+					task.wait(anim.Delay)
+					if #messages > 1 or anim.Loop then nextMessage() else break end
+				end
+			end
+			if alive() then ResetAuthorVisual() end
+		end)
+	end
+
 	Window.UIElements.Main = New("Frame", {
 		Size = Window.Size,
 		Position = Window.Position,
@@ -1585,7 +1700,29 @@ return function(Config)
 		if not WindowAuthor then
 			WindowAuthor = createAuthor(Window.Author)
 		end
-		WindowAuthor.Text = text
+		if Window.Closed then
+			StopAuthorAnimation()
+		else
+			RunAuthorAnimation()
+		end
+	end
+
+	function Window:SetAuthorMessages(messages)
+		Window.AuthorMessages = messages
+		if Window.Closed then
+			StopAuthorAnimation()
+		else
+			RunAuthorAnimation()
+		end
+	end
+
+	function Window:SetAuthorAnim(anim)
+		Window.AuthorAnim = anim
+		if Window.Closed then
+			StopAuthorAnimation()
+		else
+			RunAuthorAnimation()
+		end
 	end
 
 	function Window:SetSize(size)
@@ -1786,6 +1923,7 @@ return function(Config)
 				task.wait(0.05)
 				Window.UIElements.Main:WaitForChild("Main").Visible = true
 				RunWindowTitleAnimation()
+				RunAuthorAnimation()
 				Config.WindUI:ToggleAcrylic(true)
 			end)
 		end)

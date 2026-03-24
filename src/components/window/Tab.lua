@@ -484,7 +484,9 @@ function TabModule.New(Config, UIScale)
 
 		-- Parent NavigationBarHolder ABOVE the ScrollingFrame for sticky behavior
 		local NavigationBarHolder = New("Frame", {
-			Size = UDim2.new(1, 0, 0, BAR_HEIGHT),
+			Size = UDim2.new(1, -20, 0, BAR_HEIGHT),
+			Position = UDim2.new(0.5, 0, 0, 8),
+			AnchorPoint = Vector2.new(0.5, 0),
 			BackgroundTransparency = 1,
 			ZIndex = 10,
 			Parent = Tab.UIElements.ContainerFrameCanvas,
@@ -493,7 +495,7 @@ function TabModule.New(Config, UIScale)
 		-- Shrink the ScrollingFrame to make room for the sticky nav bar
 		Tab.UIElements.ContainerFrame.Size = UDim2.new(
 			1, 0, 1,
-			(Tab.ShowTabTitle and -((Window.UIPadding * 2.4) + 12) or 0) - BAR_HEIGHT - 4
+			(Tab.ShowTabTitle and -((Window.UIPadding * 2.4) + 12) or 0) - BAR_HEIGHT - 12
 		)
 		Tab.UIElements.ContainerFrame.Position = UDim2.new(0, 0, 1, 0)
 		Tab.UIElements.ContainerFrame.AnchorPoint = Vector2.new(0, 1)
