@@ -119,7 +119,7 @@ function Element:New(Config)
     
     Slider.UIElements.SliderIcon = Creator.NewRoundFrame(99, "Squircle", {
         ImageTransparency = .95,
-        Size = UDim2.new(1, not Slider.IsTextbox and -TotalSliderWidth or -50, 0, 4),
+        Size = UDim2.new(1, not Slider.IsTextbox and -TotalSliderWidth or -38, 0, 4),
         AnchorPoint = Vector2.new(0.5,0.5),
         Position = UDim2.new(0.5,0,0.5,0),
         Name = "Frame",
@@ -187,21 +187,21 @@ function Element:New(Config)
         IconTo,
         New("Frame", {
             Name = "TextBoxWrapper",
-            Size = UDim2.new(0, 42, 0, 22),
+            Size = UDim2.new(0, 36, 0, 20),
             BackgroundTransparency = 1,
             LayoutOrder = 2,
             Visible = Slider.IsTextbox,
         }, {
-            Creator.NewRoundFrame(6, "Squircle", {
+            Creator.NewRoundFrame(999, "Squircle", {
                 Size = UDim2.new(1, 0, 1, 0),
                 ThemeTag = { ImageColor3 = "Text" },
-                ImageTransparency = 0.9,
+                ImageTransparency = 0.88,
                 ZIndex = 0,
             }),
-            Creator.NewRoundFrame(6, "Glass-1", {
+            Creator.NewRoundFrame(999, "Glass-1", {
                 Size = UDim2.new(1, 0, 1, 0),
                 ImageColor3 = Color3.new(1, 1, 1),
-                ImageTransparency = 0.82,
+                ImageTransparency = 0.78,
                 Name = "Stroke",
                 ZIndex = 0,
             }),
@@ -215,10 +215,14 @@ function Element:New(Config)
                 ThemeTag = {
                     TextColor3 = "Text"
                 },
-                TextTransparency = 0.1,
-                TextSize = 13,
+                TextTransparency = 0.08,
+                TextSize = 14,
                 FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
                 BackgroundTransparency = 1,
+            }),
+            New("UIPadding", {
+                PaddingLeft = UDim.new(0, 6),
+                PaddingRight = UDim.new(0, 6),
             }),
         })
     })
@@ -253,7 +257,7 @@ function Element:New(Config)
             if not Slider.IsFocusing and not IsSliderHolding and (not input or (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch)) then
                 if input then
                     isTouch = (input.UserInputType == Enum.UserInputType.Touch)
-                    ScrollingFrameParent.ScrollingEnabled = false
+                    pcall(function() ScrollingFrameParent.ScrollingEnabled = false end)
                     IsSliderHolding = true
                     
                     local inputPosition = isTouch and input.Position.X or UserInputService:GetMouseLocation().X
@@ -291,7 +295,7 @@ function Element:New(Config)
                             moveconnection:Disconnect()
                             releaseconnection:Disconnect()
                             IsSliderHolding = false
-                            ScrollingFrameParent.ScrollingEnabled = true
+                            pcall(function() ScrollingFrameParent.ScrollingEnabled = true end)
                             
                             if Config.Window.NewElements then
                                 Tween(Slider.UIElements.SliderIcon.Frame.Thumb, .2, { ImageTransparency = 0, Size = UDim2.new(0,Config.Window.NewElements and (Slider.ThumbSize*2) or (Slider.ThumbSize+2),0,Config.Window.NewElements and (Slider.ThumbSize+4) or (Slider.ThumbSize+2)) }, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut):Play()
