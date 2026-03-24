@@ -49,7 +49,11 @@ local function CreateLegacySlider(Config)
 	}
 
 	if Slider.InputBox == nil then
-		Slider.InputBox = Slider.IsTextbox
+		if Slider.IsTextbox ~= nil then
+			Slider.InputBox = Slider.IsTextbox
+		else
+			Slider.InputBox = Slider.Title ~= nil
+		end
 	end
 	Slider.InputBox = Slider.InputBox == true
 
