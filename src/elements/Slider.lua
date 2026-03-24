@@ -182,20 +182,32 @@ function Element:New(Config)
         IconFrom,
         Slider.UIElements.SliderIcon,
         IconTo,
-        New("TextBox", {
-            Size = UDim2.new(0,Slider.TextBoxWidth,0,0),
-            TextXAlignment = "Left",
-            Text = FormatValue(Value),
-            ThemeTag = {
-                TextColor3 = "Text"
-            },
-            TextTransparency = .4,
-            AutomaticSize = "Y",
-            TextSize = 15,
-            FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
+        New("Frame", {
+            Name = "TextBoxWrapper",
+            Size = UDim2.new(0, Slider.TextBoxWidth + 14, 0, 24),
             BackgroundTransparency = 1,
-            LayoutOrder = -1,
+            LayoutOrder = 2,
             Visible = Slider.IsTextbox,
+        }, {
+            Creator.NewRoundFrame(6, "Squircle", {
+                Size = UDim2.new(1, 0, 1, 0),
+                ThemeTag = { ImageColor3 = "Text" },
+                ImageTransparency = 0.93,
+            }),
+            New("TextBox", {
+                Name = "TextBox",
+                Size = UDim2.new(1, 0, 1, 0),
+                TextXAlignment = "Center",
+                TextYAlignment = "Center",
+                Text = FormatValue(Value),
+                ThemeTag = {
+                    TextColor3 = "Text"
+                },
+                TextTransparency = 0.2,
+                TextSize = 13,
+                FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
+                BackgroundTransparency = 1,
+            })
         })
     })
     
@@ -239,7 +251,7 @@ function Element:New(Config)
                     
                     if Value ~= LastValue then
                         Tween(Slider.UIElements.SliderIcon.Frame, 0.05, {Size = UDim2.new(delta,0,1,0)}):Play()
-                        Slider.UIElements.SliderContainer.TextBox.Text = FormatValue(Value)
+                        Slider.UIElements.SliderContainer.TextBoxWrapper.TextBox.Text = FormatValue(Value)
                         if Tooltip then Tooltip.TitleFrame.Text = FormatValue(Value) end
                         Slider.Value.Default = FormatValue(Value)
                         LastValue = Value
@@ -253,7 +265,7 @@ function Element:New(Config)
                         
                         if Value ~= LastValue then
                             Tween(Slider.UIElements.SliderIcon.Frame, 0.05, {Size = UDim2.new(delta,0,1,0)}):Play()
-                            Slider.UIElements.SliderContainer.TextBox.Text = FormatValue(Value)
+                            Slider.UIElements.SliderContainer.TextBoxWrapper.TextBox.Text = FormatValue(Value)
                             if Tooltip then Tooltip.TitleFrame.Text = FormatValue(Value) end
                             Slider.Value.Default = FormatValue(Value)
                             LastValue = Value
@@ -283,7 +295,7 @@ function Element:New(Config)
                     
                     if Value ~= LastValue then
                         Tween(Slider.UIElements.SliderIcon.Frame, 0.05, {Size = UDim2.new(delta,0,1,0)}):Play()
-                        Slider.UIElements.SliderContainer.TextBox.Text = FormatValue(Value)
+                        Slider.UIElements.SliderContainer.TextBoxWrapper.TextBox.Text = FormatValue(Value)
                         if Tooltip then Tooltip.TitleFrame.Text = FormatValue(Value) end
                         Slider.Value.Default = FormatValue(Value)
                         LastValue = Value
@@ -318,13 +330,13 @@ function Element:New(Config)
         end
     end
     
-    Creator.AddSignal(Slider.UIElements.SliderContainer.TextBox.FocusLost, function(enterPressed)
+    Creator.AddSignal(Slider.UIElements.SliderContainer.TextBoxWrapper.TextBox.FocusLost, function(enterPressed)
         if enterPressed then
-            local newValue = tonumber(Slider.UIElements.SliderContainer.TextBox.Text)
+            local newValue = tonumber(Slider.UIElements.SliderContainer.TextBoxWrapper.TextBox.Text)
             if newValue then
                 Slider:Set(newValue)
             else
-                Slider.UIElements.SliderContainer.TextBox.Text = FormatValue(LastValue)
+                Slider.UIElements.SliderContainer.TextBoxWrapper.TextBox.Text = FormatValue(LastValue)
                 if Tooltip then Tooltip.TitleFrame.Text = FormatValue(LastValue) end
             end
         end
