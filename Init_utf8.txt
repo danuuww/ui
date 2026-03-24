@@ -1,4 +1,4 @@
--- /* src/components/Window/Init.lua */
+﻿-- /* src/components/Window/Init.lua */
 
 local cloneref = (cloneref or clonereference or function(instance)
 	return instance
@@ -706,7 +706,7 @@ return function(Config)
 				Speed = 0.055,
 				Delay = 3.5,
 				Loop = loopDefault,
-				CursorChar = "▏",
+				CursorChar = "ΓûÅ",
 			}
 		end
 
@@ -720,7 +720,7 @@ return function(Config)
 				Speed = anim.Speed or 0.055,
 				Delay = anim.Delay or 3.5,
 				Loop = anim.Loop == nil and loopDefault or anim.Loop,
-				CursorChar = anim.CursorChar or "▏",
+				CursorChar = anim.CursorChar or "ΓûÅ",
 			}
 		end
 

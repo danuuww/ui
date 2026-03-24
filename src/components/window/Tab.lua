@@ -9,6 +9,7 @@ local Mouse = Players.LocalPlayer:GetMouse()
 
 local Creator = require("../../modules/Creator")
 local New = Creator.New
+local Tween = Creator.Tween
 
 local CreateToolTip = require("../ui/Tooltip").New
 local CreateScrollSlider = require("../ui/ScrollSlider").New
