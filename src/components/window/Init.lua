@@ -1217,24 +1217,32 @@ return function(Config)
 
 	local Topbar = Window.UIElements.Main.Main.Topbar
 
-	local HoverHint = Creator.NewRoundFrame(999, "Squircle", {
+	local HoverHint = Creator.NewRoundFrame(8, "Squircle", {
 		Name = "HoverHint",
-		Size = UDim2.new(0, 0, 0, 22),
-		AutomaticSize = "XY",
+		Size = UDim2.new(0, 0, 0, 26),
+		AutomaticSize = "X",
 		BackgroundTransparency = 1,
-		ImageTransparency = 0.1,
-		ThemeTag = {
-			ImageColor3 = "Text",
-		},
+		ImageColor3 = Color3.fromRGB(205, 210, 220),
+		ImageTransparency = 0.12,
 		Parent = Topbar,
 		Visible = false,
 		ZIndex = 10050,
+		ClipsDescendants = true,
 	}, {
-		Creator.NewRoundFrame(999, "Glass-1", {
+		Creator.NewRoundFrame(8, "Glass-1.4", {
 			Size = UDim2.new(1, 0, 1, 0),
 			Name = "Outline",
-			ImageColor3 = Color3.new(1, 1, 1),
-			ImageTransparency = 0.83,
+			ImageColor3 = Color3.fromRGB(255, 255, 255),
+			ImageTransparency = 0.66,
+			ZIndex = 10051,
+		}),
+		Creator.NewRoundFrame(8, "Squircle", {
+			Size = UDim2.new(1, -2, 1, -2),
+			Position = UDim2.new(0.5, 0, 0.5, 0),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Name = "InnerGlass",
+			ImageColor3 = Color3.fromRGB(170, 176, 188),
+			ImageTransparency = 0.88,
 			ZIndex = 10051,
 		}),
 		New("TextLabel", {
@@ -1244,17 +1252,17 @@ return function(Config)
 			Text = "",
 			FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
 			TextSize = 12,
-			TextTransparency = 0.08,
-			ThemeTag = {
-				TextColor3 = "WindowBackground",
-			},
+			TextTransparency = 0,
+			TextColor3 = Color3.new(1, 1, 1),
+			TextXAlignment = "Center",
+			TextYAlignment = "Center",
 			ZIndex = 10052,
 		}),
 		New("UIPadding", {
-			PaddingLeft = UDim.new(0, 9),
-			PaddingRight = UDim.new(0, 9),
-			PaddingTop = UDim.new(0, 4),
-			PaddingBottom = UDim.new(0, 4),
+			PaddingLeft = UDim.new(0, 10),
+			PaddingRight = UDim.new(0, 10),
+			PaddingTop = UDim.new(0, 5),
+			PaddingBottom = UDim.new(0, 5),
 		}),
 	})
 
@@ -1278,8 +1286,8 @@ return function(Config)
 
 			HoverHint.Label.Text = Text or ""
 			HoverHint.Visible = true
-			HoverHint.ImageTransparency = 0.14
-			HoverHint.Outline.ImageTransparency = 0.86
+			HoverHint.ImageTransparency = 0.16
+			HoverHint.Outline.ImageTransparency = 0.70
 
 			task.wait()
 
@@ -1304,7 +1312,7 @@ return function(Config)
 			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
 			Tween(HoverHint.Outline, 0.12, {
-				ImageTransparency = 0.8,
+				ImageTransparency = 0.60,
 			}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 		end)
 	end
