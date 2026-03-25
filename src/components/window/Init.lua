@@ -1365,9 +1365,10 @@ return function(Config)
 
 		local iconThemeAsText = (Window.Topbar.ButtonsType == "Default") or IsMacCustomButton
 
+		local initialIcon = type(Icon) == "table" and Icon.Off or Icon
 		local IconFrame = Creator.Image(
-			Icon,
-			Icon,
+			initialIcon,
+			initialIcon,
 			0,
 			Window.Folder,
 			"WindowTopbarIcon",
@@ -1414,9 +1415,46 @@ return function(Config)
 				Object = ButtonContainer,
 			}
 
+			local IsToggle = type(Icon) == "table" and Icon.On and Icon.Off
+			local Enabled = false
+
+			local function UpdateIcon()
+				local currentIcon = IsToggle and (Enabled and Icon.On or Icon.Off) or initialIcon
+				local iconThemeAsText = (Window.Topbar.ButtonsType == "Default") or IsMacCustomButton
+				
+				if IconFrame and IconFrame:FindFirstChild("ImageLabel") then
+					local IconData = Creator.Icon(currentIcon)
+					IconFrame.ImageLabel.Image = IconData[1]
+					IconFrame.ImageLabel.ImageRectPosition = IconData[2].ImageRectPosition
+					IconFrame.ImageLabel.ImageRectSize = IconData[2].ImageRectSize
+				end
+			end
+			
+			if IsToggle then UpdateIcon() end
+
 			Creator.AddSignal(Button.MouseButton1Click, function()
+				if IsToggle then
+					Enabled = not Enabled
+					
+					-- macOS-style smooth transition
+					Tween(IconFrame.ImageLabel, 0.1, {
+						ImageTransparency = 1,
+					}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+					
+					task.wait(0.08)
+					UpdateIcon()
+					
+					Tween(IconFrame.ImageLabel, 0.15, {
+						ImageTransparency = (Button.UIScale.Scale > 1) and 0 or 0.22,
+					}, Enum.EasingStyle.Back, Enum.EasingDirection.Out):Play()
+				end
+
 				if Callback then
-					Callback()
+					if IsToggle then
+						Callback(Enabled)
+					else
+						Callback()
+					end
 				end
 			end)
 
@@ -1526,13 +1564,50 @@ return function(Config)
 			Object = ButtonContainer,
 		}
 
+		local IsToggle = type(Icon) == "table" and Icon.On and Icon.Off
+		local Enabled = false
+
+		local function UpdateIcon()
+			local currentIcon = IsToggle and (Enabled and Icon.On or Icon.Off) or initialIcon
+			
+			if IconFrame and IconFrame:FindFirstChild("ImageLabel") then
+				local IconData = Creator.Icon(currentIcon)
+				IconFrame.ImageLabel.Image = IconData[1]
+				IconFrame.ImageLabel.ImageRectPosition = IconData[2].ImageRectPosition
+				IconFrame.ImageLabel.ImageRectSize = IconData[2].ImageRectSize
+			end
+		end
+
+		if IsToggle then UpdateIcon() end
+
 		Creator.AddSignal(Button.MouseButton1Click, function()
+			if IsToggle then
+				Enabled = not Enabled
+				
+				-- Smooth transition
+				Tween(IconFrame.ImageLabel, 0.1, {
+					ImageTransparency = 1,
+				}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+				
+				task.wait(0.08)
+				UpdateIcon()
+				
+				Tween(IconFrame.ImageLabel, 0.15, {
+					ImageTransparency = (Window.Topbar.ButtonsType == "Default" or Button.UIScale.Scale > 1) and 0 or 1,
+				}, Enum.EasingStyle.Back, Enum.EasingDirection.Out):Play()
+			end
+
 			if Callback then
-				Callback()
+				if IsToggle then
+					Callback(Enabled)
+				else
+					Callback()
+				end
 			end
 		end)
 
 		Creator.AddSignal(Button.MouseEnter, function()
+			ShowHoverHint(ButtonContainer, HoverTitle or Name or "")
 			if Window.Topbar.ButtonsType == "Default" then
 				Tween(Button, 0.15, { ImageTransparency = 0.93 }):Play()
 				Tween(Button.Outline, 0.15, { ImageTransparency = 0.75 }):Play()
@@ -1567,6 +1642,7 @@ return function(Config)
 		end)
 
 		Creator.AddSignal(Button.MouseLeave, function()
+			HideHoverHint()
 			if Window.Topbar.ButtonsType == "Default" then
 				Tween(Button, 0.1, { ImageTransparency = 1 }):Play()
 				Tween(Button.Outline, 0.1, { ImageTransparency = 1 }):Play()
@@ -2659,6 +2735,21 @@ return function(Config)
 				end
 			end
 		end
+	end
+
+	-- Alias for user convenience
+	function Window.Topbar:Button(Config)
+		return Window:CreateTopbarButton(
+			Config.Name,
+			Config.Icon,
+			Config.Callback,
+			Config.LayoutOrder,
+			Config.IconThemed,
+			Config.Color,
+			Config.IconSize,
+			Config.UseMacSystemCluster,
+			Config.HoverTitle
+		)
 	end
 
 	return Window
