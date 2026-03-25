@@ -1244,9 +1244,9 @@ return function(Config)
 			Text = "",
 			FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
 			TextSize = 12,
-			TextTransparency = 0.18,
+			TextTransparency = 0.08,
 			ThemeTag = {
-				TextColor3 = "Text",
+				TextColor3 = "WindowBackground",
 			},
 			ZIndex = 10052,
 		}),
