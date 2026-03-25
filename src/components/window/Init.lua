@@ -709,6 +709,7 @@ return function(Config)
 				Delay = 3.5,
 				Loop = loopDefault,
 				CursorChar = "▏",
+				DeleteSpeed = 0.028,
 			}
 		end
 
@@ -723,6 +724,7 @@ return function(Config)
 				Delay = anim.Delay or 3.5,
 				Loop = anim.Loop == nil and loopDefault or anim.Loop,
 				CursorChar = anim.CursorChar or "▏",
+				DeleteSpeed = anim.DeleteSpeed or 0.028,
 			}
 		end
 
@@ -779,6 +781,7 @@ return function(Config)
 					WindowTitle.Text = ""
 					WindowTitle.TextTransparency = 0
 
+					-- Phase 1: Type in
 					for i = 1, #baseTitle do
 						if not alive() then
 							return
@@ -816,7 +819,24 @@ return function(Config)
 						break
 					end
 
+					-- Phase 2: Wait
 					task.wait(anim.Delay)
+
+					-- Phase 3: Backspace delete
+					local deleteSpeed = (anim.DeleteSpeed or anim.Speed * 0.5)
+					for i = #baseTitle, 1, -1 do
+						if not alive() then
+							return
+						end
+						local partial = string.sub(baseTitle, 1, i - 1)
+						if animType == "typingcursor" then
+							WindowTitle.Text = partial .. anim.CursorChar
+						else
+							WindowTitle.Text = partial
+						end
+						task.wait(deleteSpeed)
+					end
+
 					nextMessage()
 				until not alive()
 
@@ -1009,7 +1029,16 @@ return function(Config)
 						end
 					end
 					if #messages <= 1 and not anim.Loop then break end
-					task.wait(anim.Delay); nextMessage()
+					task.wait(anim.Delay)
+					-- Backspace delete
+					local deleteSpeed = (anim.DeleteSpeed or anim.Speed * 0.5)
+					for i = #base, 1, -1 do
+						if not alive() then return end
+						local partial = string.sub(base, 1, i - 1)
+						WindowAuthor.Text = animType == "typingcursor" and (partial .. anim.CursorChar) or partial
+						task.wait(deleteSpeed)
+					end
+					nextMessage()
 				until not alive()
 				if alive() then ResetAuthorVisual() end
 			elseif animType == "fadeloop" then
