@@ -1422,11 +1422,15 @@ return function(Config)
 				local currentIcon = IsToggle and (Enabled and Icon.On or Icon.Off) or initialIcon
 				local iconThemeAsText = (Window.Topbar.ButtonsType == "Default") or IsMacCustomButton
 				
-				if IconFrame and IconFrame:FindFirstChild("ImageLabel") then
+				local activeIcon = IconFrame:FindFirstChild("ImageLabel") or IconFrame:FindFirstChildWhichIsA("ImageLabel")
+				if activeIcon then
 					local IconData = Creator.Icon(currentIcon)
-					IconFrame.ImageLabel.Image = IconData[1]
-					IconFrame.ImageLabel.ImageRectPosition = IconData[2].ImageRectPosition
-					IconFrame.ImageLabel.ImageRectSize = IconData[2].ImageRectSize
+					if IconData then
+						local isrbxassetid = typeof(IconData) == "string"
+						activeIcon.Image = isrbxassetid and IconData or IconData[1]
+						activeIcon.ImageRectSize = isrbxassetid and Vector2.new(0,0) or IconData[2].ImageRectSize
+						activeIcon.ImageRectOffset = isrbxassetid and Vector2.new(0,0) or IconData[2].ImageRectPosition
+					end
 				end
 			end
 			
@@ -1570,11 +1574,15 @@ return function(Config)
 		local function UpdateIcon()
 			local currentIcon = IsToggle and (Enabled and Icon.On or Icon.Off) or initialIcon
 			
-			if IconFrame and IconFrame:FindFirstChild("ImageLabel") then
+			local activeIcon = IconFrame:FindFirstChild("ImageLabel") or IconFrame:FindFirstChildWhichIsA("ImageLabel")
+			if activeIcon then
 				local IconData = Creator.Icon(currentIcon)
-				IconFrame.ImageLabel.Image = IconData[1]
-				IconFrame.ImageLabel.ImageRectPosition = IconData[2].ImageRectPosition
-				IconFrame.ImageLabel.ImageRectSize = IconData[2].ImageRectSize
+				if IconData then
+					local isrbxassetid = typeof(IconData) == "string"
+					activeIcon.Image = isrbxassetid and IconData or IconData[1]
+					activeIcon.ImageRectSize = isrbxassetid and Vector2.new(0,0) or IconData[2].ImageRectSize
+					activeIcon.ImageRectOffset = isrbxassetid and Vector2.new(0,0) or IconData[2].ImageRectPosition
+				end
 			end
 		end
 
