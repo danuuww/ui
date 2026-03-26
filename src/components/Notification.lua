@@ -177,9 +177,10 @@ function NotificationModule.New(Config)
 	end
 
 	local Main = Creator.NewRoundFrame(NotificationModule.UICorner, "Squircle", {
-		Size = UDim2.new(1, 0, 0, NotificationHeight),
+		Size = UDim2.new(1, 0, 0, 0),
 		AnchorPoint = Vector2.new(0.5, 0),
 		Position = UDim2.new(0.5, 0, 0, -12),
+		AutomaticSize = Enum.AutomaticSize.Y,
 		ImageColor3 = Color3.fromRGB(205, 210, 220),
 		ImageTransparency = 1,
 		Parent = nil,
@@ -188,7 +189,7 @@ function NotificationModule.New(Config)
 			Size = UDim2.new(1, 0, 1, 0),
 			Name = "Outline",
 			ImageColor3 = Color3.fromRGB(255, 255, 255),
-			ImageTransparency = 0.66,
+			ImageTransparency = 0.5,
 		}),
 
 		Creator.NewRoundFrame(NotificationModule.UICorner, "Squircle", {
@@ -197,7 +198,7 @@ function NotificationModule.New(Config)
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Name = "InnerGlass",
 			ImageColor3 = Color3.fromRGB(170, 176, 188),
-			ImageTransparency = 0.88,
+			ImageTransparency = 0.75,
 		}),
 
 		New("Frame", {
@@ -264,55 +265,14 @@ function NotificationModule.New(Config)
 		New("Frame", {
 			Name = "Content",
 			BackgroundTransparency = 1,
-			Size = UDim2.new(1, 0, 1, 0),
+			Size = UDim2.new(1, 0, 0, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
 		}, {
 			New("UIPadding", {
 				PaddingTop = UDim.new(0, NotificationModule.UIPadding),
 				PaddingLeft = UDim.new(0, NotificationModule.UIPadding),
 				PaddingRight = UDim.new(0, NotificationModule.UIPadding),
 				PaddingBottom = UDim.new(0, NotificationModule.UIPadding),
-			}),
-
-			New("Frame", {
-				Name = "AvatarHolder",
-				BackgroundTransparency = 1,
-				Size = UDim2.new(0, HasAvatar and AvatarSize or 0, 0, AvatarSize),
-				Position = UDim2.new(0, 0, 0.5, 0),
-				AnchorPoint = Vector2.new(0, 0.5),
-				Visible = HasAvatar,
-			}, {
-				New("ImageLabel", {
-					Name = "Avatar",
-					Image = AvatarImage or "",
-					BackgroundTransparency = 1,
-					Size = UDim2.new(0, AvatarSize, 0, AvatarSize),
-					ScaleType = "Crop",
-				}, {
-					New("UICorner", {
-						CornerRadius = UDim.new(1, 0),
-					}),
-				}),
-
-				New("Frame", {
-	               Name = "BadgeBack",
-	               Size = UDim2.new(0, BadgeSize + 4, 0, BadgeSize + 4),
-	               Position = UDim2.new(1, 2, 1, 2),
-	               AnchorPoint = Vector2.new(1, 1),
-	               BackgroundColor3 = Color3.fromRGB(24, 24, 28),
-	               BackgroundTransparency = 0.18,
-	               Visible = AppBadge ~= nil,
-	               ZIndex = 6,
-                }, {
-	               New("UICorner", {
-		              CornerRadius = UDim.new(1, 0),
-	               }),
-	               New("UIStroke", {
-		              Color = Color3.new(1, 1, 1),
-		              Transparency = 0.55,
-		              Thickness = 1,
-	               }),
-	               AppBadge,
-                }),
 			}),
 
 			New("TextLabel", {
@@ -328,51 +288,107 @@ function NotificationModule.New(Config)
 				Font = Enum.Font.BuilderSansMedium,
 				TextColor3 = Color3.fromRGB(245, 246, 250),
 				TextTransparency = 0.12,
+				ZIndex = 2,
 			}),
 
-			New("Frame", {
-				Name = "TextContainer",
-				BackgroundTransparency = 1,
-				Size = UDim2.new(1, -((HasAvatar and (AvatarSize + 10) or 0) + 54), 0, 38),
-				Position = UDim2.new(0, HasAvatar and (AvatarSize + 10) or 0, 0.5, 0),
-				AnchorPoint = Vector2.new(0, 0.5),
-			}, {
-				New("UIListLayout", {
-					Padding = UDim.new(0, 0),
-					SortOrder = "LayoutOrder",
-					VerticalAlignment = "Center",
-				}),
+            New("Frame", {
+                Name = "Wrapper",
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, -54, 0, 0),
+                AutomaticSize = Enum.AutomaticSize.Y,
+            }, {
+                New("UIListLayout", {
+                    FillDirection = Enum.FillDirection.Horizontal,
+                    SortOrder = Enum.SortOrder.LayoutOrder,
+                    VerticalAlignment = Enum.VerticalAlignment.Center,
+                    Padding = UDim.new(0, 10),
+                }),
 
-				New("TextLabel", {
-					Name = "Title",
-					Text = Notification.Title,
-					BackgroundTransparency = 1,
-					Size = UDim2.new(1, 0, 0, 18),
-					TextWrapped = false,
-					TextTruncate = "AtEnd",
-					TextXAlignment = "Left",
-					TextYAlignment = "Center",
-					TextSize = 15,
-					Font = Enum.Font.BuilderSansBold,
-					TextColor3 = Color3.fromRGB(248, 248, 251),
-				}),
+                New("Frame", {
+                    Name = "AvatarHolder",
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(0, HasAvatar and AvatarSize or 0, 0, AvatarSize),
+                    Visible = HasAvatar,
+                    LayoutOrder = 1,
+                }, {
+                    New("ImageLabel", {
+                        Name = "Avatar",
+                        Image = AvatarImage or "",
+                        BackgroundTransparency = 1,
+                        Size = UDim2.new(0, AvatarSize, 0, AvatarSize),
+                        ScaleType = "Crop",
+                    }, {
+                        New("UICorner", {
+                            CornerRadius = UDim.new(1, 0),
+                        }),
+                    }),
 
-				New("TextLabel", {
-					Name = "Content",
-					Text = Notification.Content or "",
-					BackgroundTransparency = 1,
-					Size = UDim2.new(1, 0, 0, 18),
-					TextWrapped = false,
-					TextTruncate = "AtEnd",
-					TextXAlignment = "Left",
-					TextYAlignment = "Center",
-					TextSize = 14,
-					Font = Enum.Font.BuilderSansMedium,
-					TextColor3 = Color3.fromRGB(239, 240, 244),
-					TextTransparency = 0.05,
-					Visible = Notification.Content ~= nil,
-				}),
-			}),
+                    New("Frame", {
+                       Name = "BadgeBack",
+                       Size = UDim2.new(0, BadgeSize + 4, 0, BadgeSize + 4),
+                       Position = UDim2.new(1, 2, 1, 2),
+                       AnchorPoint = Vector2.new(1, 1),
+                       BackgroundColor3 = Color3.fromRGB(24, 24, 28),
+                       BackgroundTransparency = 0.18,
+                       Visible = AppBadge ~= nil,
+                       ZIndex = 6,
+                    }, {
+                       New("UICorner", {
+                          CornerRadius = UDim.new(1, 0),
+                       }),
+                       New("UIStroke", {
+                          Color = Color3.new(1, 1, 1),
+                          Transparency = 0.55,
+                          Thickness = 1,
+                       }),
+                       AppBadge,
+                    }),
+                }),
+
+                New("Frame", {
+                    Name = "TextContainer",
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(1, HasAvatar and -(AvatarSize + 10) or 0, 0, 0),
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    LayoutOrder = 2,
+                }, {
+                    New("UIListLayout", {
+                        Padding = UDim.new(0, 0),
+                        SortOrder = "LayoutOrder",
+                        VerticalAlignment = "Center",
+                    }),
+
+                    New("TextLabel", {
+                        Name = "Title",
+                        Text = Notification.Title,
+                        BackgroundTransparency = 1,
+                        Size = UDim2.new(1, 0, 0, 18),
+                        TextWrapped = false,
+                        TextTruncate = "AtEnd",
+                        TextXAlignment = "Left",
+                        TextYAlignment = "Center",
+                        TextSize = 15,
+                        Font = Enum.Font.BuilderSansBold,
+                        TextColor3 = Color3.fromRGB(248, 248, 251),
+                    }),
+
+                    New("TextLabel", {
+                        Name = "Content",
+                        Text = Notification.Content or "",
+                        BackgroundTransparency = 1,
+                        Size = UDim2.new(1, 0, 0, 18),
+                        TextWrapped = true,
+                        TextXAlignment = "Left",
+                        TextYAlignment = "Center",
+                        TextSize = 14,
+                        Font = Enum.Font.BuilderSansMedium,
+                        TextColor3 = Color3.fromRGB(239, 240, 244),
+                        TextTransparency = 0.05,
+                        Visible = Notification.Content ~= nil,
+                        AutomaticSize = Enum.AutomaticSize.Y,
+                    }),
+                }),
+            }),
 		}),
 	})
 
@@ -399,12 +415,16 @@ function NotificationModule.New(Config)
 	Notification.UIElements.Main = Main
 	Notification.UIElements.MainContainer = MainContainer
 
+	local sizeConnection
+	
 	function Notification:Close()
-		if Notification.Closed then
-			return
-		end
-
+		if Notification.Closed then return end
 		Notification.Closed = true
+		
+		if sizeConnection then
+			sizeConnection:Disconnect()
+			sizeConnection = nil
+		end
 
 		Tween(MainContainer, 0.24, {
 			Size = UDim2.new(1, 0, 0, 0),
@@ -428,14 +448,29 @@ function NotificationModule.New(Config)
 		Main.Position = UDim2.new(0.5, 0, 0, -10)
 		Main.ImageTransparency = 1
 
+		local TargetHeight = Main.AbsoluteSize.Y
+
 		Tween(MainContainer, 0.26, {
-			Size = UDim2.new(1, 0, 0, NotificationHeight),
+			Size = UDim2.new(1, 0, 0, TargetHeight),
 		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
 
 		Tween(Main, 0.26, {
 			Position = UDim2.new(0.5, 0, 0, 0),
 			ImageTransparency = 0.72,
 		}, Enum.EasingStyle.Quint, Enum.EasingDirection.Out):Play()
+		
+		-- Hook dynamic size updates so it doesn't get cut off if content wraps late
+		task.delay(0.28, function()
+		    if Notification.Closed then return end
+		    MainContainer.Size = UDim2.new(1, 0, 0, Main.AbsoluteSize.Y)
+		    sizeConnection = Main:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		        if Notification.Closed then return end
+		        -- Smoothly adjust height if text dynamically changes
+		        Tween(MainContainer, 0.15, {
+		            Size = UDim2.new(1, 0, 0, Main.AbsoluteSize.Y)
+		        }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out):Play()
+		    end)
+		end)
 
 		if Notification.Duration and Notification.Duration > 0 then
 			task.wait(Notification.Duration)
