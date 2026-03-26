@@ -198,7 +198,7 @@ function NotificationModule.New(Config)
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Name = "InnerGlass",
 			ImageColor3 = Color3.fromRGB(170, 176, 188),
-			ImageTransparency = 0.75,
+			ImageTransparency = 0.65,
 		}),
 
 		New("Frame", {
@@ -390,7 +390,7 @@ function NotificationModule.New(Config)
                 }),
             }),
 		}),
-	})
+	}),
 
 	local ClickCatcher
 	if Notification.CanClose then
