@@ -2455,24 +2455,20 @@ return function(Config)
 
 			local ContentScroll = New("ScrollingFrame", {
 				Size = UDim2.new(1, 0, 0, 0),
-				AutomaticSize = "Y",
-				AutomaticCanvasSize = "Y",
 				CanvasSize = UDim2.new(0, 0, 0, 0),
+				AutomaticCanvasSize = "Y",
 				ScrollingDirection = "Y",
 				ScrollingEnabled = true,
 				ScrollBarThickness = 0,
 				ScrollBarImageTransparency = 1,
+				ClipsDescendants = true,
 				BorderSizePixel = 0,
 				BackgroundTransparency = 1,
 				LayoutOrder = 2,
 				Parent = DialogTopColFrame,
-			}, {
-				New("UISizeConstraint", {
-					MaxSize = Vector2.new(math.huge, maxContentH),
-				}),
 			})
 
-			New("TextLabel", {
+			local ContentLabel = New("TextLabel", {
 				Text = DialogTable.Content,
 				TextSize = 18,
 				TextTransparency = 0.4,
@@ -2494,6 +2490,18 @@ return function(Config)
 					PaddingBottom = UDim.new(0, DialogTable.TextPadding / 2),
 				}),
 			})
+
+			-- Tinggi area konten = min(tinggi teks, cap). Di-set manual via
+			-- AbsoluteSize (dibagi UIScale) supaya konsisten di semua executor;
+			-- ClipsDescendants bikin sisa teks ke-clip (nggak nimpa tombol),
+			-- canvas auto bikin bisa di-scroll tanpa scrollbar kelihatan.
+			local function resizeContent()
+				local uiScale = Config.WindUI.UIScale or 1
+				local h = ContentLabel.AbsoluteSize.Y / uiScale
+				ContentScroll.Size = UDim2.new(1, 0, 0, math.min(h, maxContentH))
+			end
+			Creator.AddSignal(ContentLabel:GetPropertyChangedSignal("AbsoluteSize"), resizeContent)
+			task.defer(resizeContent)
 		end
 
 		local ButtonsLayout = New("UIListLayout", {
