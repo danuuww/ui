@@ -390,7 +390,7 @@ function NotificationModule.New(Config)
                 }),
             }),
 		}),
-	}),
+	})
 
 	local ClickCatcher
 	if Notification.CanClose then
