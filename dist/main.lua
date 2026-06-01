@@ -14280,10 +14280,33 @@ local O=math.clamp(
 360
 )
 
-local P=am("ScrollingFrame",{
-Size=UDim2.new(1,0,0,0),
-CanvasSize=UDim2.new(0,0,0,0),
-AutomaticCanvasSize="Y",
+
+
+local P=Font.new(al.Font,Enum.FontWeight.Medium)
+local Q=math.max(G.Width-(H.UIPadding*2)-G.TextPadding,40)
+local R=0
+pcall(function()
+local S=game:GetService"TextService"
+local T=Instance.new"GetTextBoundsParams"
+T.Text=G.Content
+T.Font=P
+T.Size=18
+T.Width=Q
+pcall(function()T.RichText=true end)
+R=S:GetTextBoundsAsync(T).Y
+end)
+if R<=0 then
+
+local S=select(2,tostring(G.Content):gsub("\n",""))+1
+R=S*22
+end
+
+local S=R+(G.TextPadding/2)+6
+local T=math.min(S,O)
+
+local U=am("ScrollingFrame",{
+Size=UDim2.new(1,0,0,T),
+CanvasSize=UDim2.new(0,0,0,S),
 ScrollingDirection="Y",
 ScrollingEnabled=true,
 ScrollBarThickness=0,
@@ -14295,13 +14318,13 @@ LayoutOrder=2,
 Parent=J,
 })
 
-local Q=am("TextLabel",{
+am("TextLabel",{
 Text=G.Content,
 TextSize=18,
 TextTransparency=0.4,
 TextWrapped=true,
 RichText=true,
-FontFace=Font.new(al.Font,Enum.FontWeight.Medium),
+FontFace=P,
 TextXAlignment="Left",
 Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
@@ -14309,7 +14332,7 @@ ThemeTag={
 TextColor3="Text",
 },
 BackgroundTransparency=1,
-Parent=P,
+Parent=U,
 },{
 am("UIPadding",{
 PaddingLeft=UDim.new(0,G.TextPadding/2),
@@ -14317,18 +14340,6 @@ PaddingRight=UDim.new(0,G.TextPadding/2),
 PaddingBottom=UDim.new(0,G.TextPadding/2),
 }),
 })
-
-
-
-
-
-local function resizeContent()
-local R=at.WindUI.UIScale or 1
-local S=Q.AbsoluteSize.Y/R
-P.Size=UDim2.new(1,0,0,math.min(S,O))
-end
-al.AddSignal(Q:GetPropertyChangedSignal"AbsoluteSize",resizeContent)
-task.defer(resizeContent)
 end
 
 local N=am("UIListLayout",{
