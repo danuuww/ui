@@ -2443,6 +2443,35 @@ return function(Config)
 		})
 
 		if DialogTable.Content then
+			-- Cap tinggi area konten relatif viewport supaya dialog tetap pas
+			-- di dalam window UI (Title atas & Buttons bawah selalu kelihatan).
+			-- Teks yang kepanjangan bisa di-scroll, tapi scrollbar disembunyikan.
+			local cam = workspace.CurrentCamera
+			local maxContentH = math.clamp(
+				((cam and cam.ViewportSize.Y or 600) * 0.45) / (Config.WindUI.UIScale or 1),
+				140,
+				360
+			)
+
+			local ContentScroll = New("ScrollingFrame", {
+				Size = UDim2.new(1, 0, 0, 0),
+				AutomaticSize = "Y",
+				AutomaticCanvasSize = "Y",
+				CanvasSize = UDim2.new(0, 0, 0, 0),
+				ScrollingDirection = "Y",
+				ScrollingEnabled = true,
+				ScrollBarThickness = 0,
+				ScrollBarImageTransparency = 1,
+				BorderSizePixel = 0,
+				BackgroundTransparency = 1,
+				LayoutOrder = 2,
+				Parent = DialogTopColFrame,
+			}, {
+				New("UISizeConstraint", {
+					MaxSize = Vector2.new(math.huge, maxContentH),
+				}),
+			})
+
 			New("TextLabel", {
 				Text = DialogTable.Content,
 				TextSize = 18,
@@ -2453,12 +2482,11 @@ return function(Config)
 				TextXAlignment = "Left",
 				Size = UDim2.new(1, 0, 0, 0),
 				AutomaticSize = "Y",
-				LayoutOrder = 2,
 				ThemeTag = {
 					TextColor3 = "Text",
 				},
 				BackgroundTransparency = 1,
-				Parent = DialogTopColFrame,
+				Parent = ContentScroll,
 			}, {
 				New("UIPadding", {
 					PaddingLeft = UDim.new(0, DialogTable.TextPadding / 2),
