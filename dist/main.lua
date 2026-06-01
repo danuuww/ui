@@ -14282,24 +14282,20 @@ local O=math.clamp(
 
 local P=am("ScrollingFrame",{
 Size=UDim2.new(1,0,0,0),
-AutomaticSize="Y",
-AutomaticCanvasSize="Y",
 CanvasSize=UDim2.new(0,0,0,0),
+AutomaticCanvasSize="Y",
 ScrollingDirection="Y",
 ScrollingEnabled=true,
 ScrollBarThickness=0,
 ScrollBarImageTransparency=1,
+ClipsDescendants=true,
 BorderSizePixel=0,
 BackgroundTransparency=1,
 LayoutOrder=2,
 Parent=J,
-},{
-am("UISizeConstraint",{
-MaxSize=Vector2.new(math.huge,O),
-}),
 })
 
-am("TextLabel",{
+local Q=am("TextLabel",{
 Text=G.Content,
 TextSize=18,
 TextTransparency=0.4,
@@ -14321,6 +14317,18 @@ PaddingRight=UDim.new(0,G.TextPadding/2),
 PaddingBottom=UDim.new(0,G.TextPadding/2),
 }),
 })
+
+
+
+
+
+local function resizeContent()
+local R=at.WindUI.UIScale or 1
+local S=Q.AbsoluteSize.Y/R
+P.Size=UDim2.new(1,0,0,math.min(S,O))
+end
+al.AddSignal(Q:GetPropertyChangedSignal"AbsoluteSize",resizeContent)
+task.defer(resizeContent)
 end
 
 local N=am("UIListLayout",{
