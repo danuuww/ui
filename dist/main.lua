@@ -4,7 +4,7 @@
     | |/ |/ / / _ \/ _  / /_/ // /  
     |__/|__/_/_//_/\_,_/\____/___/
     
-    v1.6.64  |  2026-03-26  |  Roblox UI Library for scripts
+    v1.6.64  |  2026-06-01  |  Roblox UI Library for scripts
     
     To view the source code, see the `src/` folder on the official GitHub repository.
     
@@ -1457,7 +1457,7 @@ Position=UDim2.new(0.5,0,0.5,0),
 AnchorPoint=Vector2.new(0.5,0.5),
 Name="InnerGlass",
 ImageColor3=Color3.fromRGB(170,176,188),
-ImageTransparency=0.75,
+ImageTransparency=0.65,
 }),
 
 e("Frame",{
@@ -14270,6 +14270,35 @@ Parent=L,
 })
 
 if G.Content then
+
+
+
+local N=workspace.CurrentCamera
+local O=math.clamp(
+((N and N.ViewportSize.Y or 600)*0.45)/(at.WindUI.UIScale or 1),
+140,
+360
+)
+
+local P=am("ScrollingFrame",{
+Size=UDim2.new(1,0,0,0),
+AutomaticSize="Y",
+AutomaticCanvasSize="Y",
+CanvasSize=UDim2.new(0,0,0,0),
+ScrollingDirection="Y",
+ScrollingEnabled=true,
+ScrollBarThickness=0,
+ScrollBarImageTransparency=1,
+BorderSizePixel=0,
+BackgroundTransparency=1,
+LayoutOrder=2,
+Parent=J,
+},{
+am("UISizeConstraint",{
+MaxSize=Vector2.new(math.huge,O),
+}),
+})
+
 am("TextLabel",{
 Text=G.Content,
 TextSize=18,
@@ -14280,12 +14309,11 @@ FontFace=Font.new(al.Font,Enum.FontWeight.Medium),
 TextXAlignment="Left",
 Size=UDim2.new(1,0,0,0),
 AutomaticSize="Y",
-LayoutOrder=2,
 ThemeTag={
 TextColor3="Text",
 },
 BackgroundTransparency=1,
-Parent=J,
+Parent=P,
 },{
 am("UIPadding",{
 PaddingLeft=UDim.new(0,G.TextPadding/2),
