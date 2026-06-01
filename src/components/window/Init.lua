@@ -2453,10 +2453,33 @@ return function(Config)
 				360
 			)
 
+			-- Ukur tinggi teks secara deterministik (nggak bergantung render /
+			-- signal AbsoluteSize yang sering nggak reliable di executor).
+			local contentFont = Font.new(Creator.Font, Enum.FontWeight.Medium)
+			local textWidth = math.max(DialogTable.Width - (Dialog.UIPadding * 2) - DialogTable.TextPadding, 40)
+			local textHeight = 0
+			pcall(function()
+				local TextService = game:GetService("TextService")
+				local params = Instance.new("GetTextBoundsParams")
+				params.Text = DialogTable.Content
+				params.Font = contentFont
+				params.Size = 18
+				params.Width = textWidth
+				pcall(function() params.RichText = true end)
+				textHeight = TextService:GetTextBoundsAsync(params).Y
+			end)
+			if textHeight <= 0 then
+				-- fallback estimasi kasar kalau API gagal
+				local lines = select(2, tostring(DialogTable.Content):gsub("\n", "")) + 1
+				textHeight = lines * 22
+			end
+			-- sedikit buffer + padding bawah supaya baris terakhir nggak ke-clip
+			local fullContentH = textHeight + (DialogTable.TextPadding / 2) + 6
+			local contentH = math.min(fullContentH, maxContentH)
+
 			local ContentScroll = New("ScrollingFrame", {
-				Size = UDim2.new(1, 0, 0, 0),
-				CanvasSize = UDim2.new(0, 0, 0, 0),
-				AutomaticCanvasSize = "Y",
+				Size = UDim2.new(1, 0, 0, contentH),
+				CanvasSize = UDim2.new(0, 0, 0, fullContentH),
 				ScrollingDirection = "Y",
 				ScrollingEnabled = true,
 				ScrollBarThickness = 0,
@@ -2468,13 +2491,13 @@ return function(Config)
 				Parent = DialogTopColFrame,
 			})
 
-			local ContentLabel = New("TextLabel", {
+			New("TextLabel", {
 				Text = DialogTable.Content,
 				TextSize = 18,
 				TextTransparency = 0.4,
 				TextWrapped = true,
 				RichText = true,
-				FontFace = Font.new(Creator.Font, Enum.FontWeight.Medium),
+				FontFace = contentFont,
 				TextXAlignment = "Left",
 				Size = UDim2.new(1, 0, 0, 0),
 				AutomaticSize = "Y",
@@ -2490,18 +2513,6 @@ return function(Config)
 					PaddingBottom = UDim.new(0, DialogTable.TextPadding / 2),
 				}),
 			})
-
-			-- Tinggi area konten = min(tinggi teks, cap). Di-set manual via
-			-- AbsoluteSize (dibagi UIScale) supaya konsisten di semua executor;
-			-- ClipsDescendants bikin sisa teks ke-clip (nggak nimpa tombol),
-			-- canvas auto bikin bisa di-scroll tanpa scrollbar kelihatan.
-			local function resizeContent()
-				local uiScale = Config.WindUI.UIScale or 1
-				local h = ContentLabel.AbsoluteSize.Y / uiScale
-				ContentScroll.Size = UDim2.new(1, 0, 0, math.min(h, maxContentH))
-			end
-			Creator.AddSignal(ContentLabel:GetPropertyChangedSignal("AbsoluteSize"), resizeContent)
-			task.defer(resizeContent)
 		end
 
 		local ButtonsLayout = New("UIListLayout", {
